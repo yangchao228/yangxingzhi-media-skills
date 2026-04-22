@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# md-img-r2 generated
+*.md.bak
+*.replace-report.json
+
+# Node
+node_modules/
