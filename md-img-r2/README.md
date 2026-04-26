@@ -134,7 +134,7 @@ export CF_R2_KEY_PREFIX=articles
 
 如果没有显式传 `--env-file`，脚本默认按这个顺序找 `.env`：
 
-1. `skills/tooling/md-img-r2/.env`
+1. `md-img-r2/.env`
 2. `target` 所在目录向上查找最近的 `.env`
 3. 当前工作目录下的 `.env`
 
@@ -215,11 +215,7 @@ articles/6d8f1e2ab4c9d011-cover.png
 - 把 R2 配置要求写进使用说明，不要把密钥写进 skill 源码
 - 推荐同时给对方一份 `.env.example` 模板，不要直接给真实 `.env`
 - 分发前至少用一篇带本地图片的 Markdown 跑一次 `--dry-run`
-- 如果平台要求上传压缩包，再在仓库根目录运行：
-
-```bash
-python3 scripts/package_skill.py md-img-r2
-```
+- 如果平台要求上传压缩包，直接压缩整个 `md-img-r2/` 目录；不要把本地 `.env`、`.bak` 或 `.replace-report.json` 一起打包
 
 ---
 

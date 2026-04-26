@@ -40,6 +40,26 @@
 
 ---
 
+## 本地验证
+
+开发或分发前，先运行统一 smoke check：
+
+```bash
+./scripts/validate_skills.sh
+```
+
+当前验证覆盖：
+
+- `SKILL.md` frontmatter 基本字段
+- `skill.json` 基本字段、`source_dir`、`entry`
+- `run.sh --help`
+- Python 脚本语法检查
+- 旧路径、缺失打包脚本引用检查
+- Git 跟踪中的 `.env`、`.DS_Store`、`__pycache__`、报告/备份文件检查
+- `md-img-r2` 临时 Markdown dry-run 样例
+
+---
+
 ## 为什么要有总调度
 
 如果没有总调度，用户就得自己判断：

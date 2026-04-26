@@ -34,7 +34,7 @@ md-img-r2/
   skill.json             # 技能元数据
   run.sh                 # 入口脚本
   scripts/md_img_r2.py   # 核心 Python 脚本
-  .env / .env.example    # R2 配置模板
+  .env.example           # R2 配置模板；真实 .env 只放本地，不提交
 ```
 
 **常用命令：**
@@ -47,6 +47,9 @@ md-img-r2/
 
 # Dry run（不修改文件，只生成报告）
 ./md-img-r2/run.sh path/to/article.md --dry-run
+
+# 本地 smoke check
+./scripts/validate_skills.sh
 ```
 
 **前置条件：** 需要 Cloudflare R2 凭证（通过 `.env` 或环境变量提供），运行环境需 `python3`，无额外 Python 依赖。
@@ -57,3 +60,4 @@ md-img-r2/
 - 新增 skill 时，参照 `md-img-r2/` 的目录结构：`SKILL.md`（定义）、`skill.json`（元数据）、`run.sh`（入口）、`scripts/`（实现）、`.env.example`（配置模板）。
 - `.env` 文件不应提交，敏感配置（密钥、account ID 等）一律通过环境变量或 `.env` 提供。
 - 所有 skill 的设计目标是**可分发**：别人拿到后只需补齐 `.env` 即可使用。
+- 修改或分发前优先跑 `./scripts/validate_skills.sh`，确认元数据、脚本入口、缓存文件和 `md-img-r2` dry-run 样例都正常。
