@@ -1,0 +1,13 @@
+{
+  "slug": "wenchang-publish-check",
+  "title": "文昌·出刊",
+  "category": "content",
+  "summary": "内容发布前检查标题、摘要、封面、配图、标签、分发文案和归档建议。",
+  "keywords": ["发布检查", "出刊", "内容发布", "分发文案"],
+  "user_needs": ["发布前检查内容是否齐全", "补齐标题摘要标签和转发文案", "判断是否需要归档或二次分发"],
+  "source_dir": "content/wenchang-publish-check",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

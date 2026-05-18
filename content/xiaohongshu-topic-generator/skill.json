@@ -1,0 +1,22 @@
+{
+  "slug": "xiaohongshu-topic-generator",
+  "title": "Human3.0 小红书热点选题",
+  "category": "content",
+  "summary": "为 AI生命克劳德 / Human3.0 小红书账号生成主题型热点选题和可视化 HTML 卡片组。",
+  "keywords": [
+    "小红书",
+    "选题",
+    "Human3.0",
+    "热点"
+  ],
+  "user_needs": [
+    "生成小红书选题",
+    "结合热点做选题卡片",
+    "把一个主题转成可发布内容"
+  ],
+  "source_dir": "content/xiaohongshu-topic-generator",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

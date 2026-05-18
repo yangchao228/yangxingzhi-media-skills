@@ -1,0 +1,22 @@
+{
+  "slug": "long-to-cards",
+  "title": "长文转图文卡片",
+  "category": "content",
+  "summary": "将长文提炼为社交媒体图文内容，生成标题、正文、标签和 3:4 卡片 HTML。",
+  "keywords": [
+    "长文转卡片",
+    "图文内容",
+    "小红书",
+    "公众号"
+  ],
+  "user_needs": [
+    "把长文转成图文卡片",
+    "生成小红书图文内容",
+    "把文章拆成社交媒体卡片"
+  ],
+  "source_dir": "content/long-to-cards",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

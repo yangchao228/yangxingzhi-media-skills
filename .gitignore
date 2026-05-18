@@ -13,5 +13,8 @@ __pycache__/
 *.md.bak
 *.replace-report.json
 
+# Local packages
+dist/
+
 # Node
 node_modules/

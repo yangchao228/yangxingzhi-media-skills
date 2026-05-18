@@ -1,0 +1,22 @@
+{
+  "slug": "redbook-cards",
+  "title": "小红书图文卡片生成",
+  "category": "content",
+  "summary": "将文章 HTML 或纯文本切片为小红书风格图文卡片组，输出可直接预览的独立 HTML。",
+  "keywords": [
+    "小红书",
+    "图文卡片",
+    "内容切片",
+    "HTML 输出"
+  ],
+  "user_needs": [
+    "把文章转成小红书卡片",
+    "生成可截图发布的内容图",
+    "按主题切片成长图文"
+  ],
+  "source_dir": "content/redbook-cards",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "zip",
+  "status": "ready"
+}

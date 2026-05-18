@@ -1,0 +1,22 @@
+{
+  "slug": "wechat-hot-topic-skill-ai-human3",
+  "title": "AI / Human3.0 公众号热点选题",
+  "category": "content",
+  "summary": "围绕 AI、Agent、OpenClaw 和 Human3.0 热点筛选公众号选题，评估长文价值和栏目沉淀潜力。",
+  "keywords": [
+    "公众号",
+    "AI 热点",
+    "Human3.0",
+    "选题策划"
+  ],
+  "user_needs": [
+    "从 AI 热点里找公众号选题",
+    "筛选 Human3.0 主题选题",
+    "判断热点是否适合写成长文"
+  ],
+  "source_dir": "content/wechat-hot-topic-skill-ai-human3",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

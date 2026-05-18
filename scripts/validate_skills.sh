@@ -27,7 +27,7 @@ log "scan skill directories"
 SKILL_FILES=()
 while IFS= read -r file; do
   SKILL_FILES+=("$file")
-done < <(find . -path './.git' -prune -o -name SKILL.md -type f -print | sort)
+done < <(find . -path './.git' -prune -o -path './dist' -prune -o -name SKILL.md -type f -print | sort)
 if [[ "${#SKILL_FILES[@]}" -eq 0 ]]; then
   fail "no SKILL.md files found"
 fi
@@ -115,13 +115,20 @@ PY
       "$skill_dir/run.sh" --help >/dev/null
     fi
   fi
+
+  case "${skill_dir#./}" in
+    content/wenchang-*)
+      require_file "$skill_dir/examples/minimal-input.md"
+      require_file "$skill_dir/examples/expected-output-notes.md"
+      ;;
+  esac
 done
 
 log "compile Python scripts"
 PY_FILES=()
 while IFS= read -r file; do
   PY_FILES+=("$file")
-done < <(find . -path './.git' -prune -o -path './*/__pycache__/*' -prune -o -name '*.py' -type f -print | sort)
+done < <(find . -path './.git' -prune -o -path './dist' -prune -o -path './*/__pycache__/*' -prune -o -name '*.py' -type f -print | sort)
 if [[ "${#PY_FILES[@]}" -gt 0 ]]; then
   PYTHONPYCACHEPREFIX=/tmp/yangxingzhi-media-skills-pycache "$PY" -m py_compile "${PY_FILES[@]}"
 fi

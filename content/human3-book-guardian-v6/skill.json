@@ -1,0 +1,22 @@
+{
+  "slug": "human3-book-guardian",
+  "title": "Human3.0 成书守门员",
+  "category": "content",
+  "summary": "审查 Human3.0 文章是否服务成书路径，并生成素材库条目、归档建议和入书判断。",
+  "keywords": [
+    "Human3.0",
+    "成书审查",
+    "素材库",
+    "归档"
+  ],
+  "user_needs": [
+    "审查一篇文章是否适合入书",
+    "生成成书素材条目",
+    "判断文章归档位置"
+  ],
+  "source_dir": "content/human3-book-guardian-v6",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

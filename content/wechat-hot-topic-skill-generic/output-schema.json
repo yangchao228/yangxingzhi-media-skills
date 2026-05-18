@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generic WeChat Hot Topic Skill Output",
+  "type": "object",
+  "properties": {
+    "hotspot_review": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "relevance": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "wechat_fit": {
+            "type": "string",
+            "enum": [
+              "good",
+              "normal",
+              "bad"
+            ]
+          },
+          "recommended_angle": {
+            "type": "string"
+          },
+          "why_not": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "summary",
+          "relevance",
+          "wechat_fit",
+          "recommended_angle"
+        ]
+      }
+    },
+    "topic_pool": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "angle": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "reader_gain": {
+            "type": "string"
+          },
+          "author_material": {
+            "type": "string"
+          },
+          "risk": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50
+          }
+        },
+        "required": [
+          "title",
+          "angle",
+          "value",
+          "reader_gain",
+          "risk",
+          "score"
+        ]
+      }
+    },
+    "top3": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "structure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "title_directions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hook": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "reason",
+          "structure",
+          "title_directions",
+          "hook"
+        ]
+      }
+    },
+    "final_pick": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "article_type": {
+          "type": "string",
+          "enum": [
+            "热点借势",
+            "栏目沉淀"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "reason",
+        "article_type"
+      ]
+    }
+  },
+  "required": [
+    "hotspot_review",
+    "topic_pool",
+    "top3",
+    "final_pick"
+  ]
+}

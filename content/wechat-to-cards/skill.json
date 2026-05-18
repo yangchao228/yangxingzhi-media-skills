@@ -1,0 +1,22 @@
+{
+  "slug": "wechat-to-cards",
+  "title": "公众号长文转卡片组",
+  "category": "content",
+  "summary": "把公众号长文拆成 3 到 10 张风格统一的方形图文卡片，适合微信图文和二次分发。",
+  "keywords": [
+    "公众号",
+    "卡片拆解",
+    "内容分发",
+    "视觉化"
+  ],
+  "user_needs": [
+    "把公众号长文拆成卡片",
+    "做公众号配图",
+    "提炼金句卡和封面卡"
+  ],
+  "source_dir": "content/wechat-to-cards",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

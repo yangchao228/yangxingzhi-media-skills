@@ -1,0 +1,13 @@
+{
+  "slug": "xiaohongshu-viral-image-skill-v4",
+  "title": "小红书爆款图文图片集合生成器 v4",
+  "category": "content",
+  "summary": "基于长文或 Markdown 文件生成小红书图文图片集合方案、逐页出图提示词和发布文案包。",
+  "keywords": ["小红书", "图文图片", "长文转图片", "Human3.0"],
+  "user_needs": ["把长文拆成小红书图片集合", "生成逐页出图提示词", "输出可直接发布的小红书文案包"],
+  "source_dir": "content/xiaohongshu-viral-image-skill-v4",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

@@ -1,0 +1,22 @@
+{
+  "slug": "zhihu-topic-hunter",
+  "title": "知乎主题热点选题助手",
+  "category": "content",
+  "summary": "围绕指定主题捕捉近期热点和讨论势能，生成适合知乎发布的问题型、判断型、经验型选题。",
+  "keywords": [
+    "知乎",
+    "热点选题",
+    "问题型选题",
+    "Human3.0"
+  ],
+  "user_needs": [
+    "围绕主题找知乎选题",
+    "判断热点是否适合知乎",
+    "生成问题型和经验型选题"
+  ],
+  "source_dir": "content/zhihu-topic-hunter",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

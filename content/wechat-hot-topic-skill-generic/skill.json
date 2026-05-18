@@ -1,0 +1,22 @@
+{
+  "slug": "wechat-hot-topic-skill-generic",
+  "title": "通用型微信公众号热点选题",
+  "category": "content",
+  "summary": "将外部热点或新闻列表转化为适配指定账号主题的微信公众号长文选题。",
+  "keywords": [
+    "公众号",
+    "热点选题",
+    "内容策划",
+    "长文"
+  ],
+  "user_needs": [
+    "从热点里找公众号选题",
+    "判断新闻是否适合账号主题",
+    "生成主题型公众号选题池"
+  ],
+  "source_dir": "content/wechat-hot-topic-skill-generic",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

@@ -60,6 +60,46 @@
 
 ---
 
+## 第一版工作流落地
+
+当前仓库已经把现有内容创作 skills 归一到 `content/` 目录，并补齐三个工作流入口：
+
+- `content/wenchang-router/`：总调度，识别平台和阶段
+- `content/wenchang-review/`：诊文，判断初稿是否值得继续推进
+- `content/wenchang-publish-check/`：出刊，做发布前检查
+
+核心入口围绕统一的 `content_state` 接力，字段规范见 `content/CONTENT_STATE.md`。每个核心入口都带有最小回归样例：
+
+- `examples/minimal-input.md`
+- `examples/expected-output-notes.md`
+
+第一版推荐链路：
+
+```text
+文昌路由
+  -> 探脉/定题：公众号、知乎、小红书选题 skills
+  -> 立骨/起稿：公众号写作 skill
+  -> 诊文/整章：wenchang-review
+  -> 配图/卡片：wechat-to-cards / redbook-cards / long-to-cards / xiaohongshu-viral-image-skill-v4 / md-img-r2
+  -> 出刊：wenchang-publish-check
+  -> 归档：human3-book-guardian
+```
+
+迁移进来的可复用模块：
+
+- `content/wechat-hot-topic-skill-ai-human3/`
+- `content/wechat-hot-topic-skill-generic/`
+- `content/wechat-writing-skill-ai-human3/`
+- `content/zhihu-topic-hunter/`
+- `content/xiaohongshu-topic-generator/`
+- `content/wechat-to-cards/`
+- `content/redbook-cards/`
+- `content/long-to-cards/`
+- `content/xiaohongshu-viral-image-skill-v4/`
+- `content/human3-book-guardian-v6/`
+
+---
+
 ## 为什么要有总调度
 
 如果没有总调度，用户就得自己判断：

@@ -1,0 +1,22 @@
+{
+  "slug": "wechat-writing-skill-ai-human3",
+  "title": "AI / Human3.0 公众号写作",
+  "category": "content",
+  "summary": "将 AI、Agent、OpenClaw 和 Human3.0 相关选题写成适合微信公众号发布的长文草稿。",
+  "keywords": [
+    "公众号写作",
+    "AI",
+    "Human3.0",
+    "长文草稿"
+  ],
+  "user_needs": [
+    "把 AI 选题写成公众号文章",
+    "写 Human3.0 主题长文",
+    "生成标题大纲正文和转发文案"
+  ],
+  "source_dir": "content/wechat-writing-skill-ai-human3",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

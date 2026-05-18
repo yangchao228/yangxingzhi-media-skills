@@ -1,0 +1,13 @@
+{
+  "slug": "wenchang-router",
+  "title": "文昌路由",
+  "category": "content",
+  "summary": "识别内容创作请求所处阶段与目标平台，并路由到选题、写作、诊断、卡片化、发布检查或归档流程。",
+  "keywords": ["文昌", "内容工作流", "路由", "Human3.0"],
+  "user_needs": ["不知道下一步该用哪个内容 skill", "从选题到发布串联工作流", "把内容创作流程标准化"],
+  "source_dir": "content/wenchang-router",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

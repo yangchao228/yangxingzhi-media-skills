@@ -1,0 +1,41 @@
+{
+  "title_candidates": [
+    {
+      "title": "string",
+      "type": "利益型|反常识型|观点型|案例型|趋势型"
+    }
+  ],
+  "hooks": [
+    "string"
+  ],
+  "outline": [
+    {
+      "section": "string",
+      "goal": "string",
+      "key_points": [
+        "string"
+      ]
+    }
+  ],
+  "draft": {
+    "title": "string",
+    "column_direction": "Human3.0|OpenClaw|AI养娃|AI工程实践|其他",
+    "article_type": "流量文|品牌文|专栏文",
+    "body_markdown": "string",
+    "estimated_length": 2200
+  },
+  "cta_options": [
+    "string"
+  ],
+  "image_suggestions": [
+    {
+      "position": "开头|中段|结尾",
+      "idea": "string",
+      "purpose": "string"
+    }
+  ],
+  "moments_copy": "string",
+  "next_topics": [
+    "string"
+  ]
+}
