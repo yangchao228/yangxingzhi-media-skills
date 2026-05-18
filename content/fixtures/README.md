@@ -18,11 +18,20 @@ content/fixtures/<case-name>/
   publish-expected.md
 ```
 
+总控 case 可以只包含：
+
+```text
+content/fixtures/<case-name>/
+  orchestrator-input.md
+  orchestrator-expected.md
+```
+
 当前 case：
 
 - `ai-memory`：已有方向但无初稿，默认先采证。
 - `codex-workbench`：外部热点/文章型，重点防止复述原文。
 - `content-agents-diagnostic`：已有初稿诊断型，重点防止直接重写和继承夸张承诺。
+- `orchestrator-codex`：总控型，重点防止固定五步链路和省略配图/归档。
 
 ## 必须覆盖
 
@@ -48,3 +57,4 @@ content/fixtures/<case-name>/
 - `existing-direction`：已有方向但无初稿，应优先进入采证。
 - `external-article`：外部文章/热点，不要逐段翻译，不要变成工具教程。
 - `draft-diagnostic`：已有初稿，必须先诊断，再决定是否采证、重写或出刊。
+- `orchestrator`：总控入口，必须选择完整阶段池中的子路径，并保留配图/卡片/上传/归档节点。

@@ -1,0 +1,13 @@
+{
+  "slug": "wenchang-orchestrator",
+  "title": "文昌总控",
+  "category": "content",
+  "summary": "根据用户输入选择内容流水线子路径，自动推进可自动阶段，并在人工判断节点暂停确认。",
+  "keywords": ["文昌", "总控", "内容流水线", "自动推进", "Human3.0"],
+  "user_needs": ["不想手动复制每一步输出", "希望从选题到出刊自动推进", "需要在关键节点保留人工确认"],
+  "source_dir": "content/wenchang-orchestrator",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

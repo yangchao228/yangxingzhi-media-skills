@@ -87,6 +87,7 @@ content_state:
 
 | 阶段 | 主要负责字段 |
 | --- | --- |
+| 总控 | `request`、`next_step`、`handoff` |
 | 路由 | `request`、`distribution`、`next_step` |
 | 探脉/定题 | `topic`、`audience`、`next_step` |
 | 采证 | `research`、`next_step` |
@@ -101,6 +102,7 @@ content_state:
 
 | 阶段 | 主要读取 | 允许写入 | 不应该做 |
 | --- | --- | --- | --- |
+| 总控 | 用户原始输入、全量 `content_state` | `request`、`next_step`、`handoff` | 固定走单一路径、吞掉人工确认 |
 | 路由 | `request`、用户原始输入 | `request`、`distribution`、`next_step` | 直接生成终稿 |
 | 探脉/定题 | `request`、`audience`、用户素材 | `topic`、`audience`、`next_step` | 替用户最终拍板不可逆发布决策 |
 | 采证 | `topic`、`outline`、用户素材 | `research`、`next_step` | 写正文、排版、虚构来源 |
@@ -137,6 +139,27 @@ handoff:
 3. 下一阶段如果发现交接包缺关键字段，应返回 `user_decision_needed`，不要自行补编。
 4. 阶段输出应面向下一阶段，而不是解释自己完整思考过程。
 5. 如果未来拆成真正多 agent，`handoff + content_state` 就是 agent 间协议。
+
+## 总控推进规则
+
+文昌总控应先判断入口阶段，再选择完整阶段池中的子路径。
+
+完整阶段池：
+
+```text
+探脉 -> 定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊 -> 配图/卡片/上传 -> 归档
+```
+
+总控可以自动推进可自动阶段，但遇到以下情况必须暂停：
+
+- `next_step.user_decision_needed = true`
+- 多个候选选题需要用户确认
+- `research.confidence = Low`
+- 缺少关键来源或反向证据
+- `diagnosis.recommendation` 为 `重写`、`暂不投入`、`转平台`
+- 出刊存在阻塞项
+- 需要配图、卡片、上传外部图片或调用 `md-img-r2`
+- `archive.should_review_for_book = true`
 
 ## 采证要求
 

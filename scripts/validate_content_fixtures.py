@@ -24,6 +24,7 @@ CASE_TYPES = {
     "ai-memory": "existing-direction",
     "codex-workbench": "external-article",
     "content-agents-diagnostic": "draft-diagnostic",
+    "orchestrator-codex": "orchestrator",
 }
 
 
@@ -40,6 +41,9 @@ def validate_case(case_dir: pathlib.Path) -> list[str]:
     errors: list[str] = []
     case_type = CASE_TYPES.get(case_dir.name)
     require(errors, case_type is not None, f"{case_dir}: missing case type mapping")
+
+    if case_type == "orchestrator":
+        return validate_orchestrator_case(case_dir)
 
     for name in REQUIRED_CASE_FILES:
         require(errors, (case_dir / name).is_file(), f"{case_dir}: missing {name}")
@@ -106,6 +110,32 @@ def validate_case(case_dir: pathlib.Path) -> list[str]:
         require(errors, "全自动" in all_expected, f"{case_dir}: draft-diagnostic should track automation drift")
         require(errors, "重构选题" in review, f"{case_dir}: draft-diagnostic review should reconstruct topic before writing")
 
+    return errors
+
+
+def validate_orchestrator_case(case_dir: pathlib.Path) -> list[str]:
+    errors: list[str] = []
+    required = ["orchestrator-input.md", "orchestrator-expected.md"]
+    for name in required:
+        require(errors, (case_dir / name).is_file(), f"{case_dir}: missing {name}")
+    if errors:
+        return errors
+
+    expected = read(case_dir / "orchestrator-expected.md")
+    require(errors, "## 当前阶段" in expected, f"{case_dir}: orchestrator expected missing current stage")
+    require(errors, "## 已完成" in expected, f"{case_dir}: orchestrator expected missing completed section")
+    require(errors, "## 需要你确认" in expected, f"{case_dir}: orchestrator expected missing confirmation section")
+    require(errors, "## 我建议" in expected, f"{case_dir}: orchestrator expected missing recommendation")
+    require(errors, "## 用户回复后将执行" in expected, f"{case_dir}: orchestrator expected missing next action")
+    require(errors, "content_state:" in expected, f"{case_dir}: orchestrator expected missing content_state")
+    require(errors, "handoff:" in expected, f"{case_dir}: orchestrator expected missing handoff")
+    require(errors, "accepted_inputs:" in expected, f"{case_dir}: orchestrator expected missing accepted_inputs")
+    require(errors, "ignored_context:" in expected, f"{case_dir}: orchestrator expected missing ignored_context")
+    require(errors, "配图" in expected or "卡片" in expected, f"{case_dir}: orchestrator expected should include image/card path")
+    require(errors, "归档" in expected, f"{case_dir}: orchestrator expected should include archive path")
+    require(errors, "定题" in expected, f"{case_dir}: orchestrator expected should include topic selection")
+    require(errors, "路由 -> 采证 -> 起稿 -> 诊文 -> 出刊" not in expected, f"{case_dir}: orchestrator should not use fixed five-step chain")
+    require(errors, "## 编辑后正文" not in expected and "## 正文" not in expected, f"{case_dir}: orchestrator expected should not write article body")
     return errors
 
 

@@ -63,14 +63,15 @@
 
 ## 第一版工作流落地
 
-当前仓库已经把现有内容创作 skills 归一到 `content/` 目录，并补齐三个工作流入口：
+当前仓库已经把现有内容创作 skills 归一到 `content/` 目录，并补齐核心工作流入口：
 
+- `content/wenchang-orchestrator/`：总控，选择完整子路径、自动推进可自动阶段、在人工判断节点暂停
 - `content/wenchang-router/`：总调度，识别平台和阶段
 - `content/wenchang-research/`：采证，补来源、事实、反向数据和可信度
 - `content/wenchang-review/`：诊文，判断初稿是否值得继续推进
 - `content/wenchang-publish-check/`：出刊，做发布前检查
 
-真实使用时先看 [文昌.skill 用户使用指南](docs/wenchang-user-guide.md)，按路由、采证、起稿、诊文、出刊、配图、归档的顺序跑一遍。
+真实使用时先看 [文昌.skill 用户使用指南](docs/wenchang-user-guide.md)。默认用文昌总控自动推进；手动模式只用于调试和回归。
 
 核心入口围绕统一的 `content_state` 接力，字段规范见 `content/CONTENT_STATE.md`。每个核心入口都带有最小回归样例：
 
@@ -82,7 +83,7 @@
 第一版推荐链路：
 
 ```text
-文昌路由
+文昌总控
   -> 探脉/定题：公众号、知乎、小红书选题 skills
   -> 采证：wenchang-research
   -> 立骨/起稿：公众号写作 skill
@@ -96,6 +97,7 @@
 
 - `content/wechat-hot-topic-skill-ai-human3/`
 - `content/wechat-hot-topic-skill-generic/`
+- `content/wenchang-orchestrator/`
 - `content/wenchang-research/`
 - `content/wechat-writing-skill-ai-human3/`
 - `content/zhihu-topic-hunter/`
