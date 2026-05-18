@@ -133,6 +133,11 @@ if [[ "${#PY_FILES[@]}" -gt 0 ]]; then
   PYTHONPYCACHEPREFIX=/tmp/yangxingzhi-media-skills-pycache "$PY" -m py_compile "${PY_FILES[@]}"
 fi
 
+if [[ -d content/fixtures ]]; then
+  log "validate content fixtures"
+  "$PY" scripts/validate_content_fixtures.py
+fi
+
 log "check stale references"
 if command -v rg >/dev/null 2>&1; then
   if rg -n 'skills/tooling/md-img-r2|package_skill\.py' . \

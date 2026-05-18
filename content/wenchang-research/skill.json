@@ -1,0 +1,13 @@
+{
+  "slug": "wenchang-research",
+  "title": "文昌·采证",
+  "category": "content",
+  "summary": "接收选题、大纲或 content_state，输出来源、关键事实、反向数据、可引用句子、矛盾点和可信度。",
+  "keywords": ["事实采证", "研究包", "内容证据", "Human3.0"],
+  "user_needs": ["为选题补事实依据", "避免文章空泛", "找到反向数据和限制条件"],
+  "source_dir": "content/wenchang-research",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

@@ -9,10 +9,11 @@
 - `## content_state 更新`
 - `publish_assets`
 - `distribution.secondary_platforms`
+- `handoff.accepted_inputs`
+- `handoff.ignored_context`
 
 不应该出现：
 
 - 替用户发布
 - 假装配图、摘要、标签已经齐全
 - 跳过 Human3.0 归档建议
-

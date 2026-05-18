@@ -24,6 +24,7 @@
 - 子技能：
   - `文昌·探脉`
   - `文昌·定题`
+  - `文昌·采证`
   - `文昌·立骨`
   - `文昌·起稿`
   - `文昌·配图`
@@ -65,6 +66,7 @@
 当前仓库已经把现有内容创作 skills 归一到 `content/` 目录，并补齐三个工作流入口：
 
 - `content/wenchang-router/`：总调度，识别平台和阶段
+- `content/wenchang-research/`：采证，补来源、事实、反向数据和可信度
 - `content/wenchang-review/`：诊文，判断初稿是否值得继续推进
 - `content/wenchang-publish-check/`：出刊，做发布前检查
 
@@ -73,11 +75,14 @@
 - `examples/minimal-input.md`
 - `examples/expected-output-notes.md`
 
+当前实现是一个 agent 调度多个 skill，但按伪多 agent 方式运行：每个阶段只读取 `content_state`、上一阶段正式输出和用户明确新增材料，不沿用未结构化聊天历史。跨阶段交接统一写入 `handoff`，后续可以平滑拆成真正多 agent。
+
 第一版推荐链路：
 
 ```text
 文昌路由
   -> 探脉/定题：公众号、知乎、小红书选题 skills
+  -> 采证：wenchang-research
   -> 立骨/起稿：公众号写作 skill
   -> 诊文/整章：wenchang-review
   -> 配图/卡片：wechat-to-cards / redbook-cards / long-to-cards / xiaohongshu-viral-image-skill-v4 / md-img-r2
@@ -89,6 +94,7 @@
 
 - `content/wechat-hot-topic-skill-ai-human3/`
 - `content/wechat-hot-topic-skill-generic/`
+- `content/wenchang-research/`
 - `content/wechat-writing-skill-ai-human3/`
 - `content/zhihu-topic-hunter/`
 - `content/xiaohongshu-topic-generator/`
@@ -121,6 +127,7 @@
 
 - `帮我找 3 个最近能写的 AI 选题`
 - `把这个主题做成公众号文章`
+- `这个选题先帮我采证，再决定怎么写`
 - `这篇稿子先诊断，再排版成发布版`
 - `给这篇文章补插图和封面方案`
 

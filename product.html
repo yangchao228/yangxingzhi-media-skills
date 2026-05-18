@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文昌.skill - 内容生产系统</title>
+  <style>
+    :root {
+      --paper: #fbfaf6;
+      --ink: #171717;
+      --muted: #5e625f;
+      --line: #d7d2c8;
+      --red: #bd2f27;
+      --blue: #156f83;
+      --green: #2f7250;
+      --gold: #b9831b;
+      --black: #0d0d0d;
+      --white: #ffffff;
+      --shadow: 0 18px 50px rgba(23, 23, 23, .11);
+      --serif: "Songti SC", "STSong", "Noto Serif CJK SC", Georgia, serif;
+      --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(23, 23, 23, .04) 1px, transparent 1px) 0 0 / 28px 28px,
+        linear-gradient(rgba(23, 23, 23, .035) 1px, transparent 1px) 0 0 / 28px 28px,
+        var(--paper);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(23, 23, 23, .12);
+      background: rgba(251, 250, 246, .9);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 66px;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: var(--paper);
+      background: var(--ink);
+      font-family: var(--serif);
+      font-size: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a {
+      padding: 8px 12px;
+      border: 1px solid transparent;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--ink);
+      border-color: rgba(23, 23, 23, .18);
+      background: rgba(255, 255, 255, .6);
+    }
+
+    .hero {
+      min-height: calc(100vh - 66px);
+      display: grid;
+      align-items: center;
+      padding: 58px 0 34px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
+      gap: clamp(28px, 5vw, 72px);
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 2px;
+      background: var(--red);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-family: var(--serif);
+      font-size: clamp(54px, 9vw, 118px);
+      line-height: .94;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 700px;
+      margin-top: 24px;
+      color: #343735;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.78;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--ink);
+      font-weight: 800;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .button.primary {
+      color: var(--paper);
+      background: var(--ink);
+      box-shadow: 7px 7px 0 var(--red);
+    }
+
+    .button:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 rgba(21, 111, 131, .65);
+    }
+
+    .command-board {
+      position: relative;
+      min-height: 570px;
+      border: 1px solid var(--ink);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .board-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      min-height: 56px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--ink);
+      background: #f0eee7;
+      font-weight: 900;
+    }
+
+    .status-dot {
+      width: 11px;
+      height: 11px;
+      background: var(--green);
+      box-shadow: 18px 0 0 var(--gold), 36px 0 0 var(--red);
+    }
+
+    .board-body {
+      padding: 24px;
+    }
+
+    .input-strip {
+      border: 1px solid var(--line);
+      padding: 16px;
+      background: var(--paper);
+    }
+
+    .input-label {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .typing-line {
+      min-height: 58px;
+      font-family: var(--serif);
+      font-size: 25px;
+      line-height: 1.35;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      margin-left: 4px;
+      background: var(--red);
+      animation: blink 1s steps(2, start) infinite;
+      vertical-align: -4px;
+    }
+
+    .routing-map {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .route-item {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .route-item strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 16px;
+    }
+
+    .route-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .route-item b {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: #fff;
+      font-family: var(--serif);
+      background: var(--ink);
+    }
+
+    .route-item em {
+      color: var(--blue);
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .route-item.is-active {
+      border-color: var(--ink);
+      box-shadow: 6px 6px 0 rgba(189, 47, 39, .22);
+      transform: translateX(-4px);
+    }
+
+    .board-note {
+      position: absolute;
+      right: 26px;
+      bottom: 24px;
+      width: 210px;
+      padding: 18px;
+      color: var(--paper);
+      background: var(--black);
+      font-size: 14px;
+      line-height: 1.6;
+      transform: rotate(-2deg);
+    }
+
+    section {
+      padding: 92px 0;
+      border-top: 1px solid rgba(23, 23, 23, .12);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+      gap: clamp(24px, 6vw, 90px);
+      align-items: end;
+      margin-bottom: 42px;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 68px);
+      line-height: 1.03;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .section-head p,
+    .wide-copy {
+      color: #383b39;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      border: 1px solid var(--ink);
+      background: var(--white);
+    }
+
+    .flow-step {
+      min-height: 214px;
+      padding: 20px;
+      border-right: 1px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .flow-step:last-child {
+      border-right: 0;
+    }
+
+    .flow-step:nth-child(2n) {
+      background: #f3f7f3;
+    }
+
+    .flow-step:nth-child(3n) {
+      background: #f4f0e6;
+    }
+
+    .step-num {
+      color: var(--red);
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .flow-step h3 {
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .flow-step p {
+      color: var(--muted);
+      line-height: 1.68;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .module {
+      min-height: 210px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .72);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .module:hover {
+      border-color: var(--ink);
+      transform: translateY(-3px);
+      box-shadow: 7px 7px 0 rgba(21, 111, 131, .16);
+    }
+
+    .module small {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--red);
+      font-weight: 900;
+    }
+
+    .module h3 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .module p {
+      color: var(--muted);
+      line-height: 1.72;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .principles {
+      display: grid;
+      gap: 12px;
+    }
+
+    .principle {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .principle b {
+      display: grid;
+      place-items: center;
+      height: 52px;
+      color: var(--paper);
+      background: var(--blue);
+      font-family: var(--serif);
+      font-size: 24px;
+    }
+
+    .principle h3 {
+      margin-bottom: 6px;
+      font-size: 20px;
+    }
+
+    .principle p {
+      color: var(--muted);
+      line-height: 1.68;
+    }
+
+    .state-panel {
+      position: relative;
+      border: 1px solid var(--ink);
+      background: #111;
+      color: #f6f2e7;
+      overflow: hidden;
+    }
+
+    .state-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(189, 47, 39, .26), transparent 28%),
+        radial-gradient(circle at 80% 72%, rgba(47, 114, 80, .28), transparent 34%);
+      opacity: .72;
+    }
+
+    .state-inner {
+      position: relative;
+      padding: 26px;
+    }
+
+    .state-inner code {
+      display: block;
+      white-space: pre-wrap;
+      color: #f5efe0;
+      font: 14px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .examples {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .example {
+      padding: 20px;
+      border-left: 6px solid var(--red);
+      background: var(--white);
+      box-shadow: 0 1px 0 rgba(23, 23, 23, .08);
+      font-family: var(--serif);
+      font-size: 22px;
+      line-height: 1.55;
+    }
+
+    .closing {
+      padding: 78px 0 96px;
+      color: var(--paper);
+      background: var(--ink);
+    }
+
+    .closing .shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .closing h2 {
+      max-width: 760px;
+    }
+
+    .closing p {
+      max-width: 700px;
+      margin-top: 18px;
+      color: #d9d3c7;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .closing .button {
+      border-color: var(--paper);
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 940px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-grid,
+      .section-head,
+      .split,
+      .closing .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .command-board {
+        min-height: auto;
+      }
+
+      .board-note {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: auto;
+        margin: 22px 24px 24px;
+      }
+
+      .flow,
+      .module-grid,
+      .examples {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .flow-step:nth-child(2n) {
+        border-right: 0;
+      }
+
+      .flow-step {
+        border-bottom: 1px solid var(--ink);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .topbar {
+        position: static;
+      }
+
+      h1 {
+        font-size: clamp(46px, 16vw, 72px);
+      }
+
+      .hero-copy,
+      .section-head p,
+      .wide-copy {
+        font-size: 16px;
+      }
+
+      .flow,
+      .module-grid,
+      .examples {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step {
+        border-right: 0;
+      }
+
+      .route-item {
+        grid-template-columns: 38px 1fr;
+      }
+
+      .route-item em {
+        grid-column: 2;
+      }
+
+      section {
+        padding: 68px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="shell nav" aria-label="页面导航">
+      <a class="brand" href="#top" aria-label="文昌.skill 首页">
+        <span class="brand-mark">文</span>
+        <span>文昌.skill</span>
+      </a>
+      <div class="nav-links">
+        <a href="#workflow">流程</a>
+        <a href="#modules">模块</a>
+        <a href="#state">接力</a>
+        <a href="#use">使用</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow">内容创作者的本地技能系统</div>
+          <h1>文昌.skill</h1>
+          <p class="hero-copy">从热点到发布，把公众号、知乎、小红书、图文卡片和成书归档收拢成一条可复用的内容生产链。用户只说目标，系统判断阶段、调度技能、交接状态，把人的判断权留在关键节点。</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#workflow">查看生产链路</a>
+            <a class="button" href="#use">看使用方式</a>
+          </div>
+        </div>
+
+        <aside class="command-board" aria-label="文昌路由调度示意">
+          <div class="board-head">
+            <span>文昌路由.skill</span>
+            <span class="status-dot" aria-hidden="true"></span>
+          </div>
+          <div class="board-body">
+            <div class="input-strip">
+              <div class="input-label">USER GOAL</div>
+              <div class="typing-line">把这个主题做成一篇公众号文章<span class="cursor" aria-hidden="true"></span></div>
+            </div>
+            <div class="routing-map">
+              <div class="route-item is-active">
+                <b>01</b>
+                <div><strong>判断阶段</strong><span>已有主题，缺证据与结构</span></div>
+                <em>ROUTE</em>
+              </div>
+              <div class="route-item">
+                <b>02</b>
+                <div><strong>补齐采证</strong><span>来源、事实、反向数据、可信度</span></div>
+                <em>RESEARCH</em>
+              </div>
+              <div class="route-item">
+                <b>03</b>
+                <div><strong>生成初稿</strong><span>按平台、语气和字数展开</span></div>
+                <em>DRAFT</em>
+              </div>
+              <div class="route-item">
+                <b>04</b>
+                <div><strong>诊断出刊</strong><span>删改、配图、封面、发布检查</span></div>
+                <em>SHIP</em>
+              </div>
+            </div>
+          </div>
+          <div class="board-note">核心不是更多 prompt，而是把创作动作变成可接力、可回放、可验证的流程资产。</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="workflow">
+      <div class="shell">
+        <div class="section-head">
+          <h2>一条主线，覆盖完整创作周期</h2>
+          <p>文昌.skill 把内容生产拆成明确阶段。每个阶段只做自己该做的事，输出可以被下一步继续读取，也可以被用户停下来判断。</p>
+        </div>
+        <div class="flow" aria-label="文昌工作流">
+          <article class="flow-step">
+            <div class="step-num">01</div>
+            <div>
+              <h3>探脉 / 定题</h3>
+              <p>从热点、领域方向或已有材料里筛出可写、可读、可承接账号定位的题。</p>
+            </div>
+          </article>
+          <article class="flow-step">
+            <div class="step-num">02</div>
+            <div>
+              <h3>采证 / 立骨</h3>
+              <p>先补事实、来源和反向证据，再把文章骨架、论点顺序和素材位置确定下来。</p>
+            </div>
+          </article>
+          <article class="flow-step">
+            <div class="step-num">03</div>
+            <div>
+              <h3>起稿 / 诊文</h3>
+              <p>生成可继续修改的初稿，并判断问题出在选题、结构、信息密度还是表达。</p>
+            </div>
+          </article>
+          <article class="flow-step">
+            <div class="step-num">04</div>
+            <div>
+              <h3>整章 / 配图</h3>
+              <p>把正文整理成适合平台发布的形态，补齐图文节奏、卡片拆分和图片 URL。</p>
+            </div>
+          </article>
+          <article class="flow-step">
+            <div class="step-num">05</div>
+            <div>
+              <h3>封面 / 出刊 / 归档</h3>
+              <p>完成标题、封面、摘要、发布检查，并把有长期价值的内容沉淀为素材。</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="modules">
+      <div class="shell">
+        <div class="section-head">
+          <h2>可组合模块，不是散装工具箱</h2>
+          <p>每个 skill 都有独立边界，也能被文昌路由串成链路。这样既能单独调用，也能形成稳定 SOP。</p>
+        </div>
+        <div class="module-grid">
+          <article class="module">
+            <small>ENTRY</small>
+            <h3>文昌路由</h3>
+            <p>识别平台、阶段和下一步动作。用户不用先理解应该调用哪个技能。</p>
+          </article>
+          <article class="module">
+            <small>EVIDENCE</small>
+            <h3>文昌采证</h3>
+            <p>把事实、来源、反向数据和可信度变成研究包，降低空泛观点风险。</p>
+          </article>
+          <article class="module">
+            <small>WRITING</small>
+            <h3>公众号 / 知乎 / 小红书</h3>
+            <p>按平台语境处理选题、正文、卡片化和发布表达，而不是一稿通吃。</p>
+          </article>
+          <article class="module">
+            <small>QUALITY</small>
+            <h3>诊文 / 整章</h3>
+            <p>先诊断是否值得继续推进，再做删减、重排、强化开头结尾和发布版整理。</p>
+          </article>
+          <article class="module">
+            <small>VISUAL</small>
+            <h3>卡片 / 配图 / R2</h3>
+            <p>支持图文卡片、长文拆卡、本地图片上传 R2 和 Markdown 链接替换。</p>
+          </article>
+          <article class="module">
+            <small>ASSET</small>
+            <h3>成书审查 / 归档</h3>
+            <p>把值得保留的内容从发布稿升级为素材库条目，服务后续复用和成书。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="state">
+      <div class="shell split">
+        <div>
+          <h2>用 content_state 做跨阶段接力</h2>
+          <p class="wide-copy">文昌.skill 的关键资产不是单次生成结果，而是统一状态对象。每个阶段只更新自己负责的片段，并明确下一步需要人的确认点。</p>
+        </div>
+        <div class="state-panel" aria-label="content_state 示例">
+          <div class="state-inner">
+            <code>{
+  "request": "把这个主题做成公众号文章",
+  "topic": { "angle": "普通人的 AI 记忆系统" },
+  "research": { "confidence": "medium", "contrarian_points": [] },
+  "draft": { "platform": "wechat", "status": "needs_review" },
+  "publish_assets": { "cover": "pending", "summary": "pending" },
+  "next_step": "wenchang-review",
+  "user_decision_needed": "是否保留当前切口"
+}</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell split">
+        <div class="principles">
+          <article class="principle">
+            <b>人</b>
+            <div>
+              <h3>关键判断留给用户</h3>
+              <p>选题方向、是否重写、最终发布这些节点不被自动化吞掉。</p>
+            </div>
+          </article>
+          <article class="principle">
+            <b>链</b>
+            <div>
+              <h3>复杂流程藏在系统里</h3>
+              <p>用户只表达目标，路由负责把任务拆成可执行的技能链。</p>
+            </div>
+          </article>
+          <article class="principle">
+            <b>产</b>
+            <div>
+              <h3>每次创作都沉淀资产</h3>
+              <p>题库、研究包、草稿、发布资产和归档素材都能被后续复用。</p>
+            </div>
+          </article>
+        </div>
+        <div>
+          <h2>为长期内容系统设计</h2>
+          <p class="wide-copy">文昌.skill 服务的是持续创作，而不是一次性生成。它把自媒体写作里最容易丢失的判断、证据、结构和发布经验固定下来，让创作者逐步拥有自己的数字生产资料。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="use">
+      <div class="shell">
+        <div class="section-head">
+          <h2>直接用自然语言启动</h2>
+          <p>典型入口不是命令表，而是创作者真实会说的话。文昌路由会判断当前应该先探脉、采证、起稿、诊断还是出刊。</p>
+        </div>
+        <div class="examples">
+          <div class="example">帮我找 3 个最近能写的 AI 选题。</div>
+          <div class="example">这个选题先帮我采证，再决定怎么写。</div>
+          <div class="example">把这个主题做成公众号文章。</div>
+          <div class="example">这篇稿子先诊断，再排版成发布版。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="shell">
+        <div>
+          <h2>从一次写作，变成一套可复用的生产系统。</h2>
+          <p>文昌.skill 把内容生产里的判断、流程和素材沉淀下来，让创作者在 AI 时代保留方向感，也拥有可以持续增值的个人工作系统。</p>
+        </div>
+        <a class="button" href="#top">回到顶部</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const links = [...document.querySelectorAll(".nav-links a")];
+    const sections = links
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
+        });
+      });
+    }, { rootMargin: "-36% 0px -58% 0px" });
+
+    sections.forEach((section) => observer.observe(section));
+
+    const routeItems = [...document.querySelectorAll(".route-item")];
+    let routeIndex = 0;
+    setInterval(() => {
+      routeItems[routeIndex].classList.remove("is-active");
+      routeIndex = (routeIndex + 1) % routeItems.length;
+      routeItems[routeIndex].classList.add("is-active");
+    }, 1800);
+  </script>
+</body>
+</html>

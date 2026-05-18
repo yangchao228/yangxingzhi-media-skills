@@ -1,5 +1,146 @@
 # todo
 
+## 2026-05-18 文昌下一步优化计划
+
+- [x] 拆分 `content/examples/full-pipeline-codex-workbench.md` 为 `content/fixtures/codex-workbench/`
+  - 目标：覆盖外部热点/文章型入口，重点校验“不复述原文，而是转成 Human3.0 主线”。
+- [x] 拆分 `content/examples/full-pipeline-content-agents-diagnostic.md` 为 `content/fixtures/content-agents-diagnostic/`
+  - 目标：覆盖已有初稿诊断型入口，重点校验“先诊文，不直接重写”和 `ignored_context` 是否排除夸张承诺。
+- [x] 扩展 `scripts/validate_content_fixtures.py`
+  - 增加 case 类型识别：`existing-direction`、`external-article`、`draft-diagnostic`。
+  - 对不同类型追加专属检查，例如 external-article 不能出现“逐段翻译”，draft-diagnostic 必须先有诊断结论。
+- [x] 补 `content/fixtures/README.md`
+  - 说明 fixture 命名、文件结构、阶段边界、如何新增一个回归样例。
+- [x] 收口 `product.html` 工作线
+  - 核对是否需要保留产品介绍页。
+  - 如果保留，补基础验证和 review；如果不保留，先确认再清理。
+- [x] 做一次完整工作区检查
+  - 运行 `./scripts/validate_skills.sh`。
+  - 运行 `git diff --check`。
+  - 检查未跟踪文件，确认哪些应该纳入版本库。
+- [x] 准备提交
+  - 按主题分组 review 改动。
+  - 只 stage 本轮相关文件，避免混入无关产物。
+
+### review
+
+- 已把剩余两个 full-pipeline 样例拆成 fixture：`codex-workbench` 和 `content-agents-diagnostic`。
+- 已扩展 fixture 校验脚本，支持 `existing-direction`、`external-article`、`draft-diagnostic` 三类入口的专属边界检查。
+- 已补 `content/fixtures/README.md`，说明 fixture 结构、新增方式和类型约束。
+- 已确认 `product.html` 保留，已有验证和 review 记录。
+- 已完成完整工作区检查；当前相关新增文件应纳入版本库，未发现需要清理的生成垃圾文件。
+
+## 2026-05-18 文昌产品介绍页
+
+- [x] 阅读 README/CLAUDE，确认产品定位和主链路
+- [x] 新增静态 HTML 产品介绍页
+- [x] 覆盖流程、模块、content_state 接力和典型用法
+- [x] 执行基础验证
+- [x] 记录 review
+
+### review
+
+- 已新增 `product.html`，定位为 `文昌.skill` 的静态产品介绍页，可直接本地打开。
+- 页面覆盖首屏定位、生产链路、可组合模块、`content_state` 接力、使用入口和长期资产沉淀价值。
+- 已通过 `git diff --check -- product.html todo.md`、`./scripts/validate_skills.sh`，并用 Playwright 生成桌面/移动截图确认首屏可见、移动端无横向溢出。
+
+## 2026-05-18 文昌 fixture 回归校验
+
+- [x] 将 `full-pipeline-ai-memory.md` 拆成分阶段 fixture
+- [x] 新增 `scripts/validate_content_fixtures.py`
+- [x] 将 fixture 校验接入 `scripts/validate_skills.sh`
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已新增 `content/fixtures/ai-memory/`，包含 router、research、review、publish 四个阶段的 input/expected。
+- 已新增 `scripts/validate_content_fixtures.py`，先做结构校验，不调用 LLM，检查 `brief`、`content_state`、`handoff`、`contrarian_points`、`删减说明`、`publish_assets` 等关键边界。
+- 已将 fixture 校验接入 `scripts/validate_skills.sh`，后续修改核心 skill 时会自动检查回归样例结构。
+- 当前只拆了最标准的 `ai-memory` 样例；`codex-workbench` 和 `content-agents-diagnostic` 可等 fixture 结构稳定后继续拆。
+
+## 2026-05-18 吸收 5-Agent 提示词纪律
+
+- [x] 强化路由/定题阶段只输出 brief，不写正文
+- [x] 强化采证阶段 `contrarian_points` 为核心必填输出
+- [x] 强化整章模式 20%-30% 删减、证据约束和最后一句传播性
+- [x] 更新核心入口 expected-output-notes
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已在 `wenchang-router` 增加 Brief 边界：路由、探脉、定题只输出 Angle、Hook、Subpoints、What to avoid、Suggested format，不生成正文。
+- 已在 `wenchang-research` 增加反向证据规则：`contrarian_points` 是核心输出，缺反向证据时必须说明已查来源、未找到原因、待验证问题并降低可信度。
+- 已在 `wenchang-review` 整章模式中强化删减纪律：目标删减 20%-30%，增加 `删减说明`，并要求最后一句能独立表达文章判断。
+- 已更新对应 `expected-output-notes`，把这些规则纳入回归样例检查。
+
+## 2026-05-18 文昌双类型流水线回归样例
+
+- [x] 跑通外部热点/文章型选题样例
+- [x] 跑通已有初稿诊断型选题样例
+- [x] 分别验证 `handoff.ignored_context` 对阶段漂移的约束
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已新增 `content/examples/full-pipeline-codex-workbench.md`，用 Jason Liu 的 Codex-maxxing 验证外部文章/热点素材如何转成 Human3.0 主线选题。
+- 已新增 `content/examples/full-pipeline-content-agents-diagnostic.md`，用 5-Agent 内容流水线长文验证已有初稿如何先诊断、再重构选题、再起稿。
+- 外部热点型样例暴露的关键风险是“复述原文”；已通过 `ignored_context` 排除逐段翻译、纯工具教程和自动化万能叙事。
+- 已有初稿型样例暴露的关键风险是“继承原稿夸张承诺”；已通过诊文阶段把“30 万美元团队”“全自动替代人”降级为不用的传播包装。
+- 两个样例与此前 `full-pipeline-ai-memory.md` 形成三类入口覆盖：已有方向、外部热点、已有初稿。
+
+## 2026-05-18 文昌完整流水线回归样例
+
+- [x] 选择真实主题跑通路由、采证、起稿、诊文、整章、出刊
+- [x] 使用一手来源补采证包
+- [x] 落盘 full-pipeline 示例
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已用“AI 记忆能力会改变普通人的工作方式吗”跑通一条完整公众号内容链路。
+- 已在 `content/examples/full-pipeline-ai-memory.md` 保存每一阶段的正式输出、`content_state` 和 `handoff`，可作为后续回归样例。
+- 采证阶段使用 OpenAI、Anthropic、Google 的官方文档/公告，覆盖关键事实、反向证据、限制条件和可信度判断。
+- 样例暴露的有效分工是：`wenchang-research` 防止观点空泛，`wenchang-review` 整章模式负责压缩和强化，`wenchang-publish-check` 只补发布资产不回头重写。
+- 后续如要增强自动化，可把该 full-pipeline 文件拆成各核心 skill 的独立输入/输出 fixture。
+
+## 2026-05-18 文昌伪多 agent 交接优化
+
+- [x] 补充交接包与上下文隔离规范
+- [x] 更新核心 skill 的读取边界
+- [x] 更新 README 的伪多 agent 说明
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已在 `content/CONTENT_STATE.md` 中新增 `handoff` 标准交接包，明确 `from_stage`、`to_stage`、`accepted_inputs`、`ignored_context` 和 `stop_condition`。
+- 已补充伪多 agent 规则：当前仍可由一个 agent 调度多个 skill，但每个阶段只读取交接包、允许字段、上一阶段正式输出和用户明确新增材料。
+- 已更新 `wenchang-router`、`wenchang-research`、`wechat-writing-skill-ai-human3`、`wenchang-review`、`wenchang-publish-check` 的上下文隔离边界。
+- 已更新核心入口 examples，要求输出 `handoff.accepted_inputs` 和 `handoff.ignored_context`，降低阶段漂移。
+- 已通过 `./scripts/validate_skills.sh` 和 `git diff --check`。
+
+## 2026-05-18 文昌内容流水线采证与编辑优化
+
+- [x] 新增 `wenchang-research` 采证 skill
+- [x] 扩展 `content_state.research` 与阶段合同
+- [x] 更新 `wenchang-router` 和 README 工作流说明
+- [x] 增强 `wenchang-review` 的诊断/整章编辑模式
+- [x] 执行统一验证
+- [x] 记录 review
+
+### review
+
+- 已新增 `content/wenchang-research/`，把事实采证独立成来源、关键事实、反向数据、可引用句子、矛盾点和可信度的研究包。
+- 已扩展 `content/CONTENT_STATE.md`，新增 `research` 字段，并补充阶段合同，明确每个阶段读取、写入和不应处理的边界。
+- 已更新 `wenchang-router`，让“已有选题但缺证据”的请求优先路由到 `wenchang-research`，避免直接起稿。
+- 已增强 `wenchang-review`，区分诊断模式和整章模式，支持删减、重排、强化开头结尾并输出修改日志。
+- 已让 `wechat-writing-skill-ai-human3` 在存在研究包时优先使用事实、反向数据和矛盾点，不重新发明研究结论。
+- 已通过 `./scripts/validate_skills.sh` 和 `git diff --check`。
+
 ## 2026-04-26 md-img-r2 可分发收尾
 
 - [x] 确认当前仓库实际进展和已跟踪文件
