@@ -1,5 +1,22 @@
 # todo
 
+## 2026-05-18 文昌用户使用指南
+
+- [x] 阅读 README、content_state 和 fixtures，确认当前真实流程
+- [x] 新增 `docs/wenchang-user-guide.md`
+- [x] 覆盖三类入口、完整流程、每阶段输入输出、跑偏信号和第一次实操主题
+- [x] 在 README 增加指南入口
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已新增用户向指南，第一屏给出三类输入方式：已有方向、外部文章/热点、已有初稿。
+- 指南按路由、采证、起稿、诊文、整章、出刊、配图/卡片、归档组织，强调每一步的输入、期望输出和停止点。
+- 已补常见跑偏信号，帮助用户发现“路由写正文、采证缺反向数据、出刊偷改正文”等问题。
+- 已在 README 的工作流入口处链接用户指南。
+- 已通过 `./scripts/validate_skills.sh` 和 `git diff --check`。
+
 ## 2026-05-18 文昌下一步优化计划
 
 - [x] 拆分 `content/examples/full-pipeline-codex-workbench.md` 为 `content/fixtures/codex-workbench/`

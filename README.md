@@ -70,6 +70,8 @@
 - `content/wenchang-review/`：诊文，判断初稿是否值得继续推进
 - `content/wenchang-publish-check/`：出刊，做发布前检查
 
+真实使用时先看 [文昌.skill 用户使用指南](docs/wenchang-user-guide.md)，按路由、采证、起稿、诊文、出刊、配图、归档的顺序跑一遍。
+
 核心入口围绕统一的 `content_state` 接力，字段规范见 `content/CONTENT_STATE.md`。每个核心入口都带有最小回归样例：
 
 - `examples/minimal-input.md`
