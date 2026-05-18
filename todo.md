@@ -1,5 +1,52 @@
 # todo
 
+## 2026-05-18 文昌总控自动推进优化
+
+- [x] 新增 `content/wenchang-orchestrator/`
+- [x] 明确完整阶段池：探脉、定题、采证、立骨、起稿、诊文、整章、出刊、配图/卡片/上传、归档
+- [x] 明确不同入口对应的默认子路径
+- [x] 明确自动推进规则和必须暂停的人审节点
+- [x] 更新 `CONTENT_STATE.md`、README 和用户指南
+- [x] 新增 `orchestrator-codex` fixture
+- [x] 扩展 fixture 校验脚本，防止总控退化成固定五步链路
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已把“默认自动推进”从固定 `路由 -> 采证 -> 起稿 -> 诊文 -> 出刊` 改成总控根据入口选择完整阶段池中的子路径。
+- 总控会保留探脉、定题、配图/卡片/上传、归档等节点，不再把它们省略。
+- 用户指南已改成总控模式优先，手动复制模式只用于调试和回归。
+- fixture 校验新增 `orchestrator` case，要求输出包含配图/卡片/归档，且不能写成固定五步链路。
+- 已通过 `./scripts/validate_skills.sh` 和 `git diff --check`。
+
+## 2026-05-18 文昌产品页 GitHub 入口简化
+
+- [x] 将 GitHub 入口收敛为首屏一个链接
+- [x] 移除导航、右侧卡片、独立 GitHub 区和收尾 CTA 中的重复链接
+- [x] 执行基础验证
+- [x] 记录 review
+
+### review
+
+- 已将 `product.html` 中指向 `https://github.com/yangchao228/yangxingzhi-media-skills` 的链接收敛为首屏主按钮一处。
+- 已把右侧首屏卡片改为产品摘要，不再承担仓库导流；移除了独立 GitHub 区和收尾 GitHub CTA。
+- 已通过 `git diff --check -- product.html todo.md`、`./scripts/validate_skills.sh`，并用 Playwright 验证 GitHub 链接数量为 1、移动端无横向溢出。
+
+## 2026-05-18 文昌产品页站点风格优化
+
+- [x] 参考 `yangxingzhi.reai.group/zh/products` 的深色产品集合风格
+- [x] 重构 `product.html` 为可并入产品页的详情页气质
+- [x] 在首屏、仓库面板、开源区和收尾 CTA 强调 GitHub 项目地址
+- [x] 执行基础验证
+- [x] 记录 review
+
+### review
+
+- 已将 `product.html` 从浅色独立介绍页改成与 `yangxingzhi.reai.group/zh/products` 接近的深色产品详情页风格，复用深色背景、金色主色、产品集合页式卡片和 serif 标题气质。
+- GitHub 项目地址已在导航、首屏主 CTA、右侧仓库面板、独立开源区和收尾 CTA 中重复强调，地址为 `https://github.com/yangchao228/yangxingzhi-media-skills`。
+- 已通过 `git diff --check -- product.html todo.md`、`./scripts/validate_skills.sh`，并用 Playwright 验证桌面/移动首屏、8 个 GitHub 链接和移动端无横向溢出。
+
 ## 2026-05-18 文昌用户使用指南
 
 - [x] 阅读 README、content_state 和 fixtures，确认当前真实流程
