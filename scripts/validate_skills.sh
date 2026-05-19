@@ -27,7 +27,7 @@ log "scan skill directories"
 SKILL_FILES=()
 while IFS= read -r file; do
   SKILL_FILES+=("$file")
-done < <(find . -path './.git' -prune -o -path './dist' -prune -o -name SKILL.md -type f -print | sort)
+done < <(find . -path './.git' -prune -o -path './dist' -prune -o -path './.codex' -prune -o -name SKILL.md -type f -print | sort)
 if [[ "${#SKILL_FILES[@]}" -eq 0 ]]; then
   fail "no SKILL.md files found"
 fi
@@ -128,7 +128,7 @@ log "compile Python scripts"
 PY_FILES=()
 while IFS= read -r file; do
   PY_FILES+=("$file")
-done < <(find . -path './.git' -prune -o -path './dist' -prune -o -path './*/__pycache__/*' -prune -o -name '*.py' -type f -print | sort)
+done < <(find . -path './.git' -prune -o -path './dist' -prune -o -path './.codex' -prune -o -path './*/__pycache__/*' -prune -o -name '*.py' -type f -print | sort)
 if [[ "${#PY_FILES[@]}" -gt 0 ]]; then
   PYTHONPYCACHEPREFIX=/tmp/yangxingzhi-media-skills-pycache "$PY" -m py_compile "${PY_FILES[@]}"
 fi
@@ -138,10 +138,16 @@ if [[ -d content/fixtures ]]; then
   "$PY" scripts/validate_content_fixtures.py
 fi
 
+if [[ -d human3.0_book ]]; then
+  log "validate Human3.0 book archive"
+  "$PY" scripts/validate_human3_book.py
+fi
+
 log "check stale references"
 if command -v rg >/dev/null 2>&1; then
   if rg -n 'skills/tooling/md-img-r2|package_skill\.py' . \
     --glob '!scripts/validate_skills.sh' \
+    --glob '!.codex/**' \
     --glob '!todo.md' \
     >/tmp/yangxingzhi-media-skills-rg.log; then
     cat /tmp/yangxingzhi-media-skills-rg.log >&2

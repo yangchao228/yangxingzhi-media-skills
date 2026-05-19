@@ -1,5 +1,60 @@
 # todo
 
+## 2026-05-19 Human3.0 归档机制收口
+
+- [x] 盘点未跟踪目录和验证阻塞
+- [x] 将 `.codex/` 明确为本地 Codex skill install/cache
+- [x] 修正 `validate_skills.sh`，避免扫描 `.codex/`
+- [x] 新增 `scripts/validate_human3_book.py`
+- [x] 将 Human3.0 归档校验接入统一验证
+- [x] 更新成书守门员 README/SKILL，优先面向 `human3.0_book/` 归档
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已确认 `.codex/` 是本地 skill install/cache 镜像，且包含 `.env`，不进入版本库；已在 `.gitignore` 忽略。
+- 已修正 `validate_skills.sh`，技能扫描、Python 编译和 stale reference 扫描都排除 `.codex/`。
+- 已新增 `scripts/validate_human3_book.py`，检查 `materials.md` 的 Part 结构、entry 链接、单篇条目的必要字段和状态标签。
+- 已把 Human3.0 归档校验接入 `./scripts/validate_skills.sh`。
+- 已更新 `content/human3-book-guardian-v6/README.md` 和 `SKILL.md`，确认用户同意归档后，优先写入 `human3.0_book/materials.md` 与 `human3.0_book/entries/`。
+- 已通过 `python3 scripts/validate_human3_book.py`、`bash -n scripts/validate_skills.sh`、`python3 -m py_compile ...`、`./scripts/validate_skills.sh` 和 `git diff --check`。
+- `content/assets/` 与 `content/outputs/` 是已有内容产物，当前保留为未跟踪状态，后续可按内容提交单独纳入。
+
+## 2026-05-19 Human3.0 成书归档目录
+
+- [x] 新增 `human3.0_book/` 作为独立成书素材库目录
+- [x] 新增 `human3.0_book/materials.md` 总索引
+- [x] 新增本篇文章归档条目
+- [x] 在 README 补充归档目录说明
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已新增 `human3.0_book/README.md`、`human3.0_book/materials.md` 和 `human3.0_book/entries/2026-05-19-execution-cheap-judgment-expensive.md`。
+- `materials.md` 作为总索引，只存归属、状态和条目链接；单篇正文快照放在 `entries/`。
+- 已在 README 说明 Human3.0 成书归档由 `human3.0_book/` 维护，`content/outputs/` 仍保存内容产物。
+- 已通过 `git diff --check`。
+- `./scripts/validate_skills.sh` 当前被工作区既有未跟踪 `.codex/skills/human3-book-guardian-v6/skill.json` 的 `source_dir mismatch` 拦截，未改动该未跟踪目录。
+
+## 2026-05-19 Anthropic AI-native startup 公众号内容流程
+
+- [x] 使用文昌总控进入定题节点
+- [x] 确认主线：AI 时代真正稀缺的不是执行力，而是判断力
+- [x] 采证：核验官方来源、关键事实和反向限制
+- [x] 起稿：生成公众号初稿
+- [x] 诊文/整章：做发布前诊断与必要编辑
+- [x] 出刊：补标题、摘要、转发文案和阻塞项
+- [x] 记录 review
+
+### review
+
+- 已按用户确认的主线推进：执行力降价，判断力变贵。
+- 起稿时只把 Anthropic playbook 当素材，不翻译原文、不逐段复述。
+- 文章同时带入“创始人从执行者转向调度者”和“不要把厂商手册当行动地图”两层观点。
+- 出刊阶段仍需用户确认最终标题、封面方向、是否进入 Human3.0 成书归档。
+
 ## 2026-05-18 文昌总控自动推进优化
 
 - [x] 新增 `content/wenchang-orchestrator/`
@@ -273,3 +328,45 @@
 - 已收敛 `long-to-cards`、`wechat-to-cards`、`redbook-cards`、`xiaohongshu-viral-image-skill-v4` 的触发边界，降低卡片类 skill 互相抢任务的风险。
 - 已升级 `scripts/validate_skills.sh`，要求 `content/wenchang-*` 入口必须带最小回归样例。
 - 已通过 `./scripts/validate_skills.sh` 和 `git diff --check`。
+
+## 2026-05-18 Codex 工作台公众号判断文
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 读取外部素材 `Codex-maxxing`
+- [x] 补充 OpenAI 官方来源和反向边界
+- [x] 生成公众号判断文草稿
+- [x] 完成诊文和出刊检查
+- [x] 用户确认标题、封面、个人案例和 Human3.0 成书审查
+- [x] 补入文昌流程个人案例
+- [x] 新增封面 SVG 并插入稿件
+- [x] 完成 Human3.0 成书审查
+
+### review
+
+- 已将主题按“定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 出刊”推进到第一个人工判断节点。
+- 已新增 `content/outputs/2026-05-18-codex-workbench-wechat.md`，正文按用户要求写成账号自己的 Human3.0 判断文，不做原文翻译。
+- 已保留官方来源和限制条件，避免把 Codex 写成无边界的自动接管叙事。
+- 已补入“文昌总控处理这篇文章本身就是工作台案例”的个人真实场景，增强作者感和长期资产感。
+- Human3.0 成书审查结论：通过，建议归入 Part 3《结构杠杆》，后续入书时弱化 Codex 功能清单，强化“工作如何被流程化、审查化、资产化”。
+- 当前只剩发布前肉眼确认公众号后台封面裁切效果。
+
+## 2026-05-18 gstack 虚拟团队公众号判断文
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 确认主切口：A 作为主稿，C 作为反向段落
+- [x] 读取外部素材和一手仓库来源
+- [x] 补充 TechCrunch / Hacker News 反向证据
+- [x] 生成公众号判断文草稿
+- [x] 完成诊文和出刊检查
+- [x] 用户确认标题、封面、个人案例和 Human3.0 成书审查
+- [x] 补入文昌流程个人案例
+- [x] 完成 Human3.0 成书审查
+
+### review
+
+- 已将主题按“定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 出刊”推进到人工判断节点。
+- 已新增 `content/outputs/2026-05-18-gstack-virtual-team-wechat.md`，正文按“别再把 AI 当聊天框，真正的高手在搭虚拟团队”展开，不翻译原文。
+- 已把“照抄 gstack 不会让你变强”作为反向段落，避免写成工具崇拜或安装教程。
+- 已补入“这篇文章本身就是文昌流程案例”的个人真实场景，增强账号作者感和长期资产感。
+- Human3.0 成书审查结论：通过，建议归入 Part 3《结构杠杆》，后续入书时弱化 gstack 热点感，强化“重复工作如何角色化、流程化、资产化”。
+- 当前只剩封面图生成后的发布前肉眼确认。

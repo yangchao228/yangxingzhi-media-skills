@@ -50,7 +50,26 @@
 review_result.md
 ```
 
-### 第四步：自动归档到素材库（可选）
+### 第四步：归档到 `human3.0_book/`（推荐）
+
+如果用户确认进入 Human3.0 成书归档，推荐在仓库根目录维护：
+
+```text
+human3.0_book/
+  materials.md
+  entries/YYYY-MM-DD-slug.md
+```
+
+- `materials.md`：只追加索引条目，按 Part 1 到 Part 6 归类。
+- `entries/`：保存单篇素材卡片、审查结论、发布包和正文快照。
+
+归档后执行：
+
+```bash
+python scripts/validate_human3_book.py
+```
+
+### 第五步：旧版单文件素材库归档（兼容）
 
 先准备素材库文件：
 

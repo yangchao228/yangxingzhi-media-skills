@@ -4,6 +4,9 @@
 # OS
 .DS_Store
 
+# Local Codex skill install/cache
+.codex/
+
 # Python
 __pycache__/
 *.pyc
