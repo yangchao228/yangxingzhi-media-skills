@@ -1,5 +1,77 @@
 # todo
 
+## 2026-05-19 不要将学习外包给 AI 内容流程
+
+- [x] 使用文昌总控进入定题节点
+- [x] 用户确认主切口：你不是在用 AI 学习，你是在让 AI 替你记住
+- [x] 采证：核验 Anthropic、MIT/arXiv、CHI 2026 与学习模式相关来源
+- [x] 起稿：生成公众号正文
+- [x] 平台适配：生成小红书 8 页图文方案与发布文案包
+- [x] 出刊：补标题、摘要、标签、转发文案和阻塞项
+- [x] 按用户确认修改标题为“不要将学习外包给AI”
+- [x] 生成小红书 8 页 HTML 图文卡片预览
+- [x] 进入 Human3.0 成书归档审查并落盘
+
+### review
+
+- 已按用户要求避免翻译原文，改写为 Human3.0 方向的原创判断文。
+- 主线收敛为：AI 可以替你完成任务，但不能替你长出能力；关键是保留假设、理解、校准和复盘。
+- 采证阶段保留了研究限制，避免把 MIT 预印本和特定任务研究夸大成普遍定论。
+- 已同时交付公众号正文、小红书图文方案、发布文案包和出刊阻塞项。
+- 用户确认后，已将标题改为“不要将学习外包给AI”，并新增小红书 HTML 卡片预览。
+- 成书守门员判断为通过，归入 Part 2｜认知主权。
+- 稿件位置：`content/outputs/2026-05-19-ai-learning-not-outsourced-wechat-xhs.md`。
+- 卡片位置：`content/assets/2026-05-19-ai-learning-not-outsourced-xhs.html`。
+- 归档位置：`human3.0_book/entries/2026-05-19-ai-learning-not-outsourced.md`。
+
+## 2026-05-19 gstack × 判断力稿出刊归档
+
+- [x] 读取 `content/outputs/2026-05-19-execution-judgment-virtual-team-wechat.md`
+- [x] 核验 gstack GitHub 与 Anthropic playbook 当前来源
+- [x] 补充出刊检查
+- [x] 完成 Human3.0 成书审查
+- [x] 新增 `human3.0_book` Part 3 归档条目
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已在稿件末尾补充出刊检查，当前建议为补齐封面后可发布。
+- 已完成成书审查，结论为通过，建议归入 Part 3《结构杠杆》中的“从聊天框到虚拟团队”小节。
+- 已新增 `human3.0_book/entries/2026-05-19-execution-judgment-virtual-team.md`，并在 `human3.0_book/materials.md` 中补索引。
+- 当前 `materials.md` 同时包含“不要将学习外包给AI”索引；为了保持索引和 entry 一致，本轮最新内容产物提交应包含两篇 2026-05-19 内容与对应归档。
+- 已通过 `python3 scripts/validate_human3_book.py`、`./scripts/validate_skills.sh` 和 `git diff --check`。
+
+## 2026-05-19 gstack × 判断力公众号融合稿
+
+- [x] 读取 gstack 虚拟团队稿和“执行力便宜，判断力昂贵”归档稿
+- [x] 核验 gstack GitHub 与 Anthropic playbook 关键事实
+- [x] 融合热点、观点和个人工作流经验
+- [x] 落盘公众号 Markdown 初稿
+- [x] 记录 review
+
+### review
+
+- 已将 gstack 的“虚拟团队”热点入口，与 Anthropic playbook 暴露的“创始人从执行者转向调度者”趋势合并。
+- 新稿主线收敛为：执行力降价后，真正变贵的是判断系统和组织 AI 的能力。
+- 已把文昌流程作为个人真实案例嵌入正文，避免只做热点评论。
+- 稿件位置：`content/outputs/2026-05-19-execution-judgment-virtual-team-wechat.md`。
+
+## 2026-05-19 历史内容归档迁移
+
+- [x] 读取 `content/outputs/` 中已完成成书审查的两篇历史文章
+- [x] 将 Codex 工作台文章归入 `human3.0_book` Part 3
+- [x] 将 gstack 虚拟团队文章归入 `human3.0_book` Part 3
+- [x] 执行验证
+- [x] 记录 review
+
+### review
+
+- 已将两篇历史内容从 `content/outputs/` 的成书审查结果迁入 `human3.0_book/materials.md` 的 Part 3。
+- 已新增 `human3.0_book/entries/2026-05-18-codex-workbench.md` 和 `human3.0_book/entries/2026-05-18-gstack-virtual-team.md`。
+- 归档条目保留成书判断、最小纠偏、发布包和正文快照摘要，不依赖 `content/outputs/` 原产物入库。
+- 已通过 `python3 scripts/validate_human3_book.py`、`./scripts/validate_skills.sh` 和 `git diff --check`。
+
 ## 2026-05-19 Human3.0 归档机制收口
 
 - [x] 盘点未跟踪目录和验证阻塞

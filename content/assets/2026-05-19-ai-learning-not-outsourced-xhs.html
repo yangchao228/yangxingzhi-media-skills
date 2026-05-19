@@ -1,0 +1,392 @@
+<!-- 小红书图文卡片 | 标题：不要将学习外包给AI | 卡片数：8 | 生成时间：2026-05-19 -->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>不要将学习外包给AI｜小红书图文卡片</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #143c3a;
+      --paper: #f7f3ea;
+      --yellow: #f4c542;
+      --blue: #8ca6a6;
+      --muted: #5e6f70;
+      --white: #fffaf0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #ebe4d8;
+      color: var(--ink);
+      font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    header {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 44px 24px 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 32px;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 24px 64px;
+    }
+
+    .card {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      border-radius: 20px;
+      padding: 34px;
+      box-shadow: 0 18px 50px rgba(20, 60, 58, 0.18);
+      isolation: isolate;
+    }
+
+    .card::before,
+    .card::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      z-index: -1;
+    }
+
+    .card::before {
+      width: 220px;
+      height: 220px;
+      right: -72px;
+      top: -72px;
+      background: rgba(244, 197, 66, 0.28);
+    }
+
+    .card::after {
+      width: 190px;
+      height: 190px;
+      left: -78px;
+      bottom: -68px;
+      background: rgba(140, 166, 166, 0.22);
+    }
+
+    .brand {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(20, 60, 58, 0.1);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .page {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(20, 60, 58, 0.14);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      padding-top: 30px;
+    }
+
+    .kicker {
+      width: fit-content;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: var(--yellow);
+      color: #17302f;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 42px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: #264c4a;
+      font-size: 21px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .footer {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(20, 60, 58, 0.72);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dark {
+      background: radial-gradient(circle at 80% 10%, rgba(244, 197, 66, 0.28), transparent 32%), linear-gradient(145deg, #143c3a, #071d1c);
+      color: var(--white);
+    }
+
+    .dark p,
+    .dark .small,
+    .dark .footer {
+      color: rgba(255, 250, 240, 0.82);
+    }
+
+    .dark .brand,
+    .dark .page {
+      background: rgba(255, 250, 240, 0.14);
+      color: var(--white);
+    }
+
+    .warm {
+      background: linear-gradient(145deg, #fff7e3, #f2f7f0);
+    }
+
+    .blue {
+      background: linear-gradient(145deg, #e8f1f0, #f8f4ea);
+    }
+
+    .yellow {
+      background: linear-gradient(145deg, #f8e8a7, #fffaf0);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pill,
+    .note,
+    .metric {
+      border-radius: 16px;
+      background: rgba(255, 250, 240, 0.72);
+      border: 1px solid rgba(20, 60, 58, 0.12);
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .dark .pill,
+    .dark .note,
+    .dark .metric {
+      background: rgba(255, 250, 240, 0.1);
+      border-color: rgba(255, 250, 240, 0.16);
+    }
+
+    .notes {
+      display: grid;
+      gap: 12px;
+    }
+
+    .note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .num {
+      flex: 0 0 auto;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--yellow);
+      color: #17302f;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .quote {
+      font-family: "Noto Serif SC", "Songti SC", serif;
+      font-size: 32px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 28px;
+      }
+
+      h2 {
+        font-size: 35px;
+      }
+
+      p {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>不要将学习外包给AI</h1>
+    <div class="sub">共 8 张 · 小红书图文切片 · AI生命克劳德</div>
+  </header>
+
+  <main class="cards-grid">
+    <section class="card dark">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">01/08</div>
+      <div class="content">
+        <div class="kicker">Human3.0</div>
+        <h2>不要将学习外包给AI</h2>
+        <p>AI 可以替你干活，但不能替你长能力。</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card warm">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">02/08</div>
+      <div class="content">
+        <div class="kicker">你是不是也这样</div>
+        <h2>问题一来<br>直接丢给 AI</h2>
+        <div class="notes">
+          <div class="note"><span class="num">1</span><span>报错了，直接粘进去</span></div>
+          <div class="note"><span class="num">2</span><span>文章不会写，让它起草</span></div>
+          <div class="note"><span class="num">3</span><span>资料读不懂，让它总结</span></div>
+        </div>
+        <p class="small">问题解决了，但你真的学会了吗？</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card blue">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">03/08</div>
+      <div class="content">
+        <div class="kicker">核心判断</div>
+        <h2>任务完成<br>不等于能力增长</h2>
+        <div class="split">
+          <div class="metric">交付完成<br><span class="small">问题被关闭</span></div>
+          <div class="metric">能力增长<br><span class="small">判断被更新</span></div>
+        </div>
+        <p>AI 默认优化交付，不会自动帮你成长。</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card yellow">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">04/08</div>
+      <div class="content">
+        <div class="kicker">研究信号</div>
+        <h2>问题不在用不用 AI</h2>
+        <div class="notes">
+          <div class="note"><span class="num">A</span><span>Anthropic：直接委托代码，理解更弱</span></div>
+          <div class="note"><span class="num">M</span><span>MIT：LLM 写作组参与感更低</span></div>
+          <div class="note"><span class="num">C</span><span>CHI 2026：先独立思考再校准更稳</span></div>
+        </div>
+        <p class="small">关键是：你把 AI 放在学习流程的哪个位置。</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card dark">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">05/08</div>
+      <div class="content">
+        <div class="kicker">最危险的习惯</div>
+        <h2>一上来<br>就问答案</h2>
+        <p>AI 先给框架，你后面很容易被它带着走。</p>
+        <p class="quote">你不再判断问题，只是在答案里做选择。</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card warm">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">06/08</div>
+      <div class="content">
+        <div class="kicker">一个小动作</div>
+        <h2>问 AI 前<br>先写 3 句话</h2>
+        <div class="notes">
+          <div class="note"><span class="num">1</span><span>我的判断是什么？</span></div>
+          <div class="note"><span class="num">2</span><span>我不确定什么？</span></div>
+          <div class="note"><span class="num">3</span><span>我希望 AI 验证什么？</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card blue">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">07/08</div>
+      <div class="content">
+        <div class="kicker">会话分层</div>
+        <h2>把 AI 使用<br>分成三类</h2>
+        <div class="notes">
+          <div class="note"><span class="num">快</span><span>纯执行：只求快</span></div>
+          <div class="note"><span class="num">判</span><span>协作完成：你保留判断</span></div>
+          <div class="note"><span class="num">学</span><span>能力升级：故意慢一点</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+
+    <section class="card dark">
+      <div class="brand">AI生命克劳德</div>
+      <div class="page">08/08</div>
+      <div class="content">
+        <div class="kicker">最后一句</div>
+        <h2>别只解决问题<br>要沉淀能力</h2>
+        <p>一个答案只省一次时间。一个 checklist、模板、SOP 或 skill，才会降低下一次成本。</p>
+        <p class="small">收藏这套流程，下次问 AI 前先试一次。</p>
+      </div>
+      <div class="footer"><span>更早发现</span><span>更准判断</span><span>更快行动</span></div>
+    </section>
+  </main>
+</body>
+</html>
