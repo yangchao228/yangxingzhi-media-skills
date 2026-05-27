@@ -1,0 +1,301 @@
+# GoalBuddy v2 state.yaml
+# Board truth lives here. goal.md is the editable charter; notes/ holds long receipts only.
+
+version: 2
+
+goal:
+  title: "AI/Codex Cost Savings"
+  slug: "ai-cost-savings"
+  kind: open_ended
+  tranche: "Discover AI/Codex/Token cost-saving opportunities and produce an actionable checklist plus reusable asset pack."
+  status: done
+  oracle:
+    signal: "Artifact review of an actionable AI/Codex/Token cost-saving checklist plus reusable asset pack."
+    cadence: "after each Worker package and at final audit"
+    final_proof: "Final Judge/PM receipt maps completed artifacts and verification back to the user's request to save money."
+  intake:
+    original_request: "请帮我省点钱"
+    interpreted_outcome: "Reduce AI/Codex/Token cost by identifying waste patterns and producing reusable cost-control assets."
+    input_shape: vague
+    audience: user
+    authority: requested
+    proof_type: artifact
+    completion_proof: "A final audit confirms the produced checklist and assets are actionable, specific to AI/Codex/Token cost, and usable without sensitive billing credentials."
+    likely_misfire: "Producing generic money-saving advice instead of concrete AI/Codex/Token cost controls and reusable workflow assets."
+    blind_spots_considered:
+      - "Optimize cost per useful output, not just total spend."
+      - "Avoid cutting valuable capability only to reduce spend."
+      - "Do not depend on private billing data unless the user later supplies safe summaries."
+    existing_plan_facts:
+      - "User selected AI/Codex/Token cost as the target."
+      - "User accepted the default proof shape: executable savings checklist plus reusable assets."
+
+rules:
+  pm_owns_state: true
+  one_active_task: true
+  max_write_workers: 1
+  no_implementation_without_worker_or_pm_task: true
+  no_completion_without_judge_or_pm_audit: true
+  planning_is_not_completion: true
+  queued_required_worker_blocks_completion: true
+  continuous_until_full_outcome: true
+  missing_input_or_credentials_do_not_stop_goal: true
+  preserve_and_validate_existing_plan: true
+  intake_misfire_must_be_audited: true
+  goal_pressure_requires_oracle: true
+  no_completion_on_weak_proof: true
+  slice_policy:
+    max_consecutive_tiny_tasks: 2
+    prefer_vertical_slices: true
+    judge_picks_largest_safe_slice: true
+    worker_completes_whole_slice: true
+
+agents:
+  scout: installed
+  worker: installed
+  judge: installed
+
+visual_board:
+  selected: local
+  local:
+    status: blocked
+    url: "http://goalbuddy.localhost:41737/ai-cost-savings/"
+    command: "npx goalbuddy board docs/goals/ai-cost-savings"
+    blocked_reason: "Sandboxed npx stayed in loading state; escalation for unsandboxed network/cache execution was rejected. Continue with file board unless user explicitly approves live board startup."
+
+active_task: null
+
+tasks:
+  - id: T000
+    type: pm
+    assignee: PM
+    status: done
+    reasoning_hint: default
+    objective: "Prepare the GoalBuddy charter, seed state, and record board setup status."
+    inputs:
+      - "User selected AI/Codex/Token cost target."
+      - "User accepted default proof: executable savings checklist plus reusable assets."
+    constraints:
+      - "Only edit GoalBuddy control files."
+      - "Do not inspect implementation files for the savings work yet."
+    expected_output:
+      - "docs/goals/ai-cost-savings/goal.md"
+      - "docs/goals/ai-cost-savings/state.yaml"
+      - "Agent availability recorded"
+      - "Board setup status recorded"
+    receipt:
+      result: done
+      changed_files:
+        - "docs/goals/ai-cost-savings/goal.md"
+        - "docs/goals/ai-cost-savings/state.yaml"
+      commands:
+        - cmd: "node /Users/yangchao/.codex/plugins/cache/goalbuddy/goalbuddy/0.3.7/skills/goalbuddy/scripts/check-update.mjs --json"
+          status: "pass_with_unavailable_update_check"
+        - cmd: "npx goalbuddy board docs/goals/ai-cost-savings"
+          status: "blocked_by_network_or_cache_access"
+      summary: "Prepared the file-backed GoalBuddy board. Live board startup is blocked until the user explicitly approves network/cache execution for npx."
+  - id: T001
+    type: scout
+    assignee: Scout
+    status: done
+    reasoning_hint: default
+    objective: "Map concrete AI/Codex/Token cost surfaces, waste patterns, and reusable asset opportunities from local context."
+    inputs:
+      - "README.md"
+      - "AGENTS.md or project instructions when present"
+      - "todo.md"
+      - "content/"
+      - "ai_study/"
+      - "docs/"
+      - "Relevant local workflow files discovered by Scout"
+    constraints:
+      - "Read-only."
+      - "Do not request, expose, or store secrets, tokens, payment credentials, or private billing data."
+      - "Prefer concrete local evidence over generic cost advice."
+      - "Separate token/model waste, subscription/tool overlap, rework/failed-run waste, and low-reuse prompt/workflow waste."
+    expected_output:
+      - "Cost surface map"
+      - "Ranked waste patterns"
+      - "Reusable asset opportunities"
+      - "Recommended first Worker package"
+    receipt:
+      result: done
+      note: "notes/T001-scout-cost-surfaces.md"
+      summary: "Mapped AI/Codex/Token cost surfaces from local evidence: heavy context, agent pathfinding, model/reasoning mismatch, low cache reuse, output overproduction, weak handoff rework, and subscription overlap as a later user-input-only area."
+      evidence:
+        - "human3.0_book/entries/2026-05-21-token-economics-workflow-cost.md"
+        - "content/outputs/2026-05-21-ai-cost-token-economics-wechat-zhihu-xhs.md"
+        - "README.md"
+        - "content/CONTENT_STATE.md"
+        - "content/redbook-cards/EXAMPLE.md"
+        - "ai_study/series-plan.md"
+      recommended_worker_package:
+        - "docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+  - id: T002
+    type: judge
+    assignee: Judge
+    status: done
+    reasoning_hint: high
+    objective: "Choose the first safe work package for saving AI/Codex/Token cost without needing sensitive billing data."
+    inputs:
+      - "T001 receipt"
+      - "Goal oracle"
+    constraints:
+      - "Do not implement."
+      - "Optimize for cost per useful output, not just total spend."
+      - "Pick the largest safe useful artifact package with explicit allowed_files, verify commands, and stop conditions."
+    expected_output:
+      - "Decision"
+      - "Exact Worker objective"
+      - "allowed_files"
+      - "verify"
+      - "stop_if"
+      - "Deferred or blocked follow-ups"
+    receipt:
+      result: done
+      decision: approved
+      full_outcome_complete: false
+      rationale: "Scout found enough local evidence to create a concrete artifact package without sensitive billing data. The largest safe useful slice is to produce both an immediate checklist and reusable operating assets, scoped to the goal notes directory."
+      worker_objective: "Create the AI/Codex/Token cost-saving checklist and reusable asset pack from Scout findings."
+      allowed_files:
+        - "docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+      verify:
+        - "test -f docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "test -f docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+        - "rg -n \"上下文|模型|工具|缓存|复用|订阅\" docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "rg -n \"模板|SOP|Skill|周复盘|路由|预算\" docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+      stop_if:
+        - "Need sensitive billing credentials or private payment data."
+        - "Need files outside allowed_files."
+        - "The cost target becomes ambiguous."
+      deferred_or_blocked_followups:
+        - "Real subscription cancellation decisions require user-provided billing summaries and human approval."
+        - "Specific model price recommendations require a current official pricing check before publication."
+  - id: T003
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Create the AI/Codex/Token cost-saving checklist and reusable asset pack selected by Judge."
+    inputs:
+      - "T001 receipt"
+      - "T002 decision"
+    constraints:
+      - "Do not edit production-sensitive configuration."
+      - "Do not include secrets, private billing details, or credentials."
+      - "Keep outputs practical, reusable, and tied to concrete waste patterns."
+    expected_output:
+      - "Actionable cost-saving checklist"
+      - "Reusable SOP/template/Skill ideas"
+      - "Short recommendation on what to execute next"
+    allowed_files:
+      - "docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+      - "docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+    verify:
+      - "test -f docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+      - "test -f docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+    stop_if:
+      - "Need sensitive billing credentials or private payment data."
+      - "Need files outside allowed_files."
+      - "The cost target becomes ambiguous."
+    receipt:
+      result: done
+      changed_files:
+        - "docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+      commands:
+        - cmd: "test -f docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+          status: pass
+        - cmd: "test -f docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+          status: pass
+        - cmd: "rg -n \"上下文|模型|工具|缓存|复用|订阅\" docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+          status: pass
+        - cmd: "rg -n \"模板|SOP|Skill|周复盘|路由|预算\" docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+          status: pass
+      summary: "Created a practical AI/Codex/Token savings checklist and reusable cost-governance asset pack, without using private billing data or changing production configuration."
+  - id: T004
+    type: judge
+    assignee: Judge
+    status: done
+    reasoning_hint: high
+    objective: "Review the cost-saving artifacts and decide whether the current tranche needs implementation follow-up."
+    inputs:
+      - "T003 receipt"
+      - "Generated notes"
+      - "Goal oracle"
+    constraints:
+      - "Do not implement."
+      - "Reject generic advice that is not actionable."
+      - "If safe local implementation remains, specify the next Worker package."
+    expected_output:
+      - "approved | needs_revision | follow_up_required"
+      - "full_outcome_complete: true | false"
+      - "missing evidence"
+      - "next task if not complete"
+    receipt:
+      result: done
+      decision: approved
+      full_outcome_complete: false
+      rationale: "The artifacts are specific to AI/Codex/Token cost control, cover immediate checklist actions and reusable assets, avoid private billing data, and preserve user approval for subscriptions, production config, and pricing-sensitive publication."
+      evidence:
+        - "docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+        - "docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+      commands:
+        - cmd: "rg -n \"^## |^# |上下文|工具|模型|缓存|订阅|立刻执行|不要省\" docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+          status: pass
+        - cmd: "rg -n \"^## |^# |Context Budget|Agent Run Guardrail|Model Routing|SOP|每周|Skill|判断权\" docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+          status: pass
+        - cmd: "wc -l docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"
+          status: pass
+      missing_evidence: "Final audit still required before goal completion."
+      next_task: T999
+  - id: T999
+    type: judge
+    assignee: Judge
+    status: done
+    reasoning_hint: high
+    objective: "Audit whether this tranche satisfies the original request to save money."
+    inputs:
+      - "All done task receipts"
+      - "Generated artifacts"
+      - "Last verification"
+      - "Current dirty diff"
+    constraints:
+      - "Do not implement."
+      - "Completion requires concrete, reusable AI/Codex/Token cost-saving artifacts."
+      - "Reject completion if required Worker work is still queued or active."
+    expected_output:
+      - "complete | not_complete"
+      - "full_outcome_complete: true | false"
+      - "mapping from artifacts to original request"
+      - "next task if not complete"
+    receipt:
+      result: done
+      decision: complete
+      full_outcome_complete: true
+      mapping_to_original_request:
+        - "Original request was to save money; target was clarified to AI/Codex/Token cost."
+        - "T001 mapped concrete local cost surfaces from existing AI cost content, content workflow docs, and card-generation examples."
+        - "T003 produced an actionable savings checklist covering context, tools, models, caching, output scope, subscriptions, immediate weekly actions, and cases where quality should not be cut."
+        - "T003 produced a reusable asset pack covering context budget, agent guardrails, model routing, stable prefix rules, content pipeline SOP, weekly review template, Skill ideas, and human decision boundaries."
+      verification:
+        - "Both required artifact files exist."
+        - "Checklist contains the required cost topics: context, model, tools, cache, reuse, subscriptions."
+        - "Asset pack contains reusable forms: templates, SOP, Skill ideas, weekly review, routing, and budget language."
+        - "State checker passed after each board transition before final completion."
+      sensitive_data_check: "No secrets, tokens, payment credentials, private billing details, or production-sensitive configuration were requested or changed."
+      remaining_work: "Optional future work only: user may provide sanitized billing summaries for subscription-specific decisions, or request publication-ready AI成本账 content derived from these assets."
+      next_task: null
+
+checks:
+  dirty_fingerprint: "pre-existing dirty worktree outside docs/goals/ai-cost-savings"
+  last_verification:
+    result: pass
+    task: T999
+    commands:
+      - "rg -n \"Completion proof|Goal oracle|Non-Negotiable|Current Tranche|full_outcome_complete\" docs/goals/ai-cost-savings/goal.md docs/goals/ai-cost-savings/state.yaml"
+      - "rg -n \"status: active|status: queued|type: worker|full_outcome_complete|receipt:\" docs/goals/ai-cost-savings/state.yaml"
+      - "test -f docs/goals/ai-cost-savings/notes/ai-codex-cost-saving-checklist.md"
+      - "test -f docs/goals/ai-cost-savings/notes/reusable-cost-assets.md"

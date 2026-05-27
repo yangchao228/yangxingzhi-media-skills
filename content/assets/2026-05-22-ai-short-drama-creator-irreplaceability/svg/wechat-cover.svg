@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="596" viewBox="0 0 1400 596" role="img" aria-labelledby="title desc">
+  <title id="title">人人都能一人剧组，你凭什么被记住？</title>
+  <desc id="desc">公众号封面，表现 AI 短剧量产时代里，创作者需要靠自己的素材、判断和资产被观众记住。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#102c2a"/>
+      <stop offset="48%" stop-color="#143d3a"/>
+      <stop offset="100%" stop-color="#241b2f"/>
+    </linearGradient>
+    <radialGradient id="warm" cx="70%" cy="42%" r="72%">
+      <stop offset="0%" stop-color="#f6c85f" stop-opacity="0.34"/>
+      <stop offset="44%" stop-color="#ef7d5d" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#102c2a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" fill="none" stroke="#fff8e7" stroke-width="1" opacity="0.07"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-25%" width="140%" height="155%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+    <linearGradient id="bar" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#f6c85f"/>
+      <stop offset="52%" stop-color="#54b3a8"/>
+      <stop offset="100%" stop-color="#ef7d5d"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="596" fill="url(#bg)"/>
+  <rect width="1400" height="596" fill="url(#grid)"/>
+  <rect width="1400" height="596" fill="url(#warm)"/>
+
+  <path d="M-72 462C174 350 352 484 584 342C790 216 944 96 1480 144" fill="none" stroke="#f6c85f" stroke-width="7" opacity="0.32"/>
+  <path d="M-80 518C206 400 416 526 696 394C952 272 1118 292 1482 372" fill="none" stroke="#54b3a8" stroke-width="4" opacity="0.28"/>
+
+  <g transform="translate(78 76)">
+    <rect x="0" y="0" width="676" height="444" rx="34" fill="#0a2523" opacity="0.68" filter="url(#shadow)"/>
+    <rect x="28" y="30" width="178" height="46" rx="23" fill="#f6c85f"/>
+    <text x="117" y="61" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="24" font-weight="800" fill="#102c2a">AI短剧时代</text>
+
+    <text x="28" y="166" font-family="Songti SC, STSong, Noto Serif CJK SC, serif" font-size="76" font-weight="900" fill="#fff8e7">人人都能</text>
+    <text x="28" y="256" font-family="Songti SC, STSong, Noto Serif CJK SC, serif" font-size="76" font-weight="900" fill="#fff8e7">一人剧组</text>
+    <rect x="30" y="292" width="500" height="9" rx="5" fill="url(#bar)"/>
+    <text x="28" y="368" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="44" font-weight="850" fill="#fff8e7">你凭什么被记住？</text>
+    <text x="28" y="424" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="24" font-weight="650" fill="#d8eee9">内容创作者要沉淀机器复制不了的东西</text>
+  </g>
+
+  <g transform="translate(810 64)" filter="url(#shadow)">
+    <rect x="0" y="0" width="500" height="468" rx="34" fill="#fff5df"/>
+    <text x="48" y="70" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="30" font-weight="900" fill="#143d3a">别只生成，要有自己的库</text>
+    <text x="48" y="108" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="20" font-weight="650" fill="#68746e">生活样本 / 价值判断 / 故事资产 / 反馈复盘</text>
+
+    <g transform="translate(48 148)">
+      <rect x="0" y="0" width="126" height="86" rx="20" fill="#f7ead0" stroke="#dfd0b6" stroke-width="2"/>
+      <text x="63" y="38" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="22" font-weight="850" fill="#143d3a">重生</text>
+      <text x="63" y="66" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" fill="#68746e">模板 01</text>
+    </g>
+    <g transform="translate(190 148)">
+      <rect x="0" y="0" width="126" height="86" rx="20" fill="#f7ead0" stroke="#dfd0b6" stroke-width="2"/>
+      <text x="63" y="38" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="22" font-weight="850" fill="#143d3a">复仇</text>
+      <text x="63" y="66" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" fill="#68746e">模板 02</text>
+    </g>
+    <g transform="translate(332 148)">
+      <rect x="0" y="0" width="126" height="86" rx="20" fill="#f7ead0" stroke="#dfd0b6" stroke-width="2"/>
+      <text x="63" y="38" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="22" font-weight="850" fill="#143d3a">逆袭</text>
+      <text x="63" y="66" text-anchor="middle" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="16" fill="#68746e">模板 03</text>
+    </g>
+
+    <g transform="translate(48 268)">
+      <rect x="0" y="0" width="410" height="138" rx="26" fill="#143d3a"/>
+      <circle cx="48" cy="48" r="18" fill="#f6c85f"/>
+      <circle cx="92" cy="48" r="18" fill="#54b3a8"/>
+      <circle cx="136" cy="48" r="18" fill="#ef7d5d"/>
+      <text x="48" y="94" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="28" font-weight="900" fill="#fff8e7">创作者资产库</text>
+      <text x="236" y="94" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="20" font-weight="650" fill="#d8eee9">把自己变成变量</text>
+    </g>
+  </g>
+
+  <text x="78" y="558" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="22" font-weight="650" fill="#fff8e7" opacity="0.76">AI生命克劳德 · Human3.0 内容创作者方法论</text>
+</svg>
+

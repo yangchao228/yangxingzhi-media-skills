@@ -1,0 +1,7 @@
+interface:
+  display_name: "文昌总控"
+  short_description: "调度完整内容流水线并在判断节点暂停"
+  default_prompt: "Use $wenchang-orchestrator to run this content request through the Wenchang pipeline and stop at user decision points."
+
+policy:
+  allow_implicit_invocation: true

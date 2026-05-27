@@ -32,16 +32,16 @@ description: Upload local images in Markdown directly to Cloudflare R2 and repla
 
 ## 用法
 ### 单文件
-./run.sh path/to/article.md
+bash run.sh path/to/article.md
 
 ### 目录批处理
-./run.sh path/to/dir --recursive
+bash run.sh path/to/dir --recursive
 
 ### Dry run
-./run.sh path/to/article.md --dry-run
+bash run.sh path/to/article.md --dry-run
 
 ### 临时覆盖 key 前缀
-./run.sh path/to/article.md --key-prefix posts/2026-04
+bash run.sh path/to/article.md --key-prefix posts/2026-04
 
 ## 输出
 - 默认原地修改，并生成备份：`xxx.md.bak`

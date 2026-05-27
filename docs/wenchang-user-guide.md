@@ -21,6 +21,8 @@
 
 总控会先判断入口阶段，再选择子路径。你不需要手动复制每一步输出。
 
+文昌现在以 `content_state + handoff + decisions` 作为核心接力对象。字段合同见 `content/CONTENT_STATE.md`，机器可读结构见 `content/content_state.schema.json`。
+
 ## 适合输入的三类任务
 
 ### 1. 已有方向，但没有初稿
@@ -91,6 +93,8 @@
 - 需要生成配图、卡片、上传外部图片。
 - 建议进入 Human3.0 成书审查或素材库。
 - 你明确要求先停。
+
+如果你在这些节点做了选择，例如“标题选第二个”“先做封面，不做归档”，总控应该把选择写入 `content_state.decisions`，后续阶段只按已确认的判断推进。
 
 ## 手动模式
 
@@ -302,8 +306,20 @@ brief 至少包括：
 - `content_state`
 - `handoff`
 - 用户确认或修改意见
+- 如果发生人工确认，保留 `content_state.decisions`
 
-这三样是文昌流水线能持续接力的基础。
+这些信息是文昌流水线能持续接力的基础。
+
+`decisions` 的最小结构：
+
+```yaml
+decisions:
+  - stage: 出刊
+    question: 是否进入 Human3.0 成书审查
+    user_choice: 暂不进入，本轮先做封面
+    timestamp: 2026-05-25
+    impact: next_step 改为配图，不调用 human3-book-guardian
+```
 
 ## 常见跑偏信号
 
@@ -311,11 +327,13 @@ brief 至少包括：
 | --- | --- |
 | 路由阶段直接写正文 | 退回路由，只要 brief |
 | 采证没有反向数据 | 要求补 `contrarian_points` |
+| 采证可信度低还继续起稿 | 要求停在采证，`user_decision_needed: true` |
 | 写作阶段重新选题 | 要求只使用 `topic`、`research` 和 `handoff` |
 | 诊文只夸不指出问题 | 要求给核心问题和最小修改建议 |
 | 整章只是润色 | 要求删减 20%-30%，输出删减说明 |
 | 出刊阶段改正文 | 退回诊文或整章 |
 | 发布前没有阻塞项 | 检查标题、摘要、封面、标签、配图、转发文案 |
+| 用户已拍板但状态里没有记录 | 要求追加 `content_state.decisions` |
 
 ## 推荐第一次实操主题
 

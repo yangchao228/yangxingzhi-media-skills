@@ -1,5 +1,213 @@
 # todo
 
+## 2026-05-26 文昌写作 skill 优化
+
+- [x] 阅读现有 `wechat-writing-skill-ai-human3` 写作规则和调用提示
+- [x] 搜罗并提炼卡兹克写作 skill、横纵分析法和公众号 AI 写作流程资料
+- [x] 给写作 skill 增加起稿前质检、AI/人边界、文章原型和研究转写规则
+- [x] 给系统提示补充第一屏、活人感、干货密度、事实边界和长期资产自检
+- [x] 更新 README 和切角库，方便后续继续迭代
+- [x] 执行验证
+
+### review
+
+- 已把卡兹克写作 skill 里的“好奇心/知识增量/共鸣”“活人感”“AI 与人的边界”“文章原型”“四层自检”等方法，转译成适合文昌和 Human3.0 的写作规则，没有照搬卡兹克人设。
+- 已吸收横纵分析法的“纵向变化 + 横向对比 + 交汇判断”，用于把 `content_state.research` 从资料包转成文章主判断。
+- 已补充公众号 AI 写作流程里的分阶段起稿、标题兑现、结构先行、人工复核和手机端阅读约束。
+- 已通过 `./scripts/validate_skills.sh`。
+
+## 2026-05-26 AI/Codex 降本规则固化
+
+- [x] 将降本清单固化到仓库级工作规则
+- [x] 给文昌总控和路由补成本敏感执行闸门
+- [x] 给卡片/图片类 skill 补“先确认结构，再生成成品”的默认约束
+- [x] 增加校验，防止降本规则后续被删掉
+- [x] 执行基础验证
+- [x] 记录 review
+
+### review
+
+- 已把 AI/Codex 降本从 `docs/goals/ai-cost-savings` 的建议资产，固化为仓库级 `CLAUDE.md` 和 `README.md` 规则。
+- 已在 `wenchang-orchestrator` 和 `wenchang-router` 增加成本敏感闸门：先判断入口、先确认高返工节点、优先使用 `content_state` / `handoff`，不在方向未定时生成全文、多平台版本、卡片或封面。
+- 已在 `wechat-to-cards`、`redbook-cards`、`long-to-cards`、`xiaohongshu-viral-image-skill-v4` 中加入卡片/图片降本规则：先确认页数、结构、风格和输出形式，再生成 HTML、PNG、出图提示词、上传或发布动作。
+- 已在 `scripts/validate_skills.sh` 增加成本规则校验，防止关键 skill 后续丢失成本敏感执行约束。
+- 已通过 `./scripts/validate_skills.sh`。
+
+## 2026-05-26 AI 学习主权 03 写作篇公众号流程
+
+- [x] 使用文昌总控从明确主题进入定题节点
+- [x] 读取 `ai_study` 系列规划和既有编程篇上下文
+- [x] 采证：OpenAI Study Mode、MIT Media Lab 写作研究、Science Advances / Nature Human Behaviour 创意多样性研究
+- [x] 立骨：收敛为“用 AI 学写作，保留观点、素材、结构和语气”
+- [x] 起稿：生成公众号主稿
+- [x] 诊文/出刊：补标题、摘要、标签、朋友圈文案、评论区引导和 content_state
+- [x] 更新 `ai_study` 系列索引
+- [x] 执行基础验证
+
+### review
+
+- 新稿定位为“别把学习外包给 AI”系列第三篇，文件为 `ai_study/03-ai-writing-learning-wechat.md`。
+- 主线收敛为：AI 写作最值得用的地方，是反问、诊断、补反例、整理素材，逼作者把自己的观点、结构和语气说清楚。
+- 已保留关键反向边界：不能污名化 AI 写作；MIT 写作研究为预印本，不能过度外推；AI 可能提升单篇输出，但会带来表达趋同风险。
+- 已按用户要求去 AI 味并收紧段落：减少碎换行，压缩模板化表达，保留证据、prompt 和验收清单。
+- 已按用户更新后的公众号写作 skill 重新生成 v2 版，文件为 `ai_study/03-ai-writing-learning-wechat-v2.md`，保留旧版不覆盖。
+- 当前已推进到出刊检查；下一步需要用户确认最终标题、是否生成公众号封面，以及是否进入 Human3.0 成书归档审查。
+
+## 2026-05-25 文昌技能包 v2 稳定性升级
+
+- [x] 新增 `content_state` schema，明确字段、类型和决策日志结构
+- [x] 将人工判断节点沉淀为 `decisions`，避免多轮流程丢失用户拍板
+- [x] 升级 fixture 校验，覆盖状态合同、停顿节点和阶段边界
+- [x] 增加负向回归样例，防止低可信采证、无反向证据、出刊改正文等跑偏
+- [x] 更新文昌核心技能说明和用户指南
+- [x] 运行 `./scripts/validate_skills.sh`
+
+### review
+
+- 已新增 `content/content_state.schema.json`，把文昌接力对象从纯文档约定推进到机器可读合同。
+- 已在 `content/CONTENT_STATE.md`、总控、路由、诊文、出刊中加入 `decisions` 结构，用户确认的标题、封面、卡片、归档等判断不再只留在聊天历史。
+- 已升级 `scripts/validate_content_fixtures.py`，增加状态合同、反向证据、低可信停顿、出刊不改正文、归档需人工确认等回归检查。
+- 已新增 `content/fixtures/regression-boundaries/` 负向边界样例，覆盖低可信采证、缺反向证据、出刊退回诊文、决策日志记录。
+- 已为 5 个文昌核心技能补 `agents/openai.yaml`，并在 `scripts/validate_skills.sh` 中加入基础校验。
+- 已通过 `./scripts/validate_skills.sh` 和本轮文件的 `git diff --check`。
+
+## 2026-05-22 AI 学习主权 02 编程篇公众号流程
+
+- [x] 使用文昌总控从明确主题 + 参考稿进入定题节点
+- [x] 读取参考稿 `2026-05-22-ai-era-qualified-engineer-wechat-zhihu-xhs.md`
+- [x] 补采证：Claude Code Learning output style、NotebookLM 官方帮助、Anthropic AI 编程学习研究、OpenAI Harness Engineering
+- [x] 立骨：将 Prompt / Context / Harness 转化为 AI 编程学习路线
+- [x] 起稿：生成公众号主稿
+- [x] 诊文/整章：确认主线承接系列开篇，且未逐段复述参考稿
+- [x] 出刊：补标题、摘要、标签、朋友圈文案、评论区引导和 content_state
+- [x] 更新 `ai_study` 系列索引和第二篇管理稿
+- [x] 执行基础验证
+
+### review
+
+- 新稿定位为“别把学习外包给 AI”系列第二篇，文件为 `ai_study/02-ai-programming-learning-engineer-model-wechat.md`。
+- 本次未直接沿用旧三平台编程稿；处理方式是把 Prompt / Context / Harness 能力模型转成“如何训练这些能力”的公众号稿。
+- 主线收敛为：NotebookLM 管资料底座，Claude Learning 管小步练习，真实项目和 Harness 管验收。
+- 当前已推进到出刊检查；下一步需要用户确认最终标题、是否生成公众号封面，以及是否进入 Human3.0 成书归档审查。
+- 已清理主稿里的工作流痕迹：正文和 `content_state` 不再出现读者不可见的内部引用、路径和上下文指代。
+- 已按诊文建议完成轻改：压缩重复开头，用 `POST /todos` 作为贯穿案例，补强 Harness 具体验收例子，并重写结尾收束。
+- 已按用户要求提升信息密度：补入国外 vibe coding 讨论、Anthropic 技能形成研究和 OpenAI Harness Engineering 对学习闭环的启发。
+- 已重写正文开头钩子：从“常见用法”改为“AI 让人提前获得掌握幻觉”的反差判断。
+- 已在开头补充读者收益承诺：能力清单、工具组合训练系统和 7 天练习路线。
+- 已澄清 Harness 相关表述：避免把 Harness 学习法写成既有术语，改为“把 Harness Engineering 降维成个人学习闸门”。
+- 已通过 `git diff --check -- todo.md ai_study/README.md ai_study/02-programming-training-system.md ai_study/02-ai-programming-learning-engineer-model-wechat.md`，并检查新稿没有使用生硬对照句式。
+
+## 2026-05-22 AI 志愿填报公众号内容流程
+
+- [x] 使用文昌总控从明确主题进入定题节点
+- [x] 采证：核验教育部阳光志愿、AI 志愿产品、付费规划师风险与反向证据
+- [x] 立骨：收敛公众号主线与读者获得感
+- [x] 起稿：生成公众号 Markdown 草稿
+- [x] 诊文/整章：检查论证闭环、干货密度和 Human3.0 贴合度
+- [x] 出刊：补标题、摘要、标签、朋友圈文案和阻塞项
+- [x] 停在配图/卡片/归档判断节点
+
+### review
+
+- 已按文昌总控从“已有明确主题”进入定题，并自动推进到出刊检查。
+- 采证覆盖教育部“阳光志愿”、2025 高考云咨询周、高考志愿规划师职业资格提示、志愿填报服务乱象调查、北京市场监管案例、AI 志愿填报产品测评和 HCI 研究。
+- 主线收敛为：AI 可以做信息过滤器和风险整理器，但不能替孩子完成关于城市、专业、代价和生活方式的人生判断。
+- 公众号内容包已落到 `content/outputs/2026-05-22-ai-gaokao-choice-wechat.md`。
+- 当前建议为补齐封面后可发布；下一步需要用户确认最终标题、是否生成公众号封面/流程图，以及是否进入 Human3.0 成书归档审查。
+
+## 2026-05-22 AI 伴侣与未成年人公众号内容流程
+
+- [x] 使用文昌总控从明确主题进入定题节点
+- [x] 采证：核验 AI 伴侣、AI 玩具、未成年人监管近期来源
+- [x] 立骨：收敛公众号主线与读者获得感
+- [x] 起稿：生成公众号 Markdown 草稿
+- [x] 诊文/整章：检查焦虑开头、论证闭环和 Human3.0 贴合度
+- [x] 出刊：补标题、摘要、标签、朋友圈文案和阻塞项
+- [x] 停在配图/卡片/归档判断节点
+
+### review
+
+- 已按文昌总控从“已有明确主题”进入定题，并自动推进到出刊检查。
+- 采证覆盖中国拟人化互动服务管理办法、FTC 调查、Common Sense Media 青少年 AI 伴侣调查、OUP 青少年社交关系研究、AI 玩具安全倡议和 Mozilla 联网玩具安全报告。
+- 主线收敛为：AI 伴侣进入儿童关系场后，真正需要警惕的是关系能力被外包。
+- 公众号内容包已落到 `content/outputs/2026-05-22-ai-companion-children-relationship-skills-wechat.md`。
+- 当前出刊建议为补齐封面后可发布；下一步需要用户确认是否生成公众号封面，以及是否进入 Human3.0 成书归档审查。
+
+## 2026-05-21 AI成本账 02 三平台出刊流程
+
+- [x] 使用文昌总控从已生成公众号稿进入诊文节点
+- [x] 读取原稿并保留公众号正文主体，不覆盖源文件
+- [x] 诊文：判断为轻改后发布
+- [x] 出刊：补公众号标题、摘要、封面文案、标签、朋友圈文案和评论引导
+- [x] 平台适配：补知乎最小改动发布包
+- [x] 小红书：拆成 8 页图文方案、统一视觉规范、逐页出图提示词和发布配文
+- [x] 快检 OpenAI / Anthropic 官方来源，确认输入、输出、缓存、推理相关表述方向成立
+- [x] 停在配图/卡片/归档判断节点
+
+### review
+
+- 本轮没有修改原始公众号稿 `/Users/yangchao/my_knowledge_space/微信公众号/drafts/AI成本账/AI成本账02-Token经济学入门.md`。
+- 出刊包已落到 `content/outputs/2026-05-21-ai-cost-token-economics-wechat-zhihu-xhs.md`。
+- 公众号和知乎遵循“尽量不修改原文”的要求：公众号只补发布资产；知乎只建议替换首屏和文末，主体沿用。
+- 小红书按 8 页图文卡处理，方向是收藏型清单，不直接搬公众号长文。
+- 当前下一步需要用户确认：是否生成公众号封面、小红书 8 页卡片，以及是否进入 Human3.0 成书归档审查。
+
+## 2026-05-20 AI 学习主权系列目录
+
+- [x] 新增 `ai_study/` 作为“别把学习外包给 AI”系列统一管理目录
+- [x] 新增 `ai_study/README.md` 作为系列入口和文件索引
+- [x] 新增 `ai_study/series-plan.md`，明确栏目定位、目标读者、选题地图和统一写作约束
+- [x] 新增开篇总纲 `ai_study/01-dont-outsource-learning-to-ai.md`
+- [x] 将现有编程篇纳入 `ai_study/02-programming-training-system.md` 管理
+- [x] 执行基础验证
+
+### review
+
+- 系列主名收敛为“别把学习外包给 AI”，比“AI 学习主权”更适合传播；“AI 学习主权”保留为方法论定位。
+- 开篇总纲不讲单一工具，先立住底层判断：AI 可以帮助解释、拆解、陪练、反馈和复盘，但提出假设、亲手练习、识别错误、复盘迁移必须留给人。
+- 编程篇不移动旧产物，保留 `content/outputs/2026-05-19-ai-programming-training-system-wechat-zhihu-xhs.md` 作为完整三平台内容包；`ai_study/02-programming-training-system.md` 负责系列目录内的管理、定位和复用说明。
+- 已通过 `git diff --check -- todo.md ai_study/...`，并检查本轮新增 `ai_study/` 文件没有继续使用“不是……而是……”句式。
+- 下一步可优先生成开篇总纲的封面和小红书卡片，也可以继续写第三篇“写作篇”。
+
+## 2026-05-20 开篇总纲封面与小红书卡片
+
+- [x] 为 `ai_study/01-dont-outsource-learning-to-ai.md` 生成公众号封面
+- [x] 拆出小红书 8 页卡片
+- [x] 新增 SVG 源文件和 HTML 预览页
+- [x] 新增精确尺寸 PNG 渲染脚本
+- [x] 导出公众号封面 PNG `1400x596`
+- [x] 导出小红书卡片 PNG `1080x1440`
+- [x] 将图片资产路径写回开篇稿和资产 README
+- [x] 执行基础验证
+
+### review
+
+- 资产目录为 `ai_study/assets/01-dont-outsource-learning/`。
+- 公众号封面路径：`ai_study/assets/01-dont-outsource-learning/png/wechat-cover.png`。
+- 小红书卡片路径：`ai_study/assets/01-dont-outsource-learning/png/01-cover.png` 到 `08-series-preview.png`。
+- SVG 与 `preview.html` 用于快速预览和后续改版；`render_pngs.py` 用 Pillow 直接渲染精确尺寸 PNG，避免 Quick Look 把 3:4 卡片导出成方图。
+- 已通过 `git diff --check -- todo.md ai_study`、`python -m py_compile render_pngs.py`，并用 `file` 核对封面与卡片 PNG 尺寸。
+- 已将开篇总纲正文里的流程型小标题改成发布型小标题，尤其把“结尾”“结尾互动”改成“最后，把学习主权拿回来”“下一次问 AI，先写下这三句话”。
+- 已补小红书发布文案：标题候选、正文描述、简短口语版、热门话题标签、评论区引导和收藏引导。
+
+## 2026-05-19 AI 编程训练系统三平台内容流程
+
+- [x] 使用文昌总控从已确认主切口继续推进
+- [x] 采证：核验 Claude Code Learning output style、NotebookLM 官方能力与 Anthropic AI 编程学习研究
+- [x] 立骨：收敛为“NotebookLM 管资料，Claude Learning 管练习，真实项目管验收”
+- [x] 起稿：生成公众号正文
+- [x] 平台适配：生成知乎回答版、小红书 9 页图文方案和发布配文
+- [x] 出刊：补标题、摘要、标签、朋友圈文案、prompt 模板库和阻塞项
+- [x] 停在配图/卡片/归档判断节点
+
+### review
+
+- 本轮没有覆盖旧稿 `2026-05-19-ai-learning-not-outsourced-wechat-xhs.md`，而是另起更贴合当前主题的新三平台内容包。
+- 主线从泛学习风险收敛为“AI 编程训练系统”：NotebookLM 负责资料底座和自测，Claude Code Learning output style 负责小步练习，真实项目与测试负责验收。
+- 采证保留限制条件：Anthropic 研究不能被外推成所有 AI 编程辅助都会削弱能力；NotebookLM 不是代码执行环境；Learning mode 也不能替代用户自己的动手。
+- 稿件位置：`content/outputs/2026-05-19-ai-programming-training-system-wechat-zhihu-xhs.md`。
+- 当前下一步需要用户确认：是否生成公众号封面、9 页小红书卡片，以及是否进入 Human3.0 成书归档审查。
+
 ## 2026-05-19 不要将学习外包给 AI 内容流程
 
 - [x] 使用文昌总控进入定题节点
@@ -442,3 +650,51 @@
 - 已补入“这篇文章本身就是文昌流程案例”的个人真实场景，增强账号作者感和长期资产感。
 - Human3.0 成书审查结论：通过，建议归入 Part 3《结构杠杆》，后续入书时弱化 gstack 热点感，强化“重复工作如何角色化、流程化、资产化”。
 - 当前只剩封面图生成后的发布前肉眼确认。
+
+## 2026-05-22 AI 时代合格研发工程师多平台出刊包
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 接收用户补充的微信公众号正文素材
+- [x] 补充 OpenAI / Anthropic / 论文一手来源
+- [x] 生成公众号正文、知乎发布包和小红书图文方案
+- [x] 完成诊文和出刊检查
+- [ ] 用户确认封面 / 小红书卡片 / Human3.0 成书审查
+
+### review
+
+- 已将主题从泛“AI 时代合格研发工程师”收敛为“Prompt -> Context -> Harness 对应工程师能力升级”。
+- 已新增 `content/outputs/2026-05-22-ai-era-qualified-engineer-wechat-zhihu-xhs.md`，包含采证、公众号正文、知乎发布包、小红书 8 页图文方案、诊文、出刊检查和 `content_state`。
+- 已保留关键反向边界：OpenAI 内部案例不能直接外推到所有团队，复杂 Harness 有明显成本，Harness 需要随模型能力动态调整。
+- 用户反馈初稿太虚后，已按素材模板重构正文：以“从 Prompt 到 Harness：AI 时代工程师的新能力模型”为主题，补入 7 要素 Prompt、5 类事实源、6 环节 Harness、9 项能力和 7 天训练路线。
+- 当前按总控规则停在配图/卡片/归档判断节点，等待用户确认是否继续生成封面、小红书卡片和 Human3.0 成书审查。
+
+## 2026-05-22 AI 短剧创作者不可替代性公众号出刊包
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 补充 AI 短剧 / AI 漫剧近期事实采证
+- [x] 生成公众号正文、标题、摘要、转发文案和配图建议
+- [x] 完成诊文和出刊检查
+- [x] 用户确认最终标题
+- [x] 用户确认封面文案
+- [x] 用户确认不补个人案例
+- [x] 生成公众号封面图
+- [x] 用户确认不做 Human3.0 成书审查
+
+### review
+
+- 已将主题按“定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 出刊”推进到人工判断节点。
+- 已新增 `content/outputs/2026-05-22-ai-short-drama-creator-irreplaceability-wechat.md`，正文面向内容创作者，主线为“AI 产能过剩后，创作者要把生活经验、价值判断、表达风格和长期资产变成不可替代性”。
+- 已保留关键反向边界：AI 降低门槛有积极价值，同质化并非 AI 独有，版权不能简化成“AI 作品一律无版权”，不可替代性必须落成资产和流程。
+- 用户已确认最终标题为“人人都能用 AI 做短剧，谁还能被观众记住？”，封面文案为“人人都能一人剧组，你凭什么被记住？”。
+- 已新增公众号封面资产：`content/assets/2026-05-22-ai-short-drama-creator-irreplaceability/png/wechat-cover.png`，同时保留可编辑 SVG 和渲染脚本。
+- 当前按总控规则停在发布前人工确认节点；本轮不补个人案例、不做 Human3.0 成书审查。
+
+## 2026-05-27 Human 3.0 创造者革命公众号流程
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 读取外部素材 Daniel Miessler《The Problem with Human 2.0 and the Promise of Human 3.0》
+- [x] 用户确认主线 A：人不该继续运行“雇员系统”
+- [x] 完成采证与反向证据整理
+- [x] 生成公众号文章骨架和标题候选
+- [x] 起稿、诊文和出刊检查
+- [ ] 用户确认封面 / 卡片 / Human3.0 成书审查

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-label="">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#082422" flood-opacity="0.12"/>
+    </filter>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#133b38" stroke-width="1" opacity="0.05"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1440" fill="#f7e8ad"/>
+  <rect width="1080" height="1440" fill="url(#grid)"/>
+  <path d="M0 1080C212 1004 320 1118 510 1026C742 914 858 802 1080 840V1440H0Z" fill="#133b38" opacity="0.18"/>
+  <path d="M0 230C194 154 348 266 544 174C744 80 894 58 1080 114" fill="none" stroke="#133b38" stroke-width="8" opacity="0.32"/>
+  <g font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif'>
+    <rect x="58" y="54" width="202" height="48" rx="24" fill="rgba(19,59,56,0.09)"/>
+    <text x="159" y="87" text-anchor="middle" font-size="24" font-weight="800" fill="#133b38">AI生命克劳德</text>
+    <rect x="894" y="54" width="128" height="48" rx="24" fill="rgba(19,59,56,0.1)"/>
+    <text x="958" y="87" text-anchor="middle" font-size="24" font-weight="900" fill="#133b38">04/08</text>
+  </g>
+  
+      <g>
+  <rect x="74" y="206" width="228" height="52" rx="26" fill="#133b38"/>
+  <text x="188" y="240.5" text-anchor="middle" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="25" font-weight="800" fill="#fffaf0">四个动作不能外包</text>
+</g>
+      <text x="74" y="382" text-anchor="start" font-family='"Songti SC", "Noto Serif CJK SC", "STSong", serif' font-size="66" font-weight="900" fill="#133b38">
+  <tspan x="74" dy="0">真正的学习</tspan>
+  <tspan x="74" dy="77.88">长在这些动作里</tspan>
+</text>
+      <g transform="translate(74 636)" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif'>
+        <g transform="translate(0 0)">
+  <rect width="438" height="214" rx="30" fill="#fffaf0" stroke="#d8cbb5" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="34" y="58" font-size="28" font-weight="900" fill="#e76f51">01</text>
+  <text x="34" y="116" font-size="38" font-weight="900" fill="#133b38">提出假设</text>
+  <text x="34" y="166" font-size="25" font-weight="650" fill="#64726e">我先判断问题在哪</text>
+</g>
+        <g transform="translate(476 0)">
+  <rect width="438" height="214" rx="30" fill="#fffaf0" stroke="#d8cbb5" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="34" y="58" font-size="28" font-weight="900" fill="#e76f51">02</text>
+  <text x="34" y="116" font-size="38" font-weight="900" fill="#133b38">亲手练习</text>
+  <text x="34" y="166" font-size="25" font-weight="650" fill="#64726e">关键小块自己做</text>
+</g>
+        <g transform="translate(0 270)">
+  <rect width="438" height="214" rx="30" fill="#fffaf0" stroke="#d8cbb5" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="34" y="58" font-size="28" font-weight="900" fill="#e76f51">03</text>
+  <text x="34" y="116" font-size="38" font-weight="900" fill="#133b38">识别错误</text>
+  <text x="34" y="166" font-size="25" font-weight="650" fill="#64726e">知道它错在哪里</text>
+</g>
+        <g transform="translate(476 270)">
+  <rect width="438" height="214" rx="30" fill="#fffaf0" stroke="#d8cbb5" stroke-width="2" filter="url(#softShadow)"/>
+  <text x="34" y="58" font-size="28" font-weight="900" fill="#e76f51">04</text>
+  <text x="34" y="116" font-size="38" font-weight="900" fill="#133b38">复盘迁移</text>
+  <text x="34" y="166" font-size="25" font-weight="650" fill="#64726e">变成下次可复用</text>
+</g>
+      </g>
+  <g font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="28" font-weight="800" fill="#64726e" opacity="0.86">
+  <text x="74" y="1372">更早发现</text>
+  <text x="540" y="1372" text-anchor="middle">更准判断</text>
+  <text x="1006" y="1372" text-anchor="end">更快行动</text>
+</g>
+</svg>

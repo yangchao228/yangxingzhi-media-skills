@@ -32,14 +32,18 @@ content/fixtures/<case-name>/
 - `codex-workbench`：外部热点/文章型，重点防止复述原文。
 - `content-agents-diagnostic`：已有初稿诊断型，重点防止直接重写和继承夸张承诺。
 - `orchestrator-codex`：总控型，重点防止固定五步链路和省略配图/归档。
+- `regression-boundaries`：负向边界型，重点防止低可信采证继续起稿、缺反向证据不降级、出刊阶段改正文、用户决策不入状态。
 
 ## 必须覆盖
 
 - `router-expected.md` 必须有 `brief`，且不能写正文。
 - `research-expected.md` 必须有 `contrarian_points` 和 `confidence`。
+- 采证缺反向证据或 `confidence: Low` 时必须 `user_decision_needed: true`，不能进入起稿。
 - `review-expected.md` 必须有 `诊断结论`、`最小修改建议`、`修改日志`、`删减说明` 和 `最强一句`。
 - `publish-expected.md` 必须有 `publish_assets`、`distribution`、`archive`。
+- `publish-expected.md` 不允许出现 `## 正文` 或 `## 编辑后正文`；正文问题应退回诊文或采证。
 - 每个 expected 都必须包含 `handoff`。
+- 用户已经确认的标题、封面、归档等关键判断必须进入 `content_state.decisions`。
 
 ## 新增 case
 
@@ -58,3 +62,4 @@ content/fixtures/<case-name>/
 - `external-article`：外部文章/热点，不要逐段翻译，不要变成工具教程。
 - `draft-diagnostic`：已有初稿，必须先诊断，再决定是否采证、重写或出刊。
 - `orchestrator`：总控入口，必须选择完整阶段池中的子路径，并保留配图/卡片/上传/归档节点。
+- `regression-boundaries`：边界回归，不模拟完整流程，只锁住容易被破坏的停顿规则和状态记录规则。

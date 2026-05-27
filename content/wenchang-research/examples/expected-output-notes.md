@@ -15,6 +15,7 @@
 - `content_state.handoff.ignored_context`
 - 至少 1 条反向数据、限制条件或不确定性；理想为 3 条
 - 如果找不到反向证据，必须说明已查来源、未找到原因、待验证问题，并降低 confidence
+- 如果 `confidence: Low`，必须 `user_decision_needed: true`，不能进入起稿
 - 下一步推荐应指向起稿、立骨或回到定题
 
 不应该出现：

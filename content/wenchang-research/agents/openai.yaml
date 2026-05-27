@@ -1,0 +1,7 @@
+interface:
+  display_name: "文昌采证"
+  short_description: "补来源、关键事实、反向证据和可信度"
+  default_prompt: "Use $wenchang-research to build a source-backed research package with contrarian evidence for this topic."
+
+policy:
+  allow_implicit_invocation: true

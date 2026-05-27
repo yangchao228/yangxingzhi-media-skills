@@ -47,6 +47,17 @@ description: 文昌.skill 总调度入口。识别内容创作请求所处阶段
 6. 如果用户要发布，必须保留发布前检查。
 7. 如果内容有长期价值，最后提示是否进入 Human3.0 素材库审查。
 
+## 成本敏感路由规则
+
+路由阶段要控制后续成本，避免错误方向进入全文、卡片或多平台生成。
+
+- 阶段不明确时，只输出 brief 和下一步，不生成正文。
+- 多平台需求先生成统一 `content_state`，再按平台分发，不重复理解原文。
+- 卡片/图片需求先路由到结构规划，确认页数、风格和输出形式后再进入生成。
+- 已有初稿只需要局部修订时，路由到诊文或整章局部修改，不默认完整重写。
+- 如果用户的目标可以通过模板、SOP、清单或素材库沉淀完成，优先产出可复用资产。
+- 订阅、模型价格、外部上传、真实发布和归档入库只给建议与阻塞项，不替用户做最终决定。
+
 ## Brief 边界
 
 路由、探脉、定题阶段只产出 brief，不写正文。brief 必须服务下一阶段决策，而不是伪装成文章开头。
@@ -76,6 +87,8 @@ brief 至少包含：
 - `next_step.user_decision_needed`
 
 完整字段规范见 `content/CONTENT_STATE.md`。
+
+如果用户明确确认或否决了选题、平台、标题或归档方向，追加到 `content_state.decisions`；路由阶段不要把自己的推荐写成用户选择。
 
 ## 上下文隔离规则
 
@@ -116,6 +129,12 @@ content_state:
     skill:
     reason:
     user_decision_needed:
+  decisions:
+    - stage:
+      question:
+      user_choice:
+      timestamp:
+      impact:
   handoff:
     from_stage:
     to_stage:

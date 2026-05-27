@@ -42,19 +42,19 @@ md-img-r2/
   skill.json             # 技能元数据
   run.sh                 # 入口脚本
   scripts/md_img_r2.py   # 核心 Python 脚本
-  .env.example           # R2 配置模板；真实 .env 只放本地，不提交
+  r2-config.env          # R2 配置模板；真实 .env 只放本地，不提交
 ```
 
 **常用命令：**
 ```bash
 # 单文件替换
-./md-img-r2/run.sh path/to/article.md
+bash ./md-img-r2/run.sh path/to/article.md
 
 # 目录批处理
-./md-img-r2/run.sh path/to/dir --recursive
+bash ./md-img-r2/run.sh path/to/dir --recursive
 
 # Dry run（不修改文件，只生成报告）
-./md-img-r2/run.sh path/to/article.md --dry-run
+bash ./md-img-r2/run.sh path/to/article.md --dry-run
 
 # 本地 smoke check
 ./scripts/validate_skills.sh
@@ -65,8 +65,17 @@ md-img-r2/
 ## 开发注意事项
 
 - 这是一个**技能/配置仓库**，不是传统代码项目。没有 build/lint/test 流程。
-- 新增 skill 时，参照 `md-img-r2/` 的目录结构：`SKILL.md`（定义）、`skill.json`（元数据）、`run.sh`（入口）、`scripts/`（实现）、`.env.example`（配置模板）。
+- 新增 skill 时，参照 `md-img-r2/` 的目录结构：`SKILL.md`（定义）、`skill.json`（元数据）、`run.sh`（入口）、`scripts/`（实现）、`r2-config.env`（配置模板）。
 - `.env` 文件不应提交，敏感配置（密钥、account ID 等）一律通过环境变量或 `.env` 提供。
 - 所有 skill 的设计目标是**可分发**：别人拿到后只需补齐 `.env` 即可使用。
 - 修改或分发前优先跑 `./scripts/validate_skills.sh`，确认元数据、脚本入口、缓存文件和 `md-img-r2` dry-run 样例都正常。
 - `content/wenchang-*` 入口必须保留 `examples/minimal-input.md` 和 `examples/expected-output-notes.md`，用于回归验证触发边界和输出结构。
+
+## 成本敏感执行
+
+- 默认先搜索再读文件，先判断范围再生成成品，避免把整仓、长日志或完整聊天历史交给模型。
+- 文昌链路必须优先用 `content_state` 和 `handoff` 接力；下一阶段只读正式输出、用户新增材料和必要字段。
+- 选题、标题、平台、页数、视觉风格、封面、上传、归档等会导致返工或外部成本的节点，先让用户确认，再生成完整资产。
+- 简单整理、标签、摘要、文件清单等任务默认低推理；复杂诊断、跨文件风险、最终审计再使用高推理。
+- 卡片和图片类 skill 先输出页数/结构/视觉规范草案，确认后再生成 HTML、PNG、图片提示词或上传动作。
+- 不自动取消订阅、降级工具、修改生产配置或发布具体价格；这类动作只提供证据和建议，保留用户判断权。

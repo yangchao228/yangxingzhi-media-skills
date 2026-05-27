@@ -67,6 +67,7 @@ md-img-r2/
   SKILL.md
   skill.json
   run.sh
+  r2-config.env
   scripts/
     md_img_r2.py
   README.md
@@ -82,10 +83,10 @@ md-img-r2/
 <repo>/.codex/skills/md-img-r2/
 ```
 
-### 2) 赋予 `run.sh` 可执行权限
+### 2) 确认入口脚本可运行
 
 ```bash
-chmod +x .codex/skills/md-img-r2/run.sh
+bash .codex/skills/md-img-r2/run.sh --help
 ```
 
 ### 3) 配置环境变量或 `.env`
@@ -122,7 +123,7 @@ export CF_R2_KEY_PREFIX=articles
 ### 4) 先做一次 dry-run
 
 ```bash
-./.codex/skills/md-img-r2/run.sh ./article.md --dry-run
+bash .codex/skills/md-img-r2/run.sh ./article.md --dry-run
 ```
 
 脚本会按这个顺序取配置：
@@ -145,31 +146,31 @@ export CF_R2_KEY_PREFIX=articles
 ### 单文件替换
 
 ```bash
-./run.sh ./article.md
+bash run.sh ./article.md
 ```
 
 ### 目录批处理
 
 ```bash
-./run.sh ./posts --recursive
+bash run.sh ./posts --recursive
 ```
 
 ### Dry run
 
 ```bash
-./run.sh ./article.md --dry-run
+bash run.sh ./article.md --dry-run
 ```
 
 ### 指定对象 key 前缀
 
 ```bash
-./run.sh ./article.md --key-prefix posts/2026-04
+bash run.sh ./article.md --key-prefix posts/2026-04
 ```
 
 ### 临时覆盖公开域名
 
 ```bash
-./run.sh ./article.md --public-base-url https://img.example.com
+bash run.sh ./article.md --public-base-url https://img.example.com
 ```
 
 ---
@@ -213,7 +214,7 @@ articles/6d8f1e2ab4c9d011-cover.png
 
 - 优先分享整个 `md-img-r2/` 目录，而不是只拷脚本
 - 把 R2 配置要求写进使用说明，不要把密钥写进 skill 源码
-- 推荐同时给对方一份 `.env.example` 模板，不要直接给真实 `.env`
+- 推荐同时给对方一份 `r2-config.env` 模板，不要直接给真实 `.env`
 - 分发前至少用一篇带本地图片的 Markdown 跑一次 `--dry-run`
 - 如果平台要求上传压缩包，直接压缩整个 `md-img-r2/` 目录；不要把本地 `.env`、`.bak` 或 `.replace-report.json` 一起打包
 

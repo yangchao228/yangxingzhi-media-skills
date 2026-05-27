@@ -172,7 +172,7 @@ def build_missing_config_message(missing: List[str], dotenv_path: Optional[Path]
         "3. --env-file /path/to/.env",
         "",
         "Start from this template:",
-        "md-img-r2/.env.example",
+        "md-img-r2/r2-config.env",
     ]
     if dotenv_path:
         lines.extend(["", f"Detected .env file: {dotenv_path}"])
@@ -217,7 +217,7 @@ def resolve_config(args, dotenv: Dict[str, str], dotenv_path: Optional[Path]) ->
     if not endpoint:
         raise SystemExit(
             "Missing R2 endpoint. Set CF_R2_ENDPOINT or CF_R2_ACCOUNT_ID.\n"
-            "You can fill it in your .env based on md-img-r2/.env.example"
+            "You can fill it in your .env based on md-img-r2/r2-config.env"
         )
 
     return {

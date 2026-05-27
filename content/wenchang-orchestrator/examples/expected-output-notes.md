@@ -10,6 +10,7 @@
 - `## content_state`
 - `handoff.accepted_inputs`
 - `handoff.ignored_context`
+- 如果本轮接收了用户确认，必须追加 `content_state.decisions`
 - 入口类型应判断为外部文章/热点素材或已有明确主题
 - 当前链路不能简化为固定五步，应包含配图/卡片/上传/归档等后续节点
 - 如果需要自动推进，应明确下一步 skill

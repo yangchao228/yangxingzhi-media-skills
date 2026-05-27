@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangxingzhi.local/schemas/wenchang/content_state.schema.json",
+  "title": "Wenchang content_state",
+  "type": "object",
+  "required": ["content_state"],
+  "additionalProperties": false,
+  "properties": {
+    "content_state": {
+      "type": "object",
+      "required": ["request", "next_step", "handoff"],
+      "additionalProperties": true,
+      "properties": {
+        "project": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "account": { "type": ["string", "null"] },
+            "long_term_goal": { "type": ["string", "null"] }
+          }
+        },
+        "request": {
+          "type": "object",
+          "required": ["raw_intent", "current_stage", "target_platforms"],
+          "additionalProperties": true,
+          "properties": {
+            "raw_intent": { "type": ["string", "null"] },
+            "current_stage": { "type": ["string", "null"] },
+            "target_platforms": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "audience": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "primary": { "type": ["string", "null"] },
+            "pain_points": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "topic": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "source": { "type": ["string", "null"] },
+            "core_angle": { "type": ["string", "null"] },
+            "title_candidates": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "selected_title": { "type": ["string", "null"] },
+            "why_now": { "type": ["string", "null"] },
+            "long_term_value": { "type": ["string", "null"] }
+          }
+        },
+        "outline": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "thesis": { "type": ["string", "null"] },
+            "sections": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "examples_to_use": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "research": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "sources": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "key_facts": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "contrarian_points": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "usable_quotes": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "contradictions": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "confidence": {
+              "type": ["string", "null"],
+              "enum": ["High", "Medium", "Low", "高", "中", "低", null]
+            }
+          }
+        },
+        "draft": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "status": { "type": ["string", "null"] },
+            "file": { "type": ["string", "null"] },
+            "summary": { "type": ["string", "null"] }
+          }
+        },
+        "diagnosis": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "recommendation": { "type": ["string", "null"] },
+            "key_issues": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "minimum_fixes": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "publish_assets": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "title": { "type": ["string", "null"] },
+            "summary": { "type": ["string", "null"] },
+            "cover_text": { "type": ["string", "null"] },
+            "tags": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "images": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "share_copy": { "type": ["string", "null"] },
+            "comment_prompt": { "type": ["string", "null"] },
+            "xiaohongshu": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "title_candidates": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "body_description": { "type": ["string", "null"] },
+                "hot_topic_tags": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "comment_prompt": { "type": ["string", "null"] }
+              }
+            }
+          }
+        },
+        "distribution": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "primary_platform": { "type": ["string", "null"] },
+            "secondary_platforms": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "card_skill": { "type": ["string", "null"] },
+            "image_skill": { "type": ["string", "null"] }
+          }
+        },
+        "archive": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "should_review_for_book": { "type": ["boolean", "string", "null"] },
+            "material_type": { "type": ["string", "null"] },
+            "suggested_bucket": { "type": ["string", "null"] }
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["stage", "question", "user_choice", "impact"],
+            "additionalProperties": true,
+            "properties": {
+              "stage": { "type": "string" },
+              "question": { "type": "string" },
+              "user_choice": { "type": "string" },
+              "timestamp": { "type": ["string", "null"] },
+              "impact": { "type": "string" }
+            }
+          }
+        },
+        "next_step": {
+          "type": "object",
+          "required": ["skill", "reason", "user_decision_needed"],
+          "additionalProperties": true,
+          "properties": {
+            "skill": { "type": ["string", "null"] },
+            "reason": { "type": ["string", "null"] },
+            "user_decision_needed": { "type": ["boolean", "string", "null"] }
+          }
+        },
+        "handoff": {
+          "type": "object",
+          "required": ["from_stage", "to_stage", "accepted_inputs", "ignored_context", "stop_condition"],
+          "additionalProperties": true,
+          "properties": {
+            "from_stage": { "type": ["string", "null"] },
+            "to_stage": { "type": ["string", "null"] },
+            "accepted_inputs": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "ignored_context": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "stop_condition": { "type": ["string", "null"] }
+          }
+        }
+      }
+    }
+  }
+}

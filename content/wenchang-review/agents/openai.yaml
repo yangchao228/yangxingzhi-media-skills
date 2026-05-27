@@ -1,0 +1,7 @@
+interface:
+  display_name: "文昌诊文"
+  short_description: "诊断初稿质量并在需要时整章编辑"
+  default_prompt: "Use $wenchang-review to diagnose this draft before deciding whether to edit, rewrite, or publish."
+
+policy:
+  allow_implicit_invocation: true

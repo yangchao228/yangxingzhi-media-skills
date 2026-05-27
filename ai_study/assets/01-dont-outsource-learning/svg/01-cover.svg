@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440" role="img" aria-label="">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#082422" flood-opacity="0.36"/>
+    </filter>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#fffaf0" stroke-width="1" opacity="0.06"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1440" fill="#082422"/><rect x="0" y="0" width="1080" height="1440" fill="#133b38" opacity="0.78"/>
+  <rect width="1080" height="1440" fill="url(#grid)"/>
+  <path d="M0 1080C212 1004 320 1118 510 1026C742 914 858 802 1080 840V1440H0Z" fill="#f1c94a" opacity="0.16"/>
+  <path d="M0 230C194 154 348 266 544 174C744 80 894 58 1080 114" fill="none" stroke="#f1c94a" stroke-width="8" opacity="0.35"/>
+  <g font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif'>
+    <rect x="58" y="54" width="202" height="48" rx="24" fill="rgba(255,250,240,0.13)"/>
+    <text x="159" y="87" text-anchor="middle" font-size="24" font-weight="800" fill="#fffaf0">AI生命克劳德</text>
+    <rect x="894" y="54" width="128" height="48" rx="24" fill="rgba(255,250,240,0.13)"/>
+    <text x="958" y="87" text-anchor="middle" font-size="24" font-weight="900" fill="#fffaf0">01/08</text>
+  </g>
+  
+      <g>
+  <rect x="74" y="202" width="236" height="54" rx="27" fill="#f1c94a"/>
+  <text x="192" y="237.84" text-anchor="middle" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="26" font-weight="800" fill="#082422">Human3.0 总纲</text>
+</g>
+      <text x="74" y="390" text-anchor="start" font-family='"Songti SC", "Noto Serif CJK SC", "STSong", serif' font-size="92" font-weight="900" fill="#fffaf0">
+  <tspan x="74" dy="0">不要把学习</tspan>
+  <tspan x="74" dy="103.04">外包给 AI</tspan>
+</text>
+      <rect x="78" y="638" width="516" height="10" rx="5" fill="#f1c94a"/>
+      <text x="78" y="724" text-anchor="start" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="42" font-weight="800" fill="rgba(255,250,240,0.9)">
+  <tspan x="78" dy="0">AI 可以给答案</tspan>
+  <tspan x="78" dy="56.7">但不能替你长能力</tspan>
+</text>
+      <g transform="translate(74 980)">
+        <rect width="248" height="86" rx="24" fill="rgba(255,250,240,0.12)"/>
+        <text x="124" y="54" text-anchor="middle" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="28" font-weight="850" fill="#fffaf0">提出假设</text>
+      </g>
+      <g transform="translate(346 980)">
+        <rect width="248" height="86" rx="24" fill="rgba(255,250,240,0.12)"/>
+        <text x="124" y="54" text-anchor="middle" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="28" font-weight="850" fill="#fffaf0">亲手练习</text>
+      </g>
+      <g transform="translate(618 980)">
+        <rect width="248" height="86" rx="24" fill="rgba(255,250,240,0.12)"/>
+        <text x="124" y="54" text-anchor="middle" font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="28" font-weight="850" fill="#fffaf0">复盘迁移</text>
+      </g>
+  <g font-family='"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif' font-size="28" font-weight="800" fill="rgba(255,250,240,0.72)" opacity="0.86">
+  <text x="74" y="1372">更早发现</text>
+  <text x="540" y="1372" text-anchor="middle">更准判断</text>
+  <text x="1006" y="1372" text-anchor="end">更快行动</text>
+</g>
+</svg>

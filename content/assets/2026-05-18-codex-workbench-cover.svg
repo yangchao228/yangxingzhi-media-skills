@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="596" viewBox="0 0 1400 596" role="img" aria-labelledby="title desc">
+  <title id="title">AI 开始接管工作台</title>
+  <desc id="desc">公众号封面，强冲击视觉，表现 Codex 从代码助手变成个人工作台。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="42%" stop-color="#121827"/>
+      <stop offset="100%" stop-color="#061a1a"/>
+    </linearGradient>
+    <radialGradient id="burst" cx="58%" cy="48%" r="68%">
+      <stop offset="0%" stop-color="#16f2b3" stop-opacity="0.36"/>
+      <stop offset="38%" stop-color="#2b7fff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#0b1020" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hot" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#29ffc6"/>
+      <stop offset="44%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#142337"/>
+      <stop offset="100%" stop-color="#07111f"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.92 0 0 0 0 0.72 0 0 0 0.75 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="26" stdDeviation="28" flood-color="#000000" flood-opacity="0.38"/>
+    </filter>
+    <pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#93c5fd" stroke-width="1" opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <rect width="1400" height="596" fill="url(#bg)"/>
+  <rect width="1400" height="596" fill="url(#grid)"/>
+  <rect width="1400" height="596" fill="url(#burst)"/>
+
+  <path d="M-60 430C210 330 400 412 642 304C888 194 1030 84 1490 116" fill="none" stroke="#29ffc6" stroke-width="2" opacity="0.28"/>
+  <path d="M-80 474C238 340 450 456 698 340C968 214 1092 160 1480 222" fill="none" stroke="#60a5fa" stroke-width="2" opacity="0.22"/>
+
+  <g transform="translate(78 82)">
+    <rect x="0" y="0" width="612" height="430" rx="34" fill="#07111f" opacity="0.52"/>
+    <text x="10" y="54" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="34" font-weight="700" fill="#b7f7e7">Codex 给我的一个新判断</text>
+    <text x="6" y="150" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="88" font-weight="900" fill="#ffffff">AI 开始</text>
+    <text x="4" y="258" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="96" font-weight="900" fill="#ffffff">接管工作台</text>
+    <rect x="10" y="294" width="500" height="8" rx="4" fill="url(#hot)" filter="url(#glow)"/>
+    <text x="10" y="362" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="34" font-weight="650" fill="#dbeafe">从聊天框，到个人工作系统</text>
+    <text x="10" y="408" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="24" font-weight="500" fill="#8fb8c7">Human3.0 / 结构杠杆 / 数字生产资料</text>
+  </g>
+
+  <g transform="translate(720 74)" filter="url(#shadow)">
+    <rect x="0" y="0" width="566" height="400" rx="30" fill="url(#panel)" stroke="#2a4964" stroke-width="2"/>
+    <rect x="0" y="0" width="566" height="62" rx="30" fill="#0b1626"/>
+    <circle cx="38" cy="31" r="8" fill="#ff5f57"/>
+    <circle cx="68" cy="31" r="8" fill="#fdbc2e"/>
+    <circle cx="98" cy="31" r="8" fill="#28c840"/>
+    <text x="132" y="40" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="20" fill="#c7d2fe">codex.workbench</text>
+
+    <rect x="34" y="92" width="498" height="74" rx="18" fill="#102a43" stroke="#2dd4bf" stroke-opacity="0.42"/>
+    <text x="58" y="124" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="24" font-weight="700" fill="#ffffff">任务正在运行</text>
+    <rect x="58" y="142" width="304" height="8" rx="4" fill="#29ffc6"/>
+    <rect x="382" y="134" width="116" height="22" rx="11" fill="#facc15"/>
+
+    <g transform="translate(34 196)">
+      <rect x="0" y="0" width="154" height="126" rx="18" fill="#0d1b2a" stroke="#28455f"/>
+      <rect x="24" y="24" width="82" height="12" rx="6" fill="#29ffc6"/>
+      <rect x="24" y="56" width="110" height="8" rx="4" fill="#8fb8c7"/>
+      <rect x="24" y="82" width="88" height="8" rx="4" fill="#496b82"/>
+      <text x="24" y="112" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#93c5fd">memory.diff</text>
+    </g>
+
+    <g transform="translate(206 196)">
+      <rect x="0" y="0" width="154" height="126" rx="18" fill="#0d1b2a" stroke="#28455f"/>
+      <rect x="24" y="24" width="74" height="12" rx="6" fill="#60a5fa"/>
+      <rect x="24" y="56" width="104" height="8" rx="4" fill="#8fb8c7"/>
+      <rect x="24" y="82" width="72" height="8" rx="4" fill="#496b82"/>
+      <text x="24" y="112" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#93c5fd">review</text>
+    </g>
+
+    <g transform="translate(378 196)">
+      <rect x="0" y="0" width="154" height="126" rx="18" fill="#0d1b2a" stroke="#28455f"/>
+      <rect x="24" y="24" width="92" height="12" rx="6" fill="#facc15"/>
+      <rect x="24" y="56" width="108" height="8" rx="4" fill="#8fb8c7"/>
+      <rect x="24" y="82" width="80" height="8" rx="4" fill="#496b82"/>
+      <text x="24" y="112" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#93c5fd">ship</text>
+    </g>
+
+    <rect x="34" y="350" width="150" height="18" rx="9" fill="#29ffc6" opacity="0.9"/>
+    <rect x="206" y="350" width="126" height="18" rx="9" fill="#60a5fa" opacity="0.9"/>
+    <rect x="354" y="350" width="178" height="18" rx="9" fill="#facc15" opacity="0.9"/>
+  </g>
+
+  <g transform="translate(1110 318)" filter="url(#shadow)">
+    <rect x="0" y="0" width="146" height="210" rx="32" fill="#07111f" stroke="#2a4964" stroke-width="2"/>
+    <rect x="16" y="24" width="114" height="154" rx="20" fill="#f8fafc"/>
+    <rect x="36" y="48" width="74" height="10" rx="5" fill="#2563eb"/>
+    <rect x="36" y="82" width="74" height="10" rx="5" fill="#64748b"/>
+    <rect x="36" y="112" width="58" height="10" rx="5" fill="#94a3b8"/>
+    <rect x="39" y="148" width="68" height="20" rx="10" fill="#22c55e"/>
+  </g>
+
+  <circle cx="1232" cy="92" r="54" fill="#29ffc6" opacity="0.14" filter="url(#glow)"/>
+  <circle cx="682" cy="512" r="44" fill="#facc15" opacity="0.12"/>
+</svg>

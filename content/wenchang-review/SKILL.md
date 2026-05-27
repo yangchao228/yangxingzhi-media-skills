@@ -104,6 +104,12 @@ content_state:
     should_review_for_book:
     material_type:
     suggested_bucket:
+  decisions:
+    - stage:
+      question:
+      user_choice:
+      timestamp:
+      impact:
   next_step:
     skill:
     reason:
@@ -154,6 +160,12 @@ content_state:
     recommendation:
     key_issues: []
     minimum_fixes: []
+  decisions:
+    - stage:
+      question:
+      user_choice:
+      timestamp:
+      impact:
   next_step:
     skill:
     reason:

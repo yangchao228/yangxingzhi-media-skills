@@ -62,6 +62,12 @@ content_state:
     should_review_for_book:
     material_type:
     suggested_bucket:
+  decisions:
+    - stage:
+      question:
+      user_choice:
+      timestamp:
+      impact:
   next_step:
     skill:
     reason:
@@ -82,6 +88,8 @@ content_state:
 4. 如果内容涉及 Human3.0，必须填写 `long_term_value` 或说明为什么没有长期沉淀价值。
 5. 多平台分发不要覆盖主平台判断，应写入 `distribution.secondary_platforms`。
 6. 每次跨阶段都要输出 `handoff`，明确下一阶段应该读取什么、忽略什么、何时停止。
+7. 用户已经拍板的关键选择写入 `decisions`，不要只留在聊天历史里。
+8. 机器可读字段合同见 `content/content_state.schema.json`；脚本校验优先保证关键字段和停顿节点不丢。
 
 ## 阶段负责字段
 
@@ -95,6 +103,7 @@ content_state:
 | 诊文 | `diagnosis`、`archive`、`next_step` |
 | 出刊 | `publish_assets`、`distribution`、`archive` |
 | 归档 | `archive` |
+| 人工确认 | `decisions`、`next_step`、`handoff` |
 
 ## 阶段合同
 
@@ -110,6 +119,27 @@ content_state:
 | 诊文/整章 | `topic`、`research`、`draft` | `diagnosis`、必要时更新 `draft`、`next_step` | 为了润色保留无证据断言 |
 | 出刊 | `draft`、`diagnosis`、`publish_assets` | `publish_assets`、`distribution`、`archive`、`next_step` | 自动发布或降低质量门槛 |
 | 归档 | 全量状态和最终稿 | `archive` | 把低价值热点强行入库 |
+| 人工确认 | 用户回复、待确认问题、当前 `content_state` | `decisions`、必要时更新 `next_step` 和 `handoff` | 把用户选择埋在非结构化聊天历史里 |
+
+## 人工决策日志
+
+`decisions` 用于记录用户在关键节点的判断，避免多轮流程里丢失“为什么选了这个标题、为什么不归档、为什么先做封面”。
+
+```yaml
+decisions:
+  - stage: 出刊
+    question: 是否进入 Human3.0 成书审查
+    user_choice: 暂不进入
+    timestamp: 2026-05-25
+    impact: 本轮只保留发布包，不调用 human3-book-guardian
+```
+
+使用规则：
+
+1. 只有用户明确选择、确认、否决或改方向时才新增记录。
+2. 不要把 agent 自己的建议写成 `user_choice`。
+3. `impact` 要说明这个选择改变了后续哪一步。
+4. 如果用户撤回或改判，追加新记录，不覆盖旧记录。
 
 ## 交接包
 

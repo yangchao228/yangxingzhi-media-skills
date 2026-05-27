@@ -23,6 +23,19 @@ require_file() {
   fi
 }
 
+require_contains() {
+  local path="$1"
+  local pattern="$2"
+  local label="$3"
+  if [[ ! -f "$path" ]]; then
+    fail "missing file for content check: $path"
+    return
+  fi
+  if ! grep -q "$pattern" "$path"; then
+    fail "$label missing in $path"
+  fi
+}
+
 log "scan skill directories"
 SKILL_FILES=()
 while IFS= read -r file; do
@@ -108,6 +121,35 @@ PY
     fi
   fi
 
+  if [[ -f "$skill_dir/agents/openai.yaml" ]]; then
+    "$PY" - "$skill_dir/agents/openai.yaml" <<'PY'
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+errors = []
+
+for token in ("interface:", "display_name:", "short_description:", "default_prompt:"):
+    if token not in text:
+        errors.append(f"missing agents/openai.yaml field: {token.rstrip(':')}")
+
+if "default_prompt: \"Use $" not in text:
+    errors.append("default_prompt must mention the skill as $skill-name")
+
+if "allow_implicit_invocation:" not in text:
+    errors.append("missing policy.allow_implicit_invocation")
+
+if errors:
+    for error in errors:
+        print(f"{path}: {error}", file=sys.stderr)
+    sys.exit(1)
+PY
+    if [[ "$?" -ne 0 ]]; then
+      fail "invalid agents/openai.yaml: ${skill_dir#./}/agents/openai.yaml"
+    fi
+  fi
+
   if [[ -f "$skill_dir/run.sh" ]]; then
     if [[ ! -x "$skill_dir/run.sh" ]]; then
       fail "run.sh is not executable: ${skill_dir#./}/run.sh"
@@ -154,6 +196,18 @@ if command -v rg >/dev/null 2>&1; then
     fail "stale path or missing package script reference found"
   fi
 fi
+
+log "check cost guardrails"
+require_contains "CLAUDE.md" "成本敏感执行" "repo cost guardrail"
+require_contains "README.md" "成本敏感工作方式" "readme cost guardrail"
+require_contains "content/wenchang-orchestrator/SKILL.md" "成本敏感执行规则" "orchestrator cost guardrail"
+require_contains "content/wenchang-router/SKILL.md" "成本敏感路由规则" "router cost guardrail"
+require_contains "content/wechat-to-cards/SKILL.md" "成本敏感规则" "wechat cards cost guardrail"
+require_contains "content/redbook-cards/SKILL.md" "成本敏感规则" "redbook cards cost guardrail"
+require_contains "content/long-to-cards/SKILL.md" "成本敏感规则" "long-to-cards cost guardrail"
+require_contains "content/xiaohongshu-viral-image-skill-v4/SKILL.md" "成本敏感规则" "xiaohongshu image cost guardrail"
+require_contains "content/wenchang-orchestrator/SKILL.md" "md-img-r2" "external upload confirmation guardrail"
+require_contains "content/xiaohongshu-viral-image-skill-v4/SKILL.md" "生成真实图片" "real image generation confirmation guardrail"
 
 log "check tracked generated files"
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then

@@ -1,0 +1,7 @@
+interface:
+  display_name: "文昌路由"
+  short_description: "识别阶段与平台并生成下一步 brief"
+  default_prompt: "Use $wenchang-router to route this content request to the right Wenchang stage without writing the full article."
+
+policy:
+  allow_implicit_invocation: true

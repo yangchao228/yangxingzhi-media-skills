@@ -10,6 +10,7 @@
 - `content_state.next_step.skill`
 - `content_state.handoff.accepted_inputs`
 - `content_state.handoff.ignored_context`
+- 如果用户已明确拍板平台、标题或归档方向，必须写入 `content_state.decisions`
 - 至少一个可选后续步骤
 - 如果已定题但缺事实证据，下一步应优先指向 `wenchang-research`
 - 定题/路由阶段应输出 brief：Angle、Hook、Subpoints、What to avoid、Suggested format

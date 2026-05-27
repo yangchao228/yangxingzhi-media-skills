@@ -1,0 +1,7 @@
+interface:
+  display_name: "文昌出刊"
+  short_description: "检查发布资产、分发包和归档建议"
+  default_prompt: "Use $wenchang-publish-check to verify publish readiness and prepare platform-specific release assets."
+
+policy:
+  allow_implicit_invocation: true
