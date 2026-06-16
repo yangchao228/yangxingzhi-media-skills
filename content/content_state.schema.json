@@ -133,7 +133,18 @@
           "additionalProperties": true,
           "properties": {
             "title": { "type": ["string", "null"] },
+            "search_title": { "type": ["string", "null"] },
+            "social_title": { "type": ["string", "null"] },
             "summary": { "type": ["string", "null"] },
+            "search_summary": { "type": ["string", "null"] },
+            "search_keywords": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "body_keyword_notes": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
             "cover_text": { "type": ["string", "null"] },
             "tags": {
               "type": "array",
@@ -145,6 +156,25 @@
             },
             "share_copy": { "type": ["string", "null"] },
             "comment_prompt": { "type": ["string", "null"] },
+            "wechat_search": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "source_reference": { "type": ["string", "null"] },
+                "title": { "type": ["string", "null"] },
+                "summary": { "type": ["string", "null"] },
+                "keywords": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "body_keyword_notes": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "opening_notes": { "type": ["string", "null"] },
+                "originality_recommendation": { "type": ["string", "null"] }
+              }
+            },
             "xiaohongshu": {
               "type": "object",
               "additionalProperties": true,

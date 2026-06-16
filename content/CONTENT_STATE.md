@@ -47,12 +47,25 @@ content_state:
     minimum_fixes: []
   publish_assets:
     title:
+    search_title:
+    social_title:
     summary:
+    search_summary:
+    search_keywords: []
+    body_keyword_notes: []
     cover_text:
     tags: []
     images: []
     share_copy:
     comment_prompt:
+    wechat_search:
+      source_reference:
+      title:
+      summary:
+      keywords: []
+      body_keyword_notes: []
+      opening_notes:
+      originality_recommendation:
   distribution:
     primary_platform:
     secondary_platforms: []
@@ -120,6 +133,19 @@ content_state:
 | 出刊 | `draft`、`diagnosis`、`publish_assets` | `publish_assets`、`distribution`、`archive`、`next_step` | 自动发布或降低质量门槛 |
 | 归档 | 全量状态和最终稿 | `archive` | 把低价值热点强行入库 |
 | 人工确认 | 用户回复、待确认问题、当前 `content_state` | `decisions`、必要时更新 `next_step` 和 `handoff` | 把用户选择埋在非结构化聊天历史里 |
+
+## 公众号搜一搜发布资产
+
+搜一搜优化属于出刊阶段，只影响标题、摘要、首屏、关键词和排版检查，不应反向绑架选题或正文立场。
+
+字段约定：
+
+- `publish_assets.search_title`：面向微信搜一搜的标题，关键词前置，清晰说明主题和收益。
+- `publish_assets.social_title`：面向朋友圈转发的标题，可以更有情绪和系列感，但不能误导。
+- `publish_assets.search_summary`：面向搜索结果理解的摘要，说明文章回答什么问题、包含哪些可用信息。
+- `publish_assets.search_keywords`：主关键词和 2-4 个副关键词。
+- `publish_assets.body_keyword_notes`：正文首屏、小标题、图表说明中需要自然补强的关键词建议。
+- `publish_assets.wechat_search.source_reference`：规则来源，默认可指向 `weixin/如何让公众号文章获取更多搜索流量|微信搜一搜.md`。
 
 ## 人工决策日志
 
