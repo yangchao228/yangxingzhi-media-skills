@@ -23,6 +23,7 @@
 
 - 是否建议进入 Human3.0 成书审查：建议
 - 建议沉淀为：个人数字生产资料 / 认知主权 / AI 工作系统案例
+- 已确认的用户决策：默认归档（用户未撤销）
 
 ## content_state 更新
 
@@ -47,8 +48,14 @@ content_state:
     suggested_bucket: Human3.0/认知主权/个人数字生产资料
   next_step:
     skill: human3-book-guardian-v6
-    reason: 文章服务 Human3.0 主线，适合判断是否入书或进入素材库
-    user_decision_needed: true
+    reason: 文章服务 Human3.0 主线，默认进入素材库 / 成书审查；不等于最终入书或公开上架
+    user_decision_needed: false
+  decisions:
+    - stage: 归档
+      question: 是否进入 Human3.0 成书审查
+      user_choice: 默认归档（用户未撤销）
+      timestamp: 2026-05-25
+      impact: 自动进入素材库 / 成书审查候选，不替用户最终入书
   handoff:
     from_stage: 出刊
     to_stage: 归档
@@ -61,5 +68,5 @@ content_state:
       - 发布前已判定不使用的标题
       - 初稿中已删除的段落
       - 未上传的本地图片占位
-    stop_condition: 只给归档建议，不替用户入库
+    stop_condition: 默认进入素材库 / 成书审查候选，不替用户最终入书
 ```

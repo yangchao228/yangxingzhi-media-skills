@@ -126,7 +126,11 @@ def validate_case(case_dir: pathlib.Path) -> list[str]:
     require(errors, "## 编辑后正文" not in publish and "## 正文" not in publish, f"{case_dir}: publish expected should not edit or regenerate body")
 
     if "should_review_for_book: true" in publish:
-        require(errors, "user_decision_needed: true" in publish, f"{case_dir}: archive recommendation should require user decision")
+        require(
+            errors,
+            "默认归档" in publish or "user_decision_needed: false" in publish,
+            f"{case_dir}: archive recommendation should follow default archive decision contract",
+        )
 
     if case_type == "existing-direction":
         require(errors, "current_stage: 采证" in router, f"{case_dir}: existing-direction should route to research")
@@ -134,6 +138,7 @@ def validate_case(case_dir: pathlib.Path) -> list[str]:
 
     if case_type == "external-article":
         require(errors, "外部文章" in router or "热点素材" in router, f"{case_dir}: external-article should mark source")
+        require(errors, "storm-research" in router, f"{case_dir}: external-article should route through storm-research before fact research")
         require(errors, "逐段翻译" in all_expected, f"{case_dir}: external-article should explicitly ignore translation drift")
         require(errors, "纯 Codex 教程" in all_expected or "纯功能清单" in all_expected, f"{case_dir}: external-article should reject tutorial drift")
         require(errors, "参考来源" in publish or "原文" in publish, f"{case_dir}: external-article publish should mention source handling")
@@ -167,6 +172,7 @@ def validate_orchestrator_case(case_dir: pathlib.Path) -> list[str]:
     require(errors, "配图" in expected or "卡片" in expected, f"{case_dir}: orchestrator expected should include image/card path")
     require(errors, "归档" in expected, f"{case_dir}: orchestrator expected should include archive path")
     require(errors, "定题" in expected, f"{case_dir}: orchestrator expected should include topic selection")
+    require(errors, "storm-research" in expected, f"{case_dir}: orchestrator expected should include storm-research stage")
     require(errors, "路由 -> 采证 -> 起稿 -> 诊文 -> 出刊" not in expected, f"{case_dir}: orchestrator should not use fixed five-step chain")
     require(errors, "## 编辑后正文" not in expected and "## 正文" not in expected, f"{case_dir}: orchestrator expected should not write article body")
     return errors

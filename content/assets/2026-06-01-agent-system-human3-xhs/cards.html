@@ -1,0 +1,602 @@
+<!-- 小红书图文卡片 | 标题：AI Agent 进了虚拟小镇，人更该夺回系统设计权 | 卡片数：8 | 生成时间：2026-06-01 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent 系统设计权 - 小红书图文卡片</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --ink: #111827;
+      --muted: #64748B;
+      --line: rgba(15, 23, 42, 0.12);
+      --blue: #2563EB;
+      --cyan: #14B8A6;
+      --coral: #F9735B;
+      --yellow: #FEF3C7;
+      --paper: #F8FAFC;
+      --deep: #172033;
+      --brand: "AI生命克劳德";
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 32px;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.10), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(20, 184, 166, 0.12), transparent 24%),
+        #EEF2F7;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    }
+    .page-header {
+      max-width: 1180px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+    }
+    .page-header h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+    .page-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .hint {
+      color: #334155;
+      font-size: 13px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 999px;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+    .cards-grid {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 28px;
+      align-items: start;
+    }
+    .card {
+      aspect-ratio: 3 / 4;
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.16);
+      isolation: isolate;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 36px 36px;
+      opacity: 0.48;
+      z-index: -2;
+    }
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      right: -88px;
+      top: -90px;
+      background: radial-gradient(circle, rgba(255,255,255,0.58), transparent 70%);
+      z-index: -1;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(15, 23, 42, 0.78);
+      min-height: 28px;
+    }
+    .brand {
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(12px);
+    }
+    .page-no {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08);
+      font-variant-numeric: tabular-nums;
+    }
+    .content {
+      position: relative;
+      z-index: 2;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      color: #0F766E;
+      font-weight: 800;
+      font-size: 20px;
+    }
+    .title {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(31px, 4.8vw, 48px);
+      line-height: 1.1;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+    .subtitle {
+      margin: 18px 0 0;
+      font-size: clamp(18px, 2.3vw, 24px);
+      line-height: 1.42;
+      color: #334155;
+      font-weight: 650;
+    }
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: rgba(15, 23, 42, 0.62);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .footer .mark {
+      color: var(--ink);
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.58);
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+    .chips, .node-grid, .checklist, .steps, .metric-row {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .chip, .node, .check-item, .step, .metric {
+      border: 1px solid rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.58);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 18px;
+      line-height: 1.28;
+      font-weight: 800;
+      color: #172033;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+    .chip strong, .metric strong { color: var(--blue); }
+    .node-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .node {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+    }
+    .dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.12);
+      flex: 0 0 auto;
+    }
+    .big-number {
+      font-size: 70px;
+      line-height: 0.9;
+      font-weight: 950;
+      color: rgba(37, 99, 235, 0.12);
+      position: absolute;
+      right: 28px;
+      bottom: 82px;
+    }
+    .card-1 {
+      background:
+        linear-gradient(145deg, rgba(37,99,235,0.94), rgba(20,184,166,0.88)),
+        #2563EB;
+      color: white;
+    }
+    .card-1 .title, .card-1 .subtitle, .card-1 .topbar, .card-1 .footer { color: white; }
+    .card-1 .brand, .card-1 .page-no, .card-1 .footer .mark {
+      background: rgba(255,255,255,0.18);
+      border-color: rgba(255,255,255,0.38);
+      color: white;
+    }
+    .card-1::before { --line: rgba(255,255,255,0.13); }
+    .cover-orbit {
+      position: absolute;
+      width: 78%;
+      aspect-ratio: 1;
+      border: 2px solid rgba(255,255,255,0.22);
+      border-radius: 42% 58% 48% 52%;
+      left: 12%;
+      top: 20%;
+      transform: rotate(-14deg);
+    }
+    .cover-orbit::before, .cover-orbit::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #FEF3C7;
+      box-shadow: 0 0 34px rgba(254,243,199,0.8);
+    }
+    .cover-orbit::before { top: 18%; left: 6%; }
+    .cover-orbit::after { right: 8%; bottom: 20%; background: #F9735B; }
+    .card-2 { background: linear-gradient(160deg, #F8FAFC, #DBEAFE); }
+    .card-3 { background: linear-gradient(160deg, #FFF7ED, #E0F2FE); }
+    .card-4 {
+      background: linear-gradient(160deg, #111827, #26344E);
+      color: white;
+    }
+    .card-4 .title, .card-4 .subtitle, .card-4 .topbar, .card-4 .footer { color: white; }
+    .card-4 .brand, .card-4 .page-no, .card-4 .footer .mark,
+    .card-4 .metric {
+      color: white;
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.18);
+    }
+    .card-4::before { --line: rgba(255,255,255,0.10); }
+    .card-5 { background: linear-gradient(145deg, #ECFEFF, #F8FAFC 55%, #FEF3C7); }
+    .card-6 { background: linear-gradient(150deg, #EEF2FF, #D1FAE5); }
+    .card-7 { background: linear-gradient(150deg, #FFFBEB, #FCE7F3); }
+    .card-8 {
+      background: linear-gradient(145deg, #F9735B, #2563EB);
+      color: white;
+    }
+    .card-8 .title, .card-8 .subtitle, .card-8 .topbar, .card-8 .footer { color: white; }
+    .card-8 .brand, .card-8 .page-no, .card-8 .footer .mark,
+    .card-8 .chip {
+      color: white;
+      background: rgba(255,255,255,0.16);
+      border-color: rgba(255,255,255,0.28);
+    }
+    .card-8::before { --line: rgba(255,255,255,0.12); }
+    .mini-map {
+      position: relative;
+      height: 148px;
+      margin-top: 18px;
+      border: 2px solid rgba(15,23,42,0.08);
+      border-radius: 26px;
+      background:
+        linear-gradient(135deg, rgba(37,99,235,0.12), rgba(20,184,166,0.08)),
+        rgba(255,255,255,0.45);
+      overflow: hidden;
+    }
+    .mini-map span {
+      position: absolute;
+      display: block;
+      width: 76px;
+      height: 46px;
+      border-radius: 12px;
+      background: white;
+      border: 2px solid rgba(37,99,235,0.18);
+      box-shadow: 0 10px 24px rgba(37,99,235,0.12);
+    }
+    .mini-map .a { left: 26px; top: 28px; }
+    .mini-map .b { right: 42px; top: 44px; background: #FEF3C7; }
+    .mini-map .c { left: 44%; bottom: 28px; background: #D1FAE5; }
+    .mini-map svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .metric {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 12px;
+      font-size: 17px;
+    }
+    .metric .symbol {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(249, 115, 91, 0.16);
+      color: #F9735B;
+      font-weight: 950;
+    }
+    .system-core {
+      margin: 28px auto 16px;
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: white;
+      font-size: 23px;
+      line-height: 1.15;
+      font-weight: 950;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      box-shadow: 0 18px 48px rgba(37,99,235,0.28);
+    }
+    .steps {
+      counter-reset: step;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--blue);
+      font-size: 17px;
+      flex: 0 0 auto;
+    }
+    .checklist {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .check-item {
+      font-size: 17px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .check-item::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 2px solid rgba(37,99,235,0.55);
+      background: linear-gradient(135deg, #DBEAFE, #F8FAFC);
+      flex: 0 0 auto;
+    }
+    .contract {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.18);
+      box-shadow: 0 18px 44px rgba(15,23,42,0.20);
+    }
+    .contract-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.22);
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .contract-row:last-child { border-bottom: 0; }
+    @media (max-width: 680px) {
+      body { padding: 18px; }
+      .page-header { display: block; }
+      .hint { display: inline-block; margin-top: 12px; white-space: normal; }
+      .card { padding: 24px; }
+      .checklist, .node-grid { grid-template-columns: 1fr; }
+    }
+    body.export {
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+    body.export .page-header { display: none; }
+    body.export .cards-grid {
+      display: block;
+      max-width: none;
+      margin: 0;
+    }
+    body.export .card {
+      display: none;
+      width: 1080px;
+      height: 1440px;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 86px;
+    }
+    body.export .card.active-export { display: flex; }
+    body.export .title { font-size: 96px; }
+    body.export .subtitle { font-size: 46px; }
+    body.export .kicker { font-size: 32px; }
+    body.export .topbar, body.export .footer { font-size: 30px; }
+    body.export .chip, body.export .node, body.export .check-item, body.export .step, body.export .metric {
+      font-size: 40px;
+      border-radius: 34px;
+      padding: 26px 30px;
+    }
+    body.export .metric .symbol {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+    }
+    body.export .system-core {
+      width: 320px;
+      height: 320px;
+      font-size: 52px;
+    }
+    body.export .mini-map { height: 330px; border-radius: 40px; }
+    body.export .checklist { gap: 18px; }
+    body.export .contract { border-radius: 36px; padding: 36px; }
+    body.export .contract-row { font-size: 40px; padding: 24px 0; }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div>
+      <h1>AI Agent 系统设计权</h1>
+      <p>共 8 张 · 小红书图文卡片 · 3:4 竖版</p>
+    </div>
+    <div class="hint">导出模式：在 URL 后加 ?card=1 到 ?card=8</div>
+  </header>
+
+  <main class="cards-grid">
+    <section class="card card-1" data-card="1">
+      <div class="cover-orbit"></div>
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">01/08</span></div>
+      <div class="content">
+        <div class="kicker">Agent 时代</div>
+        <h2 class="title">人要夺回<br>系统设计权</h2>
+        <p class="subtitle">AI 从回答者变成行动者以后，真正稀缺的能力，是知道边界该放在哪里。</p>
+      </div>
+      <div class="footer"><span>更早发现 / 更准判断 / 更快行动</span><span class="mark">Human3.0</span></div>
+    </section>
+
+    <section class="card card-2" data-card="2">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">02/08</span></div>
+      <div class="content">
+        <div class="kicker">变化</div>
+        <h2 class="title">AI 已经<br>不只会回答</h2>
+        <div class="chips">
+          <div class="chip"><strong>接工具</strong>：连接邮箱、日历、代码库</div>
+          <div class="chip"><strong>跑流程</strong>：从建议进入执行链路</div>
+          <div class="chip"><strong>做判断</strong>：给出下一步行动建议</div>
+        </div>
+        <p class="subtitle">风险也从“答错了”，升级成“行动跑偏了”。</p>
+      </div>
+      <div class="footer"><span>先看行动边界</span><span class="mark">Agent</span></div>
+    </section>
+
+    <section class="card card-3" data-card="3">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">03/08</span></div>
+      <div class="content">
+        <div class="kicker">事件</div>
+        <h2 class="title">虚拟小镇<br>给了一个警报</h2>
+        <div class="mini-map">
+          <svg viewBox="0 0 420 190" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M62 52 C140 22, 220 110, 354 64" fill="none" stroke="rgba(37,99,235,0.35)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M84 148 C164 92, 242 176, 336 122" fill="none" stroke="rgba(20,184,166,0.35)" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <span class="a"></span><span class="b"></span><span class="c"></span>
+        </div>
+        <div class="metric-row">
+          <div class="metric"><span class="symbol">40+</span><span>地点</span></div>
+          <div class="metric"><span class="symbol">120+</span><span>工具</span></div>
+          <div class="metric"><span class="symbol">3</span><span>套记忆</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>长期自治压力测试</span><span class="mark">World</span></div>
+    </section>
+
+    <section class="card card-4" data-card="4">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">04/08</span></div>
+      <div class="content">
+        <div class="kicker" style="color:#FDE68A;">误读</div>
+        <h2 class="title">别急着<br>给模型贴标签</h2>
+        <div class="metric-row">
+          <div class="metric"><span class="symbol">!</span><span>犯罪少 ≠ 系统健康</span></div>
+          <div class="metric"><span class="symbol">!</span><span>产出多 ≠ 边界稳定</span></div>
+          <div class="metric"><span class="symbol">!</span><span>高度一致 ≠ 判断独立</span></div>
+        </div>
+        <p class="subtitle">单个指标很容易制造误判。</p>
+      </div>
+      <div class="footer"><span>看系统，不看热闹</span><span class="mark">Evidence</span></div>
+    </section>
+
+    <section class="card card-5" data-card="5">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">05/08</span></div>
+      <div class="content">
+        <div class="kicker">核心判断</div>
+        <h2 class="title">系统会塑造<br>Agent 行为</h2>
+        <div class="system-core">长期<br>行为</div>
+        <div class="node-grid">
+          <div class="node"><span class="dot"></span><span>目标</span></div>
+          <div class="node"><span class="dot"></span><span>工具</span></div>
+          <div class="node"><span class="dot"></span><span>激励</span></div>
+          <div class="node"><span class="dot"></span><span>记忆</span></div>
+          <div class="node"><span class="dot"></span><span>同伴</span></div>
+          <div class="node"><span class="dot"></span><span>边界</span></div>
+        </div>
+      </div>
+      <div class="footer"><span>给 AI 什么系统，它就长出什么行为</span><span class="mark">System</span></div>
+    </section>
+
+    <section class="card card-6" data-card="6">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">06/08</span></div>
+      <div class="content">
+        <div class="kicker">Human3.0</div>
+        <h2 class="title">人要上移<br>一层</h2>
+        <div class="steps">
+          <div class="step">定义目标</div>
+          <div class="step">设置边界</div>
+          <div class="step">检查质量</div>
+          <div class="step">承担责任</div>
+          <div class="step">沉淀资产</div>
+        </div>
+      </div>
+      <div class="footer"><span>从工具使用者到系统设计者</span><span class="mark">Human3.0</span></div>
+    </section>
+
+    <section class="card card-7" data-card="7">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">07/08</span></div>
+      <div class="content">
+        <div class="kicker">收藏清单</div>
+        <h2 class="title">用 Agent 前<br>先守住 7 个边界</h2>
+        <div class="checklist">
+          <div class="check-item">目标</div>
+          <div class="check-item">工具</div>
+          <div class="check-item">证据</div>
+          <div class="check-item">阶段</div>
+          <div class="check-item">责任</div>
+          <div class="check-item">记忆</div>
+          <div class="check-item">资产</div>
+        </div>
+        <p class="subtitle">少一个边界，自动化就多一分失控成本。</p>
+      </div>
+      <div class="footer"><span>搭系统前先过一遍</span><span class="mark">Checklist</span></div>
+    </section>
+
+    <section class="card card-8" data-card="8">
+      <div class="topbar"><span class="brand">AI生命克劳德</span><span class="page-no">08/08</span></div>
+      <div class="content">
+        <div class="kicker" style="color:#FEF3C7;">行动</div>
+        <h2 class="title">先写一份<br>Agent 行动合同</h2>
+        <div class="contract">
+          <div class="contract-row"><span>目标</span><span>写清楚</span></div>
+          <div class="contract-row"><span>权限</span><span>分等级</span></div>
+          <div class="contract-row"><span>暂停点</span><span>提前设</span></div>
+          <div class="contract-row"><span>验收</span><span>可检查</span></div>
+          <div class="contract-row"><span>资产</span><span>要留下</span></div>
+        </div>
+        <p class="subtitle">别急着全自动。先让系统变得可控。</p>
+      </div>
+      <div class="footer"><span>收藏后，下次搭工作流前先看</span><span class="mark">Save</span></div>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const card = params.get("card");
+    if (card) {
+      document.body.classList.add("export");
+      const target = document.querySelector(`[data-card="${card}"]`);
+      if (target) target.classList.add("active-export");
+    }
+  </script>
+</body>
+</html>

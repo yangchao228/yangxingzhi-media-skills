@@ -5,8 +5,8 @@ case_type: external-article
 ## 路由判断
 
 - 平台：公众号
-- 阶段：外部热点/文章素材，需要定题与采证
-- 推荐链路：`wenchang-router -> wenchang-research -> wechat-writing-skill-ai-human3 -> wenchang-review -> wenchang-publish-check`
+- 阶段：外部热点/文章素材，需要定题、storm 研究前置与采证
+- 推荐链路：`wenchang-router -> storm-research -> wenchang-research -> wechat-writing-skill-ai-human3 -> wenchang-review -> wenchang-publish-check`
 - 为什么：原文是个人使用经验，不适合直接搬运。它的价值在于揭示 Codex 从代码工具变成个人工作台的结构变化。
 
 ## brief
@@ -22,6 +22,7 @@ case_type: external-article
   - 不要写成纯 Codex 教程。
   - 不要写成 AI 全自动接管工作。
 - Suggested format：公众号判断文，1800-2500 字，后续可拆知乎判断文和小红书卡片。
+- Storm trigger：建议进入 `storm-research`。原文既可以写成工具教程，也可以写成个人工作系统变化，需要先拆多视角问题地图，避免直接搬运功能清单。
 
 ## content_state
 
@@ -29,7 +30,7 @@ case_type: external-article
 content_state:
   request:
     raw_intent: 把 Codex-maxxing 当成外部热点素材，诊断选题并跑完整链路
-    current_stage: 采证
+    current_stage: storm-research
     target_platforms: [公众号]
   topic:
     source: 外部文章/热点素材
@@ -40,12 +41,12 @@ content_state:
     primary_platform: 公众号
     secondary_platforms: [知乎, 小红书]
   next_step:
-    skill: wenchang-research
-    reason: 需要从原文中提炼事实点、结构变化和限制条件
+    skill: storm-research
+    reason: 外部热点素材存在多个叙事角度，先拆多视角扫描、矛盾地图和采证计划
     user_decision_needed: false
   handoff:
     from_stage: 路由
-    to_stage: 采证
+    to_stage: storm-research
     accepted_inputs:
       - 原始文章 URL
       - content_state.topic
@@ -55,9 +56,9 @@ content_state:
       - 逐段翻译原文
       - 把 Codex 写成纯功能清单
       - 程序员失业式标题
-    stop_condition: 形成可支撑公众号判断文的研究包
+    stop_condition: 形成可交给 wenchang-research 的问题地图和采证计划
 ```
 
 ## 下一步执行
 
-调用 `wenchang-research`，只提炼事实、限制和可写角度，不搬运原文结构。
+调用 `storm-research`，先输出多视角扫描、矛盾地图和后续采证计划，不搬运原文结构、不写正文。

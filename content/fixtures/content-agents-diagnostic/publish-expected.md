@@ -25,6 +25,7 @@ case_type: draft-diagnostic
 
 - 是否建议进入 Human3.0 成书审查：建议
 - 建议沉淀为：个人内容系统 / 数字生产资料 / 人机边界案例
+- 已确认的用户决策：默认归档（用户未撤销）
 
 ## content_state 更新
 
@@ -49,8 +50,14 @@ content_state:
     suggested_bucket: Human3.0/数字生产资料/内容系统
   next_step:
     skill: human3-book-guardian-v6
-    reason: 适合进入 Human3.0 内容生产系统素材库
-    user_decision_needed: true
+    reason: 适合进入 Human3.0 内容生产系统素材库，默认进入素材库 / 成书审查候选
+    user_decision_needed: false
+  decisions:
+    - stage: 归档
+      question: 是否进入 Human3.0 成书审查
+      user_choice: 默认归档（用户未撤销）
+      timestamp: 2026-05-25
+      impact: 自动进入素材库 / 成书审查候选，不替用户最终入书
   handoff:
     from_stage: 出刊
     to_stage: 归档
@@ -62,5 +69,5 @@ content_state:
       - 原稿替代团队叙事
       - 未采用 prompt 原文
       - 未生成的封面图
-    stop_condition: 给出归档建议，不替用户入库
+    stop_condition: 默认进入素材库 / 成书审查候选，不替用户最终入书
 ```

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#F7F3EC"/>
+  <rect x="64" y="64" width="1472" height="772" rx="28" fill="#FFFFFF" stroke="#E8DFC9" stroke-width="3"/>
+  <text x="120" y="150" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="54" font-weight="700" fill="#1A1A1A">Agent 想变强，先看 5 个条件</text>
+  <text x="120" y="204" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" fill="#667085">缺一项，系统就容易漂移</text>
+
+  <circle cx="800" cy="455" r="118" fill="#1A1A1A"/>
+  <text x="800" y="438" text-anchor="middle" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF">Agent</text>
+  <text x="800" y="486" text-anchor="middle" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#E8DFC9">自我改进系统</text>
+
+  <g font-family="PingFang SC, Noto Sans SC, Arial, sans-serif">
+    <line x1="800" y1="337" x2="800" y2="250" stroke="#D4A84B" stroke-width="5"/>
+    <line x1="913" y1="420" x2="1128" y2="330" stroke="#D4A84B" stroke-width="5"/>
+    <line x1="885" y1="550" x2="1096" y2="658" stroke="#D4A84B" stroke-width="5"/>
+    <line x1="715" y1="550" x2="504" y2="658" stroke="#D4A84B" stroke-width="5"/>
+    <line x1="687" y1="420" x2="472" y2="330" stroke="#D4A84B" stroke-width="5"/>
+
+    <g transform="translate(630 172)">
+      <rect width="340" height="120" rx="18" fill="#FFF4D8" stroke="#D4A84B" stroke-width="3"/>
+      <text x="170" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#1A1A1A">可验证任务</text>
+      <text x="170" y="86" text-anchor="middle" font-size="22" fill="#4D3D14">知道结果对不对</text>
+    </g>
+
+    <g transform="translate(1110 272)">
+      <rect width="340" height="120" rx="18" fill="#EAF4F1" stroke="#80B9AD" stroke-width="3"/>
+      <text x="170" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#1A1A1A">结构化反馈</text>
+      <text x="170" y="86" text-anchor="middle" font-size="22" fill="#3B4A54">知道错在哪里</text>
+    </g>
+
+    <g transform="translate(1042 640)">
+      <rect width="340" height="120" rx="18" fill="#EEF2FF" stroke="#7886D7" stroke-width="3"/>
+      <text x="170" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#1A1A1A">持久化记忆</text>
+      <text x="170" y="86" text-anchor="middle" font-size="22" fill="#30345E">下次能读取规则</text>
+    </g>
+
+    <g transform="translate(218 640)">
+      <rect width="340" height="120" rx="18" fill="#FDEFEF" stroke="#E58B8B" stroke-width="3"/>
+      <text x="170" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#1A1A1A">外环复盘</text>
+      <text x="170" y="86" text-anchor="middle" font-size="22" fill="#5C2B2B">定期提炼经验</text>
+    </g>
+
+    <g transform="translate(150 272)">
+      <rect width="340" height="120" rx="18" fill="#F3F4F6" stroke="#98A2B3" stroke-width="3"/>
+      <text x="170" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#1A1A1A">人工审核</text>
+      <text x="170" y="86" text-anchor="middle" font-size="22" fill="#475467">防止规则写歪</text>
+    </g>
+  </g>
+
+  <text x="120" y="790" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#667085">更早发现 / 更准判断 / 更快行动</text>
+  <text x="1260" y="790" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" font-weight="700" fill="#1A1A1A">AI生命克劳德</text>
+</svg>

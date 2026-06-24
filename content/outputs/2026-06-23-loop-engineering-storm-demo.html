@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loop Engineering 是否真的提效｜storm-research Demo</title>
+  <style>
+    :root {
+      --bg: #f6f7f4;
+      --paper: #ffffff;
+      --ink: #1d2428;
+      --muted: #66727a;
+      --line: #d9ded8;
+      --teal: #0f766e;
+      --blue: #315f9f;
+      --amber: #a16207;
+      --red: #b42318;
+      --green: #2f6f44;
+      --slate: #38434c;
+      --soft-teal: #e3f2ef;
+      --soft-blue: #e7edf8;
+      --soft-amber: #f7ecd0;
+      --soft-red: #f8e4df;
+      --soft-green: #e3efe6;
+      --shadow: 0 18px 42px rgba(30, 41, 59, 0.08);
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; }
+
+    .page-shell {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 22px 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 24px;
+      align-items: stretch;
+      padding: 34px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4vw, 52px);
+      max-width: 820px;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    p { margin: 0; }
+
+    .hero-summary {
+      margin-top: 18px;
+      font-size: 18px;
+      color: #34434a;
+      max-width: 820px;
+    }
+
+    .hero-meta {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .metric-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: #fbfcfa;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fbfcfa;
+      color: #3c4a50;
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: 18px 0 22px;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      background: rgba(246, 247, 244, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav a {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #3b474e;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .nav a:hover {
+      background: var(--paper);
+      color: var(--teal);
+    }
+
+    section {
+      margin-top: 22px;
+      padding: 26px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 26px rgba(30, 41, 59, 0.05);
+    }
+
+    .section-kicker {
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      color: #43515a;
+      font-size: 16px;
+      max-width: 880px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cards {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px;
+      background: #fbfcfa;
+      min-width: 0;
+    }
+
+    .card h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 17px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+      background: var(--teal);
+    }
+
+    .dot.blue { background: var(--blue); }
+    .dot.amber { background: var(--amber); }
+    .dot.red { background: var(--red); }
+    .dot.green { background: var(--green); }
+
+    .mini-label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .card p,
+    .card li {
+      color: #3f4c53;
+      font-size: 14px;
+    }
+
+    ul, ol {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    li + li { margin-top: 6px; }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: #fff;
+    }
+
+    th, td {
+      padding: 12px 13px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eef2ef;
+      color: #263237;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .signal-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .signal {
+      border-radius: var(--radius);
+      padding: 14px;
+      border: 1px solid var(--line);
+    }
+
+    .signal strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .signal p {
+      color: #46545c;
+      font-size: 14px;
+    }
+
+    .soft-teal { background: var(--soft-teal); }
+    .soft-blue { background: var(--soft-blue); }
+    .soft-amber { background: var(--soft-amber); }
+    .soft-red { background: var(--soft-red); }
+    .soft-green { background: var(--soft-green); }
+
+    .finding-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .finding {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 92px;
+      gap: 14px;
+      align-items: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfa;
+    }
+
+    .rank {
+      display: inline-grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .score-pill {
+      justify-self: end;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--soft-green);
+      color: var(--green);
+      font-weight: 800;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .risk-board {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .score-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .score-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 60px;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfa;
+    }
+
+    .bar {
+      margin-top: 6px;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #e5e8e4;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--teal);
+    }
+
+    .score-number {
+      font-weight: 900;
+      color: var(--teal);
+      text-align: right;
+    }
+
+    .callout {
+      margin-top: 16px;
+      padding: 16px;
+      border-left: 4px solid var(--teal);
+      background: #f2f7f5;
+      border-radius: var(--radius);
+    }
+
+    .callout.warning {
+      border-left-color: var(--amber);
+      background: #fbf3df;
+    }
+
+    .callout.danger {
+      border-left-color: var(--red);
+      background: #fae9e5;
+    }
+
+    .plan-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .plan-item {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr);
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fbfcfa;
+    }
+
+    .priority {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 30px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #fff;
+      background: var(--slate);
+    }
+
+    .priority.p0 { background: var(--red); }
+    .priority.p1 { background: var(--amber); }
+    .priority.p2 { background: var(--blue); }
+
+    pre {
+      margin: 16px 0 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid #c9d0cf;
+      background: #182126;
+      color: #e7f0ec;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .source-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .next-step {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .decision {
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #f8fbf9;
+    }
+
+    .decision strong {
+      display: block;
+      font-size: 20px;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid.two,
+      .grid.three,
+      .risk-board,
+      .next-step {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .signal-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-shell {
+        padding: 16px 12px 42px;
+      }
+
+      .hero,
+      section {
+        padding: 18px;
+      }
+
+      .cards,
+      .signal-row {
+        grid-template-columns: 1fr;
+      }
+
+      .finding {
+        grid-template-columns: 34px minmax(0, 1fr);
+      }
+
+      .score-pill {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .plan-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero" id="top">
+      <div>
+        <div class="eyebrow">storm-research demo</div>
+        <h1>Loop Engineering 是否真的提效？</h1>
+        <p class="hero-summary">结论：Loop Engineering 确实有提效潜力，但只在低风险、可验证、可回滚、有人类确认边界的场景里成立。缺少评估器和停止规则时，效率会被转成 token、误修和排障成本。</p>
+        <div class="badge-row">
+          <span class="badge">主题：Loop Engineering</span>
+          <span class="badge">流程：多视角扫描 → 矛盾地图 → 可信度评审</span>
+          <span class="badge">输出：研究前置，不写正文</span>
+        </div>
+      </div>
+      <aside class="hero-meta" aria-label="demo metadata">
+        <div class="metric-card">
+          <div class="metric-label">使用 skill</div>
+          <div class="metric-value">storm-research</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">默认视角</div>
+          <div class="metric-value">5 个</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">建议下一步</div>
+          <div class="metric-value">进入 wenchang-research 深采证</div>
+        </div>
+      </aside>
+    </header>
+
+    <nav class="nav" aria-label="页面目录">
+      <a href="#demo">Demo 说明</a>
+      <a href="#perspectives">多视角扫描</a>
+      <a href="#contradictions">矛盾地图</a>
+      <a href="#brief">研究简报</a>
+      <a href="#confidence">可信度评审</a>
+      <a href="#evidence">后续采证计划</a>
+      <a href="#state">content_state</a>
+      <a href="#next">下一步建议</a>
+    </nav>
+
+    <section id="demo">
+      <div class="section-kicker">Demo 说明</div>
+      <h2>这次如何使用 storm-research</h2>
+      <p class="lead">本 demo 把「Loop Engineering 是否真的提效？」作为研究对象，按 `storm-research` 协议先拆视角，再找冲突，最后输出研究简报、可信度评审和可交给 `wenchang-research` 的采证清单。这里展示的是研究结构，不是公众号正文。</p>
+      <div class="signal-row">
+        <div class="signal soft-teal">
+          <strong>输入</strong>
+          <p>本地 Loop Engineering 手册素材、CI 自动修复篇、三角色架构篇、STORM 方法稿。</p>
+        </div>
+        <div class="signal soft-blue">
+          <strong>协议</strong>
+          <p>多视角扫描、矛盾地图、研究简报、可信度评审、后续采证计划。</p>
+        </div>
+        <div class="signal soft-amber">
+          <strong>约束</strong>
+          <p>不把角色模拟当事实，不输出公开结论，不替代事实核查。</p>
+        </div>
+        <div class="signal soft-green">
+          <strong>交接</strong>
+          <p>给出 content_state 和 handoff，便于进入 `wenchang-research`。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="perspectives">
+      <div class="section-kicker">多视角扫描</div>
+      <h2>五个视角拆开看提效问题</h2>
+      <p class="lead">同一个问题放到不同位置，会得到不同的判断。`storm-research` 的第一步是把“提效”拆成可验证、可质疑、可计成本的多个问题。</p>
+      <div class="cards">
+        <article class="card">
+          <h3><span class="dot"></span>实践者</h3>
+          <span class="mini-label">核心关切</span>
+          <p>是否少盯 CI、少重复排障、少手动汇总状态。</p>
+          <span class="mini-label">支持判断</span>
+          <p>CI 失败、部署状态、open issues 巡检这类任务适合 loop。</p>
+          <span class="mini-label">待查问题</span>
+          <p>两周内节省多少人工时间，误报和人工接管次数是多少。</p>
+        </article>
+        <article class="card">
+          <h3><span class="dot blue"></span>学者</h3>
+          <span class="mini-label">核心关切</span>
+          <p>提效是否可测，质量和失败率是否一起纳入。</p>
+          <span class="mini-label">支持判断</span>
+          <p>可用 lead time、intervention rate、rollback rate、token spend 评估。</p>
+          <span class="mini-label">待查问题</span>
+          <p>是否有论文或生产案例量化 agentic workflow 的收益。</p>
+        </article>
+        <article class="card">
+          <h3><span class="dot red"></span>怀疑者</h3>
+          <span class="mini-label">核心关切</span>
+          <p>自动化是否掩盖了后续人工验收、权限和回滚负担。</p>
+          <span class="mini-label">支持判断</span>
+          <p>低风险检查可以自动化，高代价动作要人负责。</p>
+          <span class="mini-label">待查问题</span>
+          <p>误修率、重复失败、上下文漂移和生产事故如何被控制。</p>
+        </article>
+        <article class="card">
+          <h3><span class="dot amber"></span>经济观察者</h3>
+          <span class="mini-label">核心关切</span>
+          <p>省下的人时是否高于 token、订阅、维护和风险成本。</p>
+          <span class="mini-label">支持判断</span>
+          <p>高频、低风险、可验证任务能摊薄配置成本。</p>
+          <span class="mini-label">待查问题</span>
+          <p>一次 Maker + Checker loop 的平均成本和失败成本是多少。</p>
+        </article>
+        <article class="card">
+          <h3><span class="dot green"></span>历史观察者</h3>
+          <span class="mini-label">核心关切</span>
+          <p>它和 cron、CI/CD、RPA、DevOps 的连续性。</p>
+          <span class="mini-label">支持判断</span>
+          <p>AI 加入计划、生成、评估和沉淀，可靠性仍依赖日志和回滚。</p>
+          <span class="mini-label">待查问题</span>
+          <p>哪些 DevOps 治理经验可以直接迁移到 Agent loop。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="contradictions">
+      <div class="section-kicker">矛盾地图</div>
+      <h2>真正有价值的判断在冲突处</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>冲突</th>
+              <th>支持侧</th>
+              <th>挑战侧</th>
+              <th>当前判断</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>自动执行 vs 人工判断</td>
+              <td>CI 巡检、失败分类、状态汇总可以自动化。</td>
+              <td>生产配置、权限、数据删除、merge 必须人工确认。</td>
+              <td>自动化低风险动作，高代价动作设置人工节点。</td>
+            </tr>
+            <tr>
+              <td>提效 vs 成本转移</td>
+              <td>少盯盘、少复制日志、少重复跑命令。</td>
+              <td>token、误修、排障、审批和维护成本会吞掉收益。</td>
+              <td>用总成本判断效率，不能只看 Agent 跑了几步。</td>
+            </tr>
+            <tr>
+              <td>连续运行 vs 错误放大</td>
+              <td>Automations 和定时巡检让 loop 有心跳。</td>
+              <td>长期运行会暴露上下文漂移、重复失败和结构退化。</td>
+              <td>要配最大轮数、单次时长、diff 范围、失败上限和日志。</td>
+            </tr>
+            <tr>
+              <td>通用 Agent vs 窄场景模板</td>
+              <td>通用 Agent 可处理多样任务。</td>
+              <td>第一个 loop 应从明确、可测试、有边界的小任务开始。</td>
+              <td>先做窄场景，稳定后再组合模式。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid three" style="margin-top:16px;">
+        <div class="card soft-green">
+          <h3>共识底座</h3>
+          <ul>
+            <li>重复、可验证、可回滚、低风险任务最适合进入 loop。</li>
+            <li>CI 自动检查与修复是合适的第一个 demo。</li>
+            <li>生成和验证需要分离。</li>
+          </ul>
+        </div>
+        <div class="card soft-amber">
+          <h3>证据最弱</h3>
+          <p>“具体提效幅度”仍弱。当前素材能支持提效潜力和成立条件，不能支持团队级 ROI 百分比。</p>
+        </div>
+        <div class="card soft-red">
+          <h3>关键盲点</h3>
+          <p>普通团队维护成本、长期代码质量影响、多模型分工 ROI、定时巡检噪音率和责任归属。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="brief">
+      <div class="section-kicker">研究简报</div>
+      <h2>核心发现与行动建议</h2>
+      <p class="lead">研究简报把前面的视角和矛盾压缩成可行动的判断。这里区分事实、推断和观点，避免把未经采证的内容写成发布结论。</p>
+      <div class="finding-list">
+        <div class="finding">
+          <span class="rank">1</span>
+          <div>
+            <strong>Loop Engineering 最适合从 CI 自动检查与小范围修复开始。</strong>
+            <div class="tagline">类型：推断｜支持视角：实践者、历史观察者｜挑战视角：怀疑者</div>
+          </div>
+          <span class="score-pill">8/10</span>
+        </div>
+        <div class="finding">
+          <span class="rank">2</span>
+          <div>
+            <strong>提效成立的前提是目标可验证、范围可控、有停止规则和人工确认。</strong>
+            <div class="tagline">类型：推断｜支持视角：学者、怀疑者、历史观察者</div>
+          </div>
+          <span class="score-pill">8/10</span>
+        </div>
+        <div class="finding">
+          <span class="rank">3</span>
+          <div>
+            <strong>Planner / Generator / Evaluator 或 Maker / Checker 分工能降低自我评估偏误。</strong>
+            <div class="tagline">类型：推断｜方法论依据较强，实际效果需任务数据验证</div>
+          </div>
+          <span class="score-pill">7/10</span>
+        </div>
+        <div class="finding">
+          <span class="rank">4</span>
+          <div>
+            <strong>token 成本、误修成本、排障成本会影响真实 ROI。</strong>
+            <div class="tagline">类型：推断｜逻辑强，量化数据不足</div>
+          </div>
+          <span class="score-pill">7/10</span>
+        </div>
+        <div class="finding">
+          <span class="rank">5</span>
+          <div>
+            <strong>长期价值来自 reusable workflow / skill 沉淀。</strong>
+            <div class="tagline">类型：观点 + 推断｜需要真实案例支撑</div>
+          </div>
+          <span class="score-pill">6/10</span>
+        </div>
+      </div>
+      <div class="grid two" style="margin-top:16px;">
+        <div class="callout">
+          <h3>隐藏连接</h3>
+          <p>`storm-research` 和 Loop Engineering 都把 AI 输出组织成人可审计的工作流：前者用于研究，后者用于执行。共同价值是让人的判断权回到关键节点。</p>
+        </div>
+        <div class="callout warning">
+          <h3>行动建议</h3>
+          <p>先做两周只读 CI 侦察 loop，记录命中率、误报率、token 成本和人工接管次数，再决定是否进入自动修复。</p>
+        </div>
+      </div>
+      <div class="callout">
+        <h3>前沿问题</h3>
+        <p>当 Agent 系统具备长期记忆、可配置 skill、多模型评估和自动化调度后，团队如何定义“人仍然必须决策的节点”？这个问题会影响效率上限、安全边界和责任归属。</p>
+      </div>
+    </section>
+
+    <section id="confidence">
+      <div class="section-kicker">可信度评审</div>
+      <h2>哪些判断能用，哪些必须降级</h2>
+      <div class="risk-board">
+        <div>
+          <h3>关键发现评分</h3>
+          <div class="score-grid">
+            <div class="score-item">
+              <div>CI 自动检查与小范围修复是优先 demo 场景<div class="bar"><span style="width:80%"></span></div></div>
+              <div class="score-number">8/10</div>
+            </div>
+            <div class="score-item">
+              <div>可验证目标、停止规则、人工确认是提效前提<div class="bar"><span style="width:80%"></span></div></div>
+              <div class="score-number">8/10</div>
+            </div>
+            <div class="score-item">
+              <div>Maker / Checker 分工能降低自我评估偏误<div class="bar"><span style="width:70%"></span></div></div>
+              <div class="score-number">7/10</div>
+            </div>
+            <div class="score-item">
+              <div>成本账决定真实 ROI<div class="bar"><span style="width:70%"></span></div></div>
+              <div class="score-number">7/10</div>
+            </div>
+            <div class="score-item">
+              <div>reusable workflow 产生长期复利<div class="bar"><span style="width:60%"></span></div></div>
+              <div class="score-number">6/10</div>
+            </div>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card soft-red">
+            <h3>最弱结论</h3>
+            <p>“Loop Engineering 能带来多大幅度的效率提升”。当前素材支持提效潜力和成立条件，不能支持具体百分比。</p>
+          </div>
+          <div class="card soft-amber">
+            <h3>偏见检查</h3>
+            <ul>
+              <li>工程乐观偏见</li>
+              <li>编程场景偏见</li>
+              <li>高技能用户偏见</li>
+              <li>工具可用性偏见</li>
+            </ul>
+          </div>
+          <div class="card soft-blue">
+            <h3>缺失视角</h3>
+            <p>建议补安全 / 合规负责人视角，重点看授权、审计、责任和事故处置。</p>
+          </div>
+        </div>
+      </div>
+      <div class="callout danger">
+        <h3>必须人工核验项</h3>
+        <p>官方工具能力和限制、论文与报道原始来源、真实 CI loop 执行日志、token 与人工成本记录、提效指标定义。</p>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-kicker">后续采证计划</div>
+      <h2>进入深采证前要查什么</h2>
+      <div class="plan-list">
+        <div class="plan-item">
+          <span class="priority p0">P0</span>
+          <div>
+            <strong>官方工具能力和限制</strong>
+            <p>建议来源：Claude Code 官方文档、OpenAI Codex 官方文档。目标输出：产品事实卡片和跨工具对照表。</p>
+          </div>
+        </div>
+        <div class="plan-item">
+          <span class="priority p0">P0</span>
+          <div>
+            <strong>真实 CI loop 效率账本</strong>
+            <p>建议来源：本地 CI 记录、token 使用记录、人工 review 记录。目标输出：两周小样本效率账本。</p>
+          </div>
+        </div>
+        <div class="plan-item">
+          <span class="priority p1">P1</span>
+          <div>
+            <strong>长周期 coding agent 质量退化</strong>
+            <p>建议来源：论文 PDF、代码 benchmark、复现实验。目标输出：反向证据卡。</p>
+          </div>
+        </div>
+        <div class="plan-item">
+          <span class="priority p1">P1</span>
+          <div>
+            <strong>Maker / Checker 分工效果</strong>
+            <p>建议来源：自建对照实验、PR review 记录。目标输出：质量评估表。</p>
+          </div>
+        </div>
+        <div class="plan-item">
+          <span class="priority p2">P2</span>
+          <div>
+            <strong>普通团队维护成本与禁入清单</strong>
+            <p>建议来源：访谈、开源仓库 issue、安全规范、事故复盘。目标输出：失败场景清单和禁入清单。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="state">
+      <div class="section-kicker">content_state / handoff</div>
+      <h2>可交接给下一阶段的结构</h2>
+      <p class="lead">这段结构化状态用于把 `storm-research` 的结果交给 `wenchang-research`，避免下一步重新解释背景。</p>
+      <pre><code>content_state:
+  storm_research:
+    topic: "Loop Engineering 是否真的提效？"
+    purpose: "展示 storm-research skill 的研究前置效果"
+    target_reader: "Human3.0 / AI 实践读者 / 公众号前置研究"
+    perspectives:
+      - "实践者"
+      - "学者"
+      - "怀疑者"
+      - "经济观察者"
+      - "历史观察者"
+    contradiction_map:
+      conflicts:
+        - "自动执行 vs 人工判断"
+        - "提效 vs 成本转移"
+        - "连续运行 vs 错误放大"
+        - "通用 Agent vs 窄场景模板"
+        - "演示成功 vs 生产可靠"
+      consensus:
+        - "重复、可验证、可回滚、低风险任务最适合进入 loop。"
+        - "CI 自动检查与修复适合作为第一个 demo。"
+        - "生成和验证需要分离。"
+      blind_spots:
+        - "普通团队维护成本"
+        - "长期代码质量影响"
+        - "多模型分工 ROI"
+        - "定时巡检噪音率"
+        - "责任归属"
+    synthesis_brief:
+      summary: "Loop Engineering 有提效潜力，但提效成立依赖可验证目标、真实反馈、独立评估、停止规则、权限边界、日志和人工确认。"
+      key_findings:
+        - "优先从 CI 自动检查与小范围修复开始。"
+        - "提效前提是目标可验证、范围可控、有停止规则和人工确认。"
+        - "Maker / Checker 分工能降低自我评估偏误。"
+        - "成本账决定真实 ROI。"
+    confidence_review:
+      weakest_claim: "Loop Engineering 能带来多大幅度的效率提升。"
+      verification_needed:
+        - "官方工具能力和限制"
+        - "论文与报道原始来源"
+        - "真实 CI loop 执行日志"
+        - "token 和人工成本记录"
+  next_step:
+    skill: "wenchang-research"
+    reason: "关键产品事实和提效幅度需要一手来源与真实日志核验。"
+    user_decision_needed: "是否围绕 CI 自动检查与修复 loop 做深采证。"
+  handoff:
+    from_stage: "storm-research"
+    to_stage: "wenchang-research"
+    stop_condition: "如果缺少官方文档、论文原文或真实执行日志，不进入公开结论写作。"</code></pre>
+    </section>
+
+    <section id="next">
+      <div class="section-kicker">下一步建议</div>
+      <div class="next-step">
+        <div>
+          <h2>建议进入 wenchang-research 深采证</h2>
+          <p class="lead">原因很简单：当前 `storm-research` 已经找到了问题地图、冲突点和最弱结论，但公开写作需要一手来源和真实数据。下一步应核验官方文档、论文、生产案例，并做一个两周 CI 侦察 loop 小样本。</p>
+          <div class="callout">
+            <h3>最小深采证任务</h3>
+            <p>用一个真实仓库跑只读 CI 侦察 loop，记录候选命中率、误报率、token 成本、人工接管次数和节省时间。拿到这组数据后，再决定是否写成公众号案例。</p>
+          </div>
+        </div>
+        <aside class="decision">
+          <strong>推荐：进入</strong>
+          <p>但只围绕 CI 自动检查与修复这个窄场景，不扩成泛泛的 AI 提效话题。</p>
+        </aside>
+      </div>
+      <p class="source-note">辅助源文件：content/outputs/2026-06-23-loop-engineering-storm-demo-source.md</p>
+    </section>
+  </main>
+</body>
+</html>

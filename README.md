@@ -24,6 +24,7 @@
 - 子技能：
   - `文昌·探脉`
   - `文昌·定题`
+  - `STORM Research`
   - `文昌·采证`
   - `文昌·立骨`
   - `文昌·起稿`
@@ -80,6 +81,7 @@
 
 - `content/wenchang-orchestrator/`：总控，选择完整子路径、自动推进可自动阶段、在人工判断节点暂停
 - `content/wenchang-router/`：总调度，识别平台和阶段
+- `content/storm-research/`：研究前置，把主题拆成多视角扫描、矛盾地图和采证计划
 - `content/wenchang-research/`：采证，补来源、事实、反向数据和可信度
 - `content/wenchang-review/`：诊文，判断初稿是否值得继续推进
 - `content/wenchang-publish-check/`：出刊，做发布前检查
@@ -100,6 +102,7 @@ Human3.0 成书归档维护在 `human3.0_book/`。只有完成成书守门员审
 ```text
 文昌总控
   -> 探脉/定题：公众号、知乎、小红书选题 skills
+  -> 研究前置：storm-research
   -> 采证：wenchang-research
   -> 立骨/起稿：公众号写作 skill
   -> 诊文/整章：wenchang-review
@@ -113,6 +116,7 @@ Human3.0 成书归档维护在 `human3.0_book/`。只有完成成书守门员审
 - `content/wechat-hot-topic-skill-ai-human3/`
 - `content/wechat-hot-topic-skill-generic/`
 - `content/wenchang-orchestrator/`
+- `content/storm-research/`
 - `content/wenchang-research/`
 - `content/wechat-writing-skill-ai-human3/`
 - `content/zhihu-topic-hunter/`

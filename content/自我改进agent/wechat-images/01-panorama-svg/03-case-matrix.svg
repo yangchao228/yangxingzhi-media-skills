@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#F7F3EC"/>
+  <rect x="64" y="64" width="1472" height="772" rx="28" fill="#FFFFFF" stroke="#E8DFC9" stroke-width="3"/>
+  <text x="120" y="150" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="52" font-weight="700" fill="#1A1A1A">自改进 Agent 的 4 类真实入口</text>
+  <text x="120" y="204" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" fill="#667085">先从可验证场景开始，不追全自动叙事</text>
+
+  <g font-family="PingFang SC, Noto Sans SC, Arial, sans-serif">
+    <g transform="translate(120 270)">
+      <rect width="630" height="220" rx="20" fill="#EAF4F1" stroke="#80B9AD" stroke-width="3"/>
+      <text x="38" y="58" font-size="30" font-weight="700" fill="#1A1A1A">连续编码循环</text>
+      <text x="38" y="108" font-size="24" fill="#3B4A54">小任务、测试、提交、上下文重置</text>
+      <text x="38" y="156" font-size="22" fill="#667085">代表材料：Addy / Ralph Wiggum</text>
+    </g>
+
+    <g transform="translate(850 270)">
+      <rect width="630" height="220" rx="20" fill="#FFF4D8" stroke="#D4A84B" stroke-width="3"/>
+      <text x="38" y="58" font-size="30" font-weight="700" fill="#1A1A1A">失败轨迹提炼 Skill</text>
+      <text x="38" y="108" font-size="24" fill="#4D3D14">失败记录、规则提炼、验证集、版本化</text>
+      <text x="38" y="156" font-size="22" fill="#667085">代表材料：EvoSkill</text>
+    </g>
+
+    <g transform="translate(120 540)">
+      <rect width="630" height="220" rx="20" fill="#EEF2FF" stroke="#7886D7" stroke-width="3"/>
+      <text x="38" y="58" font-size="30" font-weight="700" fill="#1A1A1A">自动实验研究</text>
+      <text x="38" y="108" font-size="24" fill="#30345E">改代码、训练、评估、保留或丢弃</text>
+      <text x="38" y="156" font-size="22" fill="#667085">代表材料：Karpathy / autoresearch</text>
+    </g>
+
+    <g transform="translate(850 540)">
+      <rect width="630" height="220" rx="20" fill="#FDEFEF" stroke="#E58B8B" stroke-width="3"/>
+      <text x="38" y="58" font-size="30" font-weight="700" fill="#1A1A1A">反馈日志 + 学习存储</text>
+      <text x="38" y="108" font-size="24" fill="#5C2B2B">失败诊断、规则沉淀、下次加载</text>
+      <text x="38" y="156" font-size="22" fill="#667085">代表材料：MindStudio / 个人系统</text>
+    </g>
+  </g>
+
+  <line x1="800" y1="260" x2="800" y2="770" stroke="#E8DFC9" stroke-width="3"/>
+  <line x1="110" y1="515" x2="1490" y2="515" stroke="#E8DFC9" stroke-width="3"/>
+  <text x="120" y="806" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#667085">共同点：都有验证、记录、选择和回滚，不能只靠“感觉更好”。</text>
+  <text x="1260" y="806" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" font-weight="700" fill="#1A1A1A">AI生命克劳德</text>
+</svg>

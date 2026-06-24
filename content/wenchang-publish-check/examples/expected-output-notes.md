@@ -13,6 +13,7 @@
 - `publish_assets.xiaohongshu`
 - `distribution.secondary_platforms`
 - 如果用户已确认标题、封面、卡片或归档选择，必须包含 `decisions`
+- 如果建议归档，应在 `decisions` 中记录默认归档，且不要因归档本身要求用户确认
 - `handoff.accepted_inputs`
 - `handoff.ignored_context`
 
@@ -21,3 +22,4 @@
 - 替用户发布
 - 假装配图、摘要、标签已经齐全
 - 跳过 Human3.0 归档建议
+- 把默认归档写成默认发布、默认上传或默认最终入书

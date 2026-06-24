@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#F7F3EC"/>
+  <rect x="64" y="64" width="1472" height="772" rx="28" fill="#FFFFFF" stroke="#E8DFC9" stroke-width="3"/>
+  <text x="120" y="150" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="56" font-weight="700" fill="#1A1A1A">自改进的三层</text>
+  <text x="120" y="204" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" fill="#667085">从当前任务内修正，到改变下一次行为</text>
+
+  <g transform="translate(120 298)">
+    <rect x="0" y="240" width="360" height="210" rx="18" fill="#EAF4F1" stroke="#80B9AD" stroke-width="3"/>
+    <text x="30" y="295" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" font-weight="700" fill="#1A1A1A">01 同一任务做得更好</text>
+    <text x="30" y="350" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#3B4A54">当前任务内修正</text>
+    <text x="30" y="390" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#3B4A54">根据检查结果重试</text>
+  </g>
+
+  <g transform="translate(620 298)">
+    <rect x="0" y="120" width="360" height="330" rx="18" fill="#FFF4D8" stroke="#D4A84B" stroke-width="3"/>
+    <text x="30" y="175" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" font-weight="700" fill="#1A1A1A">02 从错误中学习</text>
+    <text x="30" y="230" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#4D3D14">失败被记录和分类</text>
+    <text x="30" y="270" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#4D3D14">下一轮带着反馈执行</text>
+    <path d="M58 330 H300" stroke="#D4A84B" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="58" cy="330" r="14" fill="#D4A84B"/>
+    <circle cx="180" cy="330" r="14" fill="#D4A84B"/>
+    <circle cx="300" cy="330" r="14" fill="#D4A84B"/>
+  </g>
+
+  <g transform="translate(1120 298)">
+    <rect x="0" y="0" width="360" height="450" rx="18" fill="#EEF2FF" stroke="#7886D7" stroke-width="3"/>
+    <text x="30" y="58" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" font-weight="700" fill="#1A1A1A">03 改变下一次行为</text>
+    <text x="30" y="115" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#30345E">规则写回 Skill</text>
+    <text x="30" y="155" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#30345E">模板 / 记忆 / 检查清单</text>
+    <rect x="36" y="225" width="288" height="128" rx="14" fill="#FFFFFF" stroke="#C9CEF3" stroke-width="2"/>
+    <text x="66" y="276" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="22" fill="#30345E">下次任务开始前</text>
+    <text x="66" y="318" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="22" fill="#30345E">先读取旧规则</text>
+  </g>
+
+  <path d="M500 642 C550 642 560 580 610 580" fill="none" stroke="#98A2B3" stroke-width="5" stroke-linecap="round"/>
+  <path d="M1000 522 C1050 522 1060 450 1110 450" fill="none" stroke="#98A2B3" stroke-width="5" stroke-linecap="round"/>
+  <path d="M604 580 l-18 -12 l4 22 Z" fill="#98A2B3"/>
+  <path d="M1104 450 l-18 -12 l4 22 Z" fill="#98A2B3"/>
+
+  <text x="120" y="790" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" fill="#667085">关键判断：多跑几轮只是尝试；经验写回系统，才会影响下一次。</text>
+  <text x="1260" y="790" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="24" font-weight="700" fill="#1A1A1A">AI生命克劳德</text>
+</svg>

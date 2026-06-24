@@ -74,6 +74,73 @@
             }
           }
         },
+        "storm_research": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "topic": { "type": ["string", "null"] },
+            "purpose": { "type": ["string", "null"] },
+            "perspectives": {
+              "type": "array",
+              "items": { "type": ["string", "object"] }
+            },
+            "contradiction_map": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "conflicts": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "consensus": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "blind_spots": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            },
+            "synthesis_brief": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "summary": { "type": ["string", "null"] },
+                "key_findings": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "hidden_connection": { "type": ["string", "null"] },
+                "actionable_insight": { "type": ["string", "null"] },
+                "frontier_question": { "type": ["string", "null"] }
+              }
+            },
+            "confidence_review": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "scores": {
+                  "type": "array",
+                  "items": { "type": ["string", "object"] }
+                },
+                "weakest_claim": { "type": ["string", "null"] },
+                "missing_perspectives": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "verification_needed": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            },
+            "evidence_plan": {
+              "type": "array",
+              "items": { "type": ["string", "object"] }
+            }
+          }
+        },
         "research": {
           "type": "object",
           "additionalProperties": true,

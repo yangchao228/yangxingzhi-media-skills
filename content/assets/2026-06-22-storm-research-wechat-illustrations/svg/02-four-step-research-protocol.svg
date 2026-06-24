@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">AI 研究四步协议</title>
+  <desc id="desc">多视角扫描、矛盾地图、研究简报、可信度评审四步流程图。</desc>
+  <rect width="1280" height="720" fill="#f6f7f4"/>
+  <rect x="68" y="70" width="1144" height="580" rx="28" fill="#ffffff" stroke="#d9ded8"/>
+  <text x="112" y="138" fill="#1d2428" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="48" font-weight="800">AI 研究四步协议</text>
+  <text x="112" y="184" fill="#66727a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="24">从一个平均答案，走向一张可采证的问题地图。</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <line x1="257" y1="382" x2="1014" y2="382" stroke="#c7d1cc" stroke-width="10" stroke-linecap="round"/>
+
+    <g>
+      <circle cx="222" cy="382" r="78" fill="#e3f2ef" stroke="#0f766e" stroke-width="4"/>
+      <text x="222" y="372" text-anchor="middle" fill="#0f766e" font-size="26" font-weight="800">01</text>
+      <text x="222" y="407" text-anchor="middle" fill="#1d2428" font-size="24" font-weight="800">多视角扫描</text>
+      <text x="222" y="508" text-anchor="middle" fill="#52616a" font-size="20">先打开问题空间</text>
+    </g>
+
+    <g>
+      <circle cx="502" cy="382" r="78" fill="#e7edf8" stroke="#315f9f" stroke-width="4"/>
+      <text x="502" y="372" text-anchor="middle" fill="#315f9f" font-size="26" font-weight="800">02</text>
+      <text x="502" y="407" text-anchor="middle" fill="#1d2428" font-size="24" font-weight="800">矛盾地图</text>
+      <text x="502" y="508" text-anchor="middle" fill="#52616a" font-size="20">找冲突和盲点</text>
+    </g>
+
+    <g>
+      <circle cx="782" cy="382" r="78" fill="#f7ecd0" stroke="#a16207" stroke-width="4"/>
+      <text x="782" y="372" text-anchor="middle" fill="#a16207" font-size="26" font-weight="800">03</text>
+      <text x="782" y="407" text-anchor="middle" fill="#1d2428" font-size="24" font-weight="800">研究简报</text>
+      <text x="782" y="508" text-anchor="middle" fill="#52616a" font-size="20">按可靠性排序</text>
+    </g>
+
+    <g>
+      <circle cx="1062" cy="382" r="78" fill="#f8e4df" stroke="#b42318" stroke-width="4"/>
+      <text x="1062" y="372" text-anchor="middle" fill="#b42318" font-size="26" font-weight="800">04</text>
+      <text x="1062" y="407" text-anchor="middle" fill="#1d2428" font-size="24" font-weight="800">可信度评审</text>
+      <text x="1062" y="508" text-anchor="middle" fill="#52616a" font-size="20">降级不稳结论</text>
+    </g>
+  </g>
+
+  <rect x="185" y="572" width="910" height="46" rx="23" fill="#fbfcfa" stroke="#d9ded8"/>
+  <text x="640" y="603" text-anchor="middle" fill="#44525a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="22" font-weight="700">多视角扫描 → 矛盾地图 → 研究简报 → 可信度评审</text>
+</svg>

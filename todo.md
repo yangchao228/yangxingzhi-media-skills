@@ -1,5 +1,149 @@
 # todo
 
+## 2026-06-24 文昌接入 storm-research 并重跑 Understand Anything
+
+- [x] 将 `storm-research` 接入文昌总控默认阶段池和路由规则
+- [x] 更新 `content_state`、README 和回归样例，防止后续又退回 `定题 -> 采证`
+- [x] 用新链路 `定题 -> storm-research -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 出刊` 重跑 Understand Anything
+- [x] 生成旧版 / storm 版对比结论
+- [x] 执行基础验证并记录 review
+
+### review
+
+- 已把 `storm-research` 接入文昌总控和路由：外部项目、热点链接、趋势判断、产品问题、学习领域或模糊主题默认走 `定题 -> storm-research -> 采证`；已有初稿、只诊文、只发布检查、只配图/卡片不强行回到 storm。
+- 已新增 `content/storm-research/` 并加入售卖包打包脚本，避免只在 `.codex/skills` 可用但分发包漏掉。
+- 已更新 `content/CONTENT_STATE.md`、`content/content_state.schema.json`、README、用户指南、回归 fixture 和校验脚本，确保 `storm_research` 是结构化接力字段。
+- 已基于 GitHub API、README 和 release API 重新采证 Understand Anything，新增 storm 研究包、storm 版公众号稿和旧版/新版对比文件。
+- 对比结论：storm 版更适合作为正式发布候选，主线从“个人读代码地图”升级为“团队共同地图 + 数字生产资料”。
+- 已通过 `./scripts/validate_skills.sh`，并通过禁用句式、尾随空格和 Markdown diff 检查。
+
+## 2026-06-24 Understand Anything 公众号成稿
+
+- [x] 启用文昌总控，从明确主题 + GitHub 项目链接进入定题链路
+- [x] 采证 Understand Anything GitHub README、官网、release 信息和项目限制
+- [x] 收敛主线为“AI 编程的下一道门槛是系统理解和知识图谱资产”
+- [x] 生成公众号正文源、标题候选、摘要、搜一搜发布包、配图提示词和 content_state
+- [x] 执行基础文本验证并记录 review
+
+### review
+
+- 已新增 `content/outputs/2026-06-24-understand-anything-wechat.md`，单文件维护公众号正文和发布资产。
+- 文章没有把 Understand Anything 写成普通代码可视化工具，而是收束到 Human3.0 方向：把代码理解、业务流程、团队 onboarding 和 PR 影响分析沉淀为可复用的数字生产资料。
+- 已保留反向边界：首次全仓分析 token 成本、隐私/本地模型选择、图谱漂移、语义层误差和高风险改动仍需人工验收。
+- 当前停在出刊后的人工确认节点：需要确认最终标题、是否生成封面/公众号贴图，以及是否进入小红书卡片或视频拆条。
+
+## 2026-06-18 Agent 进化论 04 国产模型跑 Codex 公众号
+
+- [x] 使用文昌总控从已有素材/半成稿进入采证、起稿和出刊链路
+- [x] 核验 OpenAI Codex 配置、OpenAI API 价格、DeepSeek 价格与 Anthropic API、Z.AI GLM-5.2 / Coding Plan、Claude Code LLM Gateway 和 CC Switch 信息
+- [x] 修正原素材里过期或高风险口径，尤其是 gpt-5.3-codex 价格、Codex custom provider 的 `responses` 协议边界、DeepSeek 人民币价格和 GLM Coding Plan 使用范围
+- [x] 生成公众号出刊包、正文、标题候选、摘要、朋友圈文案、配图建议、来源清单和 content_state
+- [x] 执行基础文本验证并记录 review
+
+### review
+
+- 已新增 `content/outputs/2026-06-18-codex-domestic-models-wechat.md`，正文主线从“国产模型更便宜”收束为“模型选择权 + 低成本试错 + 个人编程 Agent 工作流”。
+- 文章没有直接沿用原素材里的“直接改 base_url 就能跑”口径，而是补充 Codex 当前 `wire_api` 只支持 `responses` 的协议边界，避免误导读者。
+- 当前停在出刊后的人工确认节点：需要确认最终标题、公众号封面方向，以及是否继续生成配图/卡片；不自动上传外部服务。
+- 2026-06-22 本轮基于官方/项目来源复核 OpenAI Codex 配置、DeepSeek 价格、Z.AI GLM-5.2 价格与 Claude Code LLM Gateway 口径；仅刷新事实边界日期和错误源路径，不新增第二份正文。
+- 根据用户反馈强化主线：面向国内用户，先跑通 DeepSeek、GLM-5.2、阿里云百炼 / Model Studio / Coding Plan 这三类模型底座，再谈低成本试错、任务分层和上层 Agent 优化；同步更新正文、发布包和 content_state。
+
+## 2026-06-07 AI 记忆升级公众号初稿
+
+- [x] 筛选最近 3 天 AI 热点并确认主选题
+- [x] 采证 OpenAI Dreaming、Anthropic AI builds itself、Meta Business Agent 和白宫 AI 指令
+- [x] 收敛主线为“AI 记忆升级后，个人系统成为新护城河”
+- [x] 生成公众号出刊包初稿
+- [x] 根据用户“AI味重”反馈升级写作 skill 的结构级去 AI 味规则
+- [x] 重写 v2 版公众号稿，改为具体场景入口和文件/流程级建议
+- [x] 执行基础文本验证并记录 review
+
+### review
+
+- 已新增 `content/outputs/2026-06-07-ai-memory-personal-system-wechat.md`，包含来源清单、关键事实、反向边界、标题候选、正文初稿、摘要、配图建议、朋友圈文案和后续选题。
+- 正文主热点聚焦 OpenAI Dreaming 记忆系统，Anthropic、Meta 和白宫 AI 指令只作趋势侧证，避免写成 AI 快讯合集。
+- 文章主线落到 Human3.0：个人说明书、项目档案、写作风格卡、AI 禁用清单和记忆清理机制。
+- 用户反馈 v1 “一股子AI味”后，已把 `wechat-writing-skill-ai-human3` 的去 AI 味规则从词表扩展为结构级诊断：开头、段落推进、小标题、抽象词密度、清单形态和事实转写。
+- 已新增 `content/outputs/2026-06-07-ai-memory-personal-system-wechat-v2.md`，标题改为《别急着让 ChatGPT 记住你，先把自己整理清楚》，正文从“反复交代前情”这一具体写作卡点进入。
+
+## 2026-05-31 AI 学习系列独立仓库迁移
+
+- [x] 核对源目录 `ai_study/` 与目标仓库 `/Users/yangchao/github/ai_study`
+- [x] 保留用户未提交的写作篇 v2 修改并迁移到新仓库
+- [x] 将独立仓库内部路径从 `ai_study/...` 归一为仓库根路径
+- [x] 为新仓库补充 `AGENTS.md` 和 `.gitignore`
+- [x] 旧仓库 `ai_study/` 仅保留迁移说明
+- [x] 执行基础验证并记录 review
+
+### review
+
+- 已将 33 个 `ai_study` 内容文件迁移到 `/Users/yangchao/github/ai_study`，并补入 1 个历史三平台内容包到 `archive/`，目标仓库保持独立 Git 维护。
+- 新仓库内不再保留 `ai_study/` 路径前缀，正文元数据、资产 README 和生成脚本命令已改为从仓库根目录引用。
+- 旧仓库只保留 `ai_study/README.md` 作为迁移指针；后续正文、发布包、封面和卡片资产都在新仓库维护。
+- 已通过两边文件数量核对、`rg "ai_study/"` 路径扫描、`git diff --check` 和资产脚本语法检查。
+
+## 2026-05-28 文昌 Studio v1 PRD 技术方案补齐
+
+- [x] 在 PRD 中补齐 v1 技术架构、模块边界和推荐技术栈
+- [x] 补充 Web SaaS、Local Runner、`codex exec`、文昌 skills 的调用链路
+- [x] 补充数据模型、API、状态机、安全边界和部署方案
+- [x] 对齐 v1 不做自动发布、Cloud OpenAPI 和 Ollama 的工程边界
+- [x] 执行基础验证并记录 review
+
+### review
+
+- 已在 `docs/product/wenchang-studio-v1.md` 增加“技术方案”章节，补齐总体架构、推荐技术栈、模块划分、数据模型、API、状态机、Codex 调用、结构化输出、安全边界、部署方案、POC 顺序和技术风险。
+- 技术方案继续保持 v1 只支持 Local Codex Runner；Web SaaS 负责状态和产品体验，本地 Runner 负责调用 `codex exec` 和现有文昌 skills。
+- 已明确 v1 不做自动发布、不接 Cloud OpenAPI、不接 Ollama，避免工程复杂度提前膨胀。
+- 已通过 `git diff --check -- todo.md docs/product/wenchang-studio-v1.md` 和 `./scripts/validate_skills.sh`。
+
+## 2026-05-28 文昌 Studio v1 原型与执行协议
+
+- [x] 新增低保真原型文档，明确小白入口、工作台、决策卡片、产物箱和模板页
+- [x] 新增执行协议文档，明确 Web SaaS、Local Runner、`codex exec` 和文昌 skills 的边界
+- [x] 定义 `execution_job`、`execution_result`、`decision_request`、`artifact` 的最小结构
+- [x] 标注 v1 不做自动发布、Cloud OpenAPI 和 Ollama 的协议边界
+- [x] 执行基础验证并记录 review
+
+### review
+
+- 已新增 `docs/product/wenchang-studio-v1-wireframe.md`，覆盖首页/项目列表、新建项目、项目工作台、决策卡片、产物箱、模板管理和 Runner 连接状态。
+- 已新增 `docs/product/wenchang-studio-v1-execution-protocol.md`，定义 Web SaaS、Local Runner、`codex exec`、文昌 skills 之间的最小任务协议。
+- 协议已明确 v1 只支持 `local_codex`，不接 Cloud OpenAPI、Ollama 和自动发布；未来 v2 可复用同一套 job/result/artifact/decision 结构扩展。
+- 已通过 `git diff --check -- todo.md docs/product/wenchang-studio-v1-wireframe.md docs/product/wenchang-studio-v1-execution-protocol.md` 和 `./scripts/validate_skills.sh`。
+
+## 2026-05-28 文昌 Studio v1 产品定义
+
+- [x] 明确 v1 产品定位、目标用户和范围边界
+- [x] 固化一期只支持 Local Codex Runner，不做 Cloud OpenAPI / Ollama / 自动发布
+- [x] 定义核心页面、项目状态、模板和决策卡片
+- [x] 梳理本地 runner 与现有文昌 skills 的最小执行协议
+- [x] 给出 v1 MVP、验证方式和 v2 演进边界
+- [x] 执行基础验证并记录 review
+
+### review
+
+- 已新增 `docs/product/wenchang-studio-v1.md`，把文昌 Studio v1 定义为 Web SaaS 控制台 + 本地 Codex Runner 的内容创作工作台。
+- v1 已明确不做自动发布、Cloud OpenAPI、Ollama、平台账号授权和发布后数据回收，先聚焦内容创作与发布资产包生成。
+- 已把小白入口、项目状态、模板、决策卡片、产物箱、本地 runner 协议和 v2 Cloud OpenAPI 演进边界写入 PRD。
+- 已通过 `git diff --check -- todo.md docs/product/wenchang-studio-v1.md` 和 `./scripts/validate_skills.sh`。
+
+## 2026-05-28 Codex 个人网站上线公众号成稿
+
+- [ ] 使用文昌总控从已确认主题进入定题/起稿链路
+- [ ] 快检 Cloudflare DNS、Vercel 部署/访问和 ICP 事实边界
+- [ ] 生成公众号 Markdown 初稿、摘要、标签和朋友圈文案
+- [ ] 根据用户最新要求整理正文-only 版本
+- [ ] 针对诊文问题新写正文 v2，补真实过程证据和叙事节奏
+- [ ] 后续封面图、朋友圈文案、卡片和归档暂缓
+- [ ] 执行基础验证并记录 review
+
+### scope update
+
+- 用户已明确“先只需要出正文即可，后面暂时可以先不出”。
+- 本轮收敛为正文-only Markdown，不继续推进封面、朋友圈、卡片、上传或归档。
+- 用户反馈 v1 缺少真实过程证据、DNS/ICP 段落偏科普、结尾泛化、移动端节奏偏紧、“三类动作”框架偏学术。v2 需要改成真实过程复盘。
+
 ## 2026-05-26 文昌写作 skill 优化
 
 - [x] 阅读现有 `wechat-writing-skill-ai-human3` 写作规则和调用提示
@@ -697,4 +841,227 @@
 - [x] 完成采证与反向证据整理
 - [x] 生成公众号文章骨架和标题候选
 - [x] 起稿、诊文和出刊检查
+- [x] 生成小红书 8 页卡片方案、HTML 预览和 PNG 图片包
+- [ ] 用户确认公众号封面 / Human3.0 成书审查
+
+## 2026-05-31 Emergence World Agent 自治公众号流程
+
+- [x] 使用 `wenchang-orchestrator` 判断入口和链路
+- [x] 读取 36Kr 转载素材与 Emergence AI 一手来源
+- [x] 用户确认主切口 A：AI Agent 失控的本质，是能力没有被放进人的系统里
+- [x] 完成采证与反向证据整理
+- [x] 生成公众号文章骨架和标题候选
+- [x] 起稿、诊文和出刊检查
 - [ ] 用户确认封面 / 卡片 / Human3.0 成书审查
+
+### review
+
+- 已新增 `content/outputs/2026-05-31-agent-system-human3-wechat.md`，将 36Kr 转载素材收束为 Human3.0 方向的系统设计权判断文。
+- 已补充 Emergence AI 官方博客、GitHub 仓库和 AWI 指标文档作为一手来源，并保留代表性运行、样本规模、利益相关和指标不完整等反向边界。
+- 已新增 `content/outputs/2026-06-01-agent-system-human3-xhs-cards.md` 和 `content/assets/2026-06-01-agent-system-human3-xhs/`，包含小红书 8 页卡片方案、HTML 预览、8 张 1080x1440 PNG 和 zip 包。
+- 当前按总控规则停在封面/归档判断节点，等待用户确认是否生成公众号封面和 Human3.0 成书审查。
+
+## 2026-06-11 文昌技能包闲鱼最小可售包
+
+- [x] 新增买家侧 sale 文档
+- [x] 新增可复制模板和示例输出
+- [x] 新增售卖包打包脚本
+- [x] 跑结构校验和打包校验
+
+### review
+
+- 已新增 `sale/` 买家交付包，覆盖入口说明、安装、最小使用指南、交付清单、闲鱼商品页文案、FAQ、售后边界、模板、示例和商品图建议。
+- 已新增 `scripts/package_for_sale.sh`，生成 `dist/sale/wenchang-skill-pack-v0.1.zip`，只打包公开交付材料、文昌核心 skills 和多平台辅助 skills。
+- 打包校验时发现 `md-img-r2/.env` 会被误带入初版 zip；已删除初版生成物，并在打包脚本中排除 `.env`、`.env.*`、`*.env`，压缩前增加阻断扫描。
+- 根据售卖复杂度判断，首版不再打包 `md-img-r2`，避免买家第一天理解 R2、对象存储、密钥和公开外链配置；图片上传后续可作为高级能力单独说明。
+- 已通过 `bash -n scripts/package_for_sale.sh`、`./scripts/validate_skills.sh`、`./scripts/package_for_sale.sh` 和 zip 内容检查；最终包未包含 `md-img-r2`、`.env`、R2 配置、历史 `content/outputs`、历史图片资产、`ai_study` 或临时 PDF/渲染文件。
+
+## 2026-06-12 Loop Engineering 实战手册采证
+
+- [x] 使用 `wenchang-orchestrator` 判断入口阶段
+- [x] 使用 `wenchang-research` 采集官方文档、实战报道、工程论文和反向案例
+- [x] 新增素材包 `content/outputs/2026-06-12-loop-engineering-practice-source-pack.md`
+- [x] 整理成书大纲与公众号预热拆分方案
+- [x] 起稿第 1 篇公众号文章
+- [ ] 第 1 篇诊文、压缩和出刊检查
+
+### review
+
+- 已将素材拆成官方能力、实战案例、工程方法和反向证据四类。
+- 核心一手来源包括 Claude Code `/loop`、scheduled tasks、hooks、subagents、Codex Automations。
+- 关键反向边界包括长周期 agent code degradation、Replit 删除生产数据库、AI coding tools bug taxonomy、token / 权限 / 可观测性成本。
+- 已根据用户补充的两张图，补强“规划器 / 生成器 / 评估器 / Harness”章节，并把手册目录调整为“四要素入门 -> 三角色架构 -> Harness 系统”。
+- 已新增 `content/outputs/2026-06-12-loop-engineering-book-outline.md`，整理为 5 篇、18 章、4 个附录的成书大纲，并给出 9 章最小电子手册版本和 8 篇公众号系列拆法。
+- 已新增 `content/outputs/2026-06-12-loop-engineering-wechat-series-plan.md`，将手册拆成 5 篇公众号主线文章、3 篇可选加更，并设计“公众号验证 -> 模板领取 -> 电子书转化 -> 微信读书上架”的路径。
+- 已新增 `content/outputs/2026-06-12-loop-engineering-wechat-01.md`，完成第 1 篇公众号出刊包《Claude Code 之父说他不再写提示词了》，包含标题候选、摘要、正文、封面文案、朋友圈文案、配图建议和来源边界。
+- 当前已推进到第 1 篇起稿完成，下一步建议对 `2026-06-12-loop-engineering-wechat-01.md` 做诊文和 20% 压缩，再进入出刊检查。
+
+## 2026-06-15 Loop Engineering 系列第 2 篇重写
+
+- [x] 读取已发布第 1 篇和原第 2 篇素材
+- [x] 按“6 块积木、5 种模式、1 张决策表”重写第 2 篇
+- [x] 新增 `content/loop engineer从入门到进阶手册/02.Loop Engineering 入门：6块积木、5种模式、1张决策表.md`
+- [x] 保留旧版 `02.积木搭好了，但你该选哪个工具？5 种 Loop 模式 + 决策表.md` 作为素材备份
+- [x] 诊断并单独重写六块积木版第 2 篇，新增 `02.Loop Engineering 的六块积木：让 Agent 循环真正跑起来-v2.md`
+
+### review
+
+- 新第 2 篇定位为导航型公众号文章，先兑现第 1 篇对“六块积木”的预告，再承接到 5 种 Loop 模式和决策表。
+- 6 块积木只做架构地图，不展开成工具说明书；5 种模式和决策表作为正文主体，增强收藏价值。
+- 下一篇预告改为通用“三角色架构”，不再强绑定未核验的一手来源表述。
+- 后续根据用户反馈判断“6 块积木”和“5 种模式”拆开发更清晰，已另写六块积木 v2：收紧 `/loop`、Codex Automations、worktree、sub-agents 等产品事实口径，并加入“CI 失败巡检”贯穿案例。
+- 为避免与后续 CI 自动修复实战篇冲突，已将第 2 篇第 7 节从“搭成第一个 Loop”改为“最小装配顺序”，明确本篇只做架构地图，完整 CI 搭建留到实战篇。
+
+## 2026-06-18 自我改进 Agent 自媒体矩阵资产
+
+- [x] 将旧版 A/B/C 选题迁移为执行版 `series-plan.md`
+- [x] 新增 `source-pack.md`，明确采证池、高波动事实和分篇证据要求
+- [x] 新增 6 篇公众号长文 brief，覆盖全景、双循环、反馈日志、OpenClaw、边界和 EvoSkill 加更
+- [x] 新增小红书 8 页图文卡片 brief
+- [x] 新增小红书视频和抖音短视频脚本 brief
+- [x] 新增 Agent 反馈日志和 Skill 更新审核两份可复用模板
+- [x] 执行基础文本验证并记录 review
+
+### review
+
+- 已在 `content/自我改进agent/` 下建立专题入口、执行规划、采证包、长文 brief、图文 brief、视频脚本和模板目录，后续可以按“公众号长文 -> 小红书图文 -> 小红书视频 -> 抖音短视频”的矩阵节奏推进。
+- 第一季主线收敛为：Agent 自我改进依赖可验证任务、反馈记录、外环复盘、Skill 更新和人工审核，避免写成空泛趋势稿。
+- 已把可复用资产前置为 `templates/feedback-log.md` 和 `templates/skill-update-review.md`，让专题不只产出内容，也沉淀个人 Agent 自改进工作流。
+- 已修正旧大纲中 Anthony Alcaraz 拼写、Addy Osmani 来源格式和 Nakajima 框架归属表述，并清理本专题目录中的硬禁句式。
+- 已按用户补充的“公众号贴图”方向新增 `wechat-images/`，把每篇长文的首屏判断图、机制图、模板图、边界图和 CTA 图纳入标准交付，避免长文和视觉资产脱节。
+- 已完成第 01 篇完整样板：补采证快照，生成公众号出刊包、公众号贴图细化、小红书图文细稿和小红书/抖音视频脚本；Zach Lloyd/Warp 的 X Article 本轮因登录限制未作为正文硬证据。
+- 已继续完成第 01 篇发布前闭环：新增诊文记录、公众号发布定稿、出刊检查记录，并制作 4 张公众号贴图 SVG；当前只剩人工确认最终标题和是否将 SVG 转为 PNG/JPG。
+- 已根据用户新偏好调整图片工作流：新增 `image-prompts/` 和第 01 篇完整图片提示词包，明确公众号贴图、小红书图文、视频封面/B-roll 默认只交付提示词，由用户手动到 ChatGPT 出图；既有 SVG 仅保留为低保真布局参考。
+- 已根据用户补充修正图片口径：公众号贴图和公众号插图分开处理，贴图固定 3:4，插图默认 16:9 且按需生成；第 01 篇提示词、第一季贴图 brief、出刊检查和旧 SVG 预览说明已同步调整。
+- 已新增 `publish-packs/01-panorama-execution-pack.md`，把第 01 篇公众号粘贴版、4 张 16:9 正文插图提示词、小红书图文发布版、抖音脚本和小红书视频脚本收成一个发布当天执行包。
+- 已进一步修正公众号图片发布口径：公众号正文插图默认 16:9 横图，3:4 公众号贴图只作为收藏、转发、朋友圈、社群和跨平台复用资产；第 01 篇执行包、出刊检查、图片提示词和插图 brief 已同步切换。
+- 已按发布需求补齐第 01 篇发布三件套：公众号、小红书图文、抖音短视频和小红书视频均已增加“爆款优质标题推荐 / 正文描述 / 热门标签”，并同步到执行包和出刊检查。
+- 已将第 01 篇正文描述升级为长描述版本：公众号 4 张正文插图和小红书 8 张图文卡均按一图一段写到 200 字以上，短视频发布描述也扩展为 200 字以上版本。
+- 已根据用户反馈修正正文描述口径：公众号和小红书图文的正文描述都改为整篇发布文案，不再按图片粒度写成看图说明；图片粒度信息只保留在卡片结构、插图清单和提示词区。
+- 已继续加厚第 01 篇发布正文描述：四个平台都改为长版整篇文案，覆盖卡片/插图中的三层定义、5 个条件、内外环、失败变 Skill、人审边界和错题本行动，同时保持非逐图说明。
+- 已优化第 01 篇发布包里的正文描述排版：四个平台都改成“正文描述（可直接复制）”文本块，内部自然分段，方便发布时整段复制。
+- 已使用文昌出刊标准完成第 01 篇终审，新增 `articles/01-panorama-final-review.md`；初始结论为补 1 个一致性问题后可发布，主要问题是正文未承接资料来源和插图位中的 `Karpathy/autoresearch`。
+- 已按终审建议补齐 `Karpathy/autoresearch` 正文承接段，并同步更新发布执行包和终审状态；当前正文结构阻塞已清除，剩余动作是手动出图、外链复核和最终标题确认。
+- 已按用户要求改成单一正文源：第 01 篇正文只维护在 `articles/01-panorama-publish.md`，发布执行包只保留正文源文件引用；同时把“发布包不复制完整正文”的规则固化到 `wenchang-publish-check`。
+- 已优化第 01 篇正文开头：保留写稿和 coding agent 两个真实痛点，并在首屏提前交代读者能获得判断标准、5 个条件和错题本行动，增强阅读抓手。
+- 已在 `articles/01-panorama-publish-v2.md` 插入 4 张 16:9 公众号正文插图，图片来自 `agent自我进化公众号插图/`；第 3 张按实际文件内容调整为“自改进 Agent 的 4 类真实入口”。
+
+## 2026-06-22 Stanford STORM x Claude 研究方法素材处理
+
+- [x] 使用 `wenchang-orchestrator` 判断入口阶段和当前链路
+- [x] 读取用户提供的 STORM / Claude 四提示词素材
+- [x] 使用 `wenchang-research` 规则核查 STORM 论文、ACL Anthology、arXiv、GitHub 和 live preview
+- [x] 新增素材处理包 `content/outputs/2026-06-22-storm-claude-research-source-pack.md`
+- [x] 用户确认继续 Human3.0 主线，并强化可复制实操模板作为关注送资料钩子
+- [x] 新增公众号起稿 `content/outputs/2026-06-22-storm-claude-research-wechat-draft.md`
+- [x] 新增关注送资料模板包 `content/outputs/2026-06-22-storm-research-template-lead-magnet.md`
+- [x] 新增诊文记录 `content/outputs/2026-06-22-storm-claude-research-draft-review.md`
+- [x] 开发轻量版 `storm-research` skill，安装到 `.codex/skills/storm-research/`
+- [ ] 出刊检查：确认最终标题、摘要、封面、关键词、资料领取路径
+
+### review
+
+- 已确认 STORM、NAACL 2024、25% absolute increase、10% coverage 这几个核心事实有一手来源支撑。
+- 已将原素材里的“4 个 Claude 提示词”“5 分钟 PhD 研究”降级为传播包装和轻量迁移，不作为论文结论使用。
+- 推荐后续采用 Human3.0 主线切口：把 STORM 写成“个人研究协议”和“认知主权工作流”，比单纯提示词合集更利于长期资产沉淀。
+- 已按用户要求把“AI 研究四步模板”拆成独立资料包，适合公众号后台回复关键词领取，正文只保留文末钩子，避免资料正文混在文章里。
+- 已完成诊文，结论为轻改后进入出刊检查；当前需要确认最终标题、后台关键词和资料领取路径。
+- `storm-research` 定位为研究前置 skill，只输出多视角扫描、矛盾地图、研究简报、可信度评审和采证计划，不写正文、不替代事实核查。
+- 已按用户要求把 `storm-research` skill 介绍补进公众号初稿，作为文末资料领取钩子的一部分，并同步清理该段固定对照句式。
+- 已将正文中的研究示例替换为“Loop Engineering 是否真的提效”，并同步调整五视角、冲突示例和结论，让案例更贴合账号已有 Loop Engineering 系列。
+
+## 2026-06-23 外网 Top 3 AI 主题 STORM 测试
+
+- [x] 使用本地 `.codex/skills/storm-research/` 读取规则
+- [x] 联网筛选 2026-06-16 至 2026-06-23 英文外网 AI 热点
+- [x] 选择 3 个主题：AI 网络安全军备竞赛、中国开源/低价模型进入美国企业栈、AI 人才与资本战
+- [x] 新增 STORM 批处理结果 `content/outputs/2026-06-23-top3-ai-topics-storm-research.md`
+- [ ] 用户选择一个主题进入 `wenchang-research` 深采证或起稿
+
+### review
+
+- 本轮热度判断不是严格全网流量榜，缺少 X、Reddit、Hacker News、YouTube 等完整互动数据；采用媒体覆盖、官方/行业信号和内容延展性综合判断。
+- `storm-research` 对每个主题都能稳定输出多视角、矛盾地图、研究简报、可信度评审和后续采证计划，适合作为定题后、采证前的中间层。
+- 最适合 Human3.0 账号继续写的方向是“中国开源/低价模型进入企业栈”，可承接模型选择权、低成本试错和个人数字生产资料主线。
+
+## 2026-06-23 STORM Research Kit 打包
+
+- [x] 整理《AI 研究四步提示词模板》
+- [x] 整理 `storm-research` skill 交付目录
+- [x] 新增包说明 `dist/storm-research-kit-20260623/README.md`
+- [x] 新增复核清单 `dist/storm-research-kit-20260623/review-checklist.md`
+- [x] 复核 skill 元数据、Markdown 格式、敏感文件和密钥模式
+- [x] 生成最终 zip `dist/storm-research-kit-20260623-final.zip`
+- [x] 测试 zip 完整性并确认包内文件名为跨平台安全的 ASCII 名称
+
+### review
+
+- 最终交付包包含两套资料：`ai-research-4-step-prompts.md` 和 `storm-research/` skill。
+- 包内不包含 `.env`、token、key、password、secret、`.DS_Store`、`__MACOSX`、缓存或历史生成报告。
+- 早期测试 zip 使用中文文件名，在 `unzip -l` 下出现编码显示风险；最终包改用 ASCII 文件名，中文标题保留在文件正文中。
+
+## 2026-06-23 Loop Engineering STORM Demo HTML
+
+- [x] 使用当前仓库 `.codex/skills/storm-research/` 跑「Loop Engineering 是否真的提效」demo
+- [x] 读取 `storm-research` skill 协议和 prompt templates
+- [x] 读取本地 Loop Engineering 手册素材、CI 自动修复篇、三角色架构篇和 STORM 方法稿
+- [x] 新增研究源文件 `content/outputs/2026-06-23-loop-engineering-storm-demo-source.md`
+- [x] 新增 HTML 主页面 `content/outputs/2026-06-23-loop-engineering-storm-demo.html`
+- [x] 完成 HTML 静态可打开性和内容完整检查
+- [x] 完成关键词、禁用句式和基础格式检查
+- [ ] 如需公开成文，进入 `wenchang-research` 深采证
+
+### review
+
+- `storm-research` demo 已完整输出多视角扫描、矛盾地图、研究简报、可信度评审、后续采证计划和 `content_state / handoff`。
+- 核心判断收敛为：Loop Engineering 有提效潜力，但提效成立依赖可验证目标、真实反馈、独立评估、停止规则、权限边界、日志和人工确认。
+- HTML 页面为单文件、内联 CSS、无外部 CDN，包含 Hero、Demo 说明、五视角卡片、矛盾表、发现评分、采证计划和结构化 `content_state`。
+- 已完成文件存在、关键词覆盖、禁用句式、静态 HTML 解析和 `git diff --check` 验证；未上传外部服务，未打 zip。
+- 当前建议进入 `wenchang-research` 深采证，重点核验官方工具能力、论文/报道原文、真实 CI loop 执行日志、token 成本和人工接管次数。
+
+## 2026-06-23 storm-research HTML 输出能力补充
+
+- [x] 将“可浏览 HTML 研究页”作为 `storm-research` 的可选交付模式补进 `SKILL.md`
+- [x] 新增 HTML 输出参考模板 `.codex/skills/storm-research/references/html-output-template.md`
+- [x] 更新 `.codex/skills/storm-research/skill.json`，补充 HTML 研究页相关摘要、关键词和用户需求
+- [x] 完成 JSON、引用、禁用句式和基础格式检查
+
+### review
+
+- 默认输出仍是 Markdown 研究结构；只有用户明确要求 HTML、可浏览页面、demo 页面、研究看板或方便用户查看时，才额外生成单文件 HTML。
+- 新增模板固定了页面结构：Hero、Demo 说明、多视角扫描、矛盾地图、研究简报、可信度评审、后续采证计划、`content_state / handoff` 和下一步建议。
+- HTML 要求保持研究展示用途，不写成公众号正文、知乎正文或营销页；页面必须单文件、内联 CSS、无外部 CDN。
+- 仓库通用 `scripts/validate_skills.sh` 会跳过 `.codex` 目录，因此本次对 `.codex/skills/storm-research/` 做了专项静态校验。
+
+## 2026-06-23 STORM 公众号初稿插图生成
+
+- [x] 读取 `content/outputs/2026-06-22-storm-claude-research-wechat-draft.md` 的配图建议
+- [x] 生成 3 张 16:9 SVG 插图到 `content/assets/2026-06-22-storm-research-wechat-illustrations/svg/`
+- [x] 将首屏判断图插入正文标题后
+- [x] 将人的判断权位置图插入“自查是保留判断权”段落后
+- [x] 将四步研究流程图插入“四步协议”列表后
+- [x] 在配图建议区补充已生成文件路径，便于出刊复核
+
+### review
+
+- 这次插图是结构图和流程图，中文文字准确性优先，因此使用可编辑 SVG 直接生成，没有调用位图生成工具。
+- 三张图分别承接文章的首屏判断、可信度自查和四步模板钩子，位置与正文论点对应。
+- 后续如公众号后台不接受 SVG，可再批量导出 PNG，但当前正文引用和资产文件已就位。
+
+## 2026-06-24 STORM Research Kit 重新验证与打包
+
+- [x] 在公众号初稿中新增 Co-STORM 下文预告，并加入后续选题
+- [x] 重新读取《AI 研究四步提示词模板》和当前 `.codex/skills/storm-research/`
+- [x] 重新组装新版资料包 `dist/storm-research-kit-20260624/`
+- [x] 新版包已包含 `storm-research/references/html-output-template.md`
+- [x] 新增新版包说明 `dist/storm-research-kit-20260624/README.md`
+- [x] 新增新版复核清单 `dist/storm-research-kit-20260624/review-checklist.md`
+- [x] 生成最终 zip `dist/storm-research-kit-20260624-final.zip`
+- [x] 完成 skill、JSON、敏感信息、跨平台文件名、zip 完整性和包内清单校验
+
+### review
+
+- 新版包包含 7 个文件：`README.md`、`ai-research-4-step-prompts.md`、`review-checklist.md`、`storm-research/SKILL.md`、`storm-research/skill.json`、`prompt-templates.md`、`html-output-template.md`。
+- `storm-research` 包内文件已和当前 `.codex/skills/storm-research/` 源文件逐项比对一致。
+- `quick_validate.py` 校验通过；`zip -T` 校验通过；zip 内文件名均为 ASCII，未包含 `.DS_Store`、`__MACOSX`、`.env`、缓存或密钥模式。
+- 全量 `todo.md` 中仍有旧历史句式命中，本次新增正文和新版资料包未命中禁用句式。

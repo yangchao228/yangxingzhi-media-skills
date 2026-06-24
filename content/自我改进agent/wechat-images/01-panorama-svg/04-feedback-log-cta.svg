@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440">
+  <rect width="1080" height="1440" fill="#F7F3EC"/>
+  <rect x="70" y="70" width="940" height="1300" rx="34" fill="#FFFFFF" stroke="#E8DFC9" stroke-width="4"/>
+  <text x="120" y="170" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="60" font-weight="700" fill="#1A1A1A">先给 Agent</text>
+  <text x="120" y="245" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="60" font-weight="700" fill="#1A1A1A">建一个错题本</text>
+  <text x="120" y="305" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="30" fill="#667085">失败要变成下一次能用的规则</text>
+
+  <g font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="34" fill="#1A1A1A">
+    <rect x="120" y="395" width="840" height="92" rx="18" fill="#EAF4F1"/>
+    <text x="165" y="455">01 任务目标</text>
+
+    <rect x="120" y="520" width="840" height="92" rx="18" fill="#FFF4D8"/>
+    <text x="165" y="580">02 预期结果</text>
+
+    <rect x="120" y="645" width="840" height="92" rx="18" fill="#EEF2FF"/>
+    <text x="165" y="705">03 实际结果</text>
+
+    <rect x="120" y="770" width="840" height="92" rx="18" fill="#FDEFEF"/>
+    <text x="165" y="830">04 验证证据</text>
+
+    <rect x="120" y="895" width="840" height="92" rx="18" fill="#F3F4F6"/>
+    <text x="165" y="955">05 失败类型</text>
+
+    <rect x="120" y="1020" width="840" height="92" rx="18" fill="#F8EBD2"/>
+    <text x="165" y="1080">06 下一次规则</text>
+  </g>
+
+  <rect x="120" y="1190" width="840" height="100" rx="24" fill="#1A1A1A"/>
+  <text x="540" y="1254" text-anchor="middle" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="36" font-weight="700" fill="#FFFFFF">评论“错题本”，领取模板</text>
+
+  <text x="120" y="1340" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" fill="#667085">更早发现 / 更准判断 / 更快行动</text>
+  <text x="760" y="1340" font-family="PingFang SC, Noto Sans SC, Arial, sans-serif" font-size="28" font-weight="700" fill="#1A1A1A">AI生命克劳德</text>
+</svg>

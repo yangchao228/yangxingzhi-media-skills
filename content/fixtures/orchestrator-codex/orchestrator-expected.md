@@ -6,7 +6,7 @@ case_type: orchestrator
 
 - 阶段：定题
 - 入口类型：外部文章/热点素材 + 已有明确主题
-- 当前链路：定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊 -> 配图/卡片/上传 -> 归档
+- 当前链路：定题 -> storm-research -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊 -> 配图/卡片/上传 -> 归档
 
 ## 已完成
 
@@ -16,16 +16,16 @@ case_type: orchestrator
 
 ## 需要你确认
 
-- 暂无，下一步可自动推进到采证。
+- 暂无，下一步可自动推进到 storm-research。
 
 ## 我建议
 
-- 先输出定题 brief，再调用 `wenchang-research` 提炼原文事实、限制条件和反向证据。
+- 先输出定题 brief，再调用 `storm-research` 拆多视角问题地图、矛盾点和采证计划，随后调用 `wenchang-research` 提炼原文事实、限制条件和反向证据。
 - 文章不要写成 Codex 功能清单，应写成“AI 从聊天框变成个人工作台”的结构变化。
 
 ## 用户回复后将执行
 
-- 如果用户无异议，执行 `wenchang-research`。
+- 如果用户无异议，执行 `storm-research`，再进入 `wenchang-research`。
 - 后续在出刊缺封面、配图、卡片或归档建议时暂停确认。
 
 ## content_state
@@ -47,12 +47,12 @@ content_state:
     card_skill: long-to-cards
     image_skill: xiaohongshu-viral-image-skill-v4
   next_step:
-    skill: wenchang-research
-    reason: 需要从原文中提炼事实点、结构变化和限制条件
+    skill: storm-research
+    reason: 外部文章素材存在多个可写角度，需要先拆多视角问题地图和采证计划
     user_decision_needed: false
   handoff:
     from_stage: 定题
-    to_stage: 采证
+    to_stage: storm-research
     accepted_inputs:
       - 原始文章 URL
       - content_state.topic
@@ -62,12 +62,13 @@ content_state:
       - 逐段翻译原文
       - 纯 Codex 功能清单
       - AI 全自动接管工作的叙事
-    stop_condition: 形成可支撑公众号判断文的研究包
+    stop_condition: 形成可交给 wenchang-research 的问题地图和采证计划
 ```
 
 ## 子 skill 调用建议
 
-- `wenchang-research`：采证。
-- 后续自动链路：立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊。
+- `storm-research`：多视角研究前置。
+- `wenchang-research`：基于 storm 采证计划做事实核验。
+- 后续自动链路：采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊。
 - 出刊后如缺封面、卡片或图片上传，暂停确认后进入配图/卡片/上传。
 - 如果文章有长期价值，暂停确认是否进入 Human3.0 归档。

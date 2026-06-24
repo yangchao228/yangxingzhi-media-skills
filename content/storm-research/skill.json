@@ -1,0 +1,13 @@
+{
+  "slug": "storm-research",
+  "title": "STORM Research",
+  "category": "content",
+  "summary": "把主题拆成多视角扫描、矛盾地图、研究简报、可信度评审和后续采证计划；可选生成单文件 HTML 研究页。",
+  "keywords": ["STORM", "多视角研究", "矛盾地图", "研究简报", "可信度评审", "HTML研究页", "研究看板", "Human3.0"],
+  "user_needs": ["选题前先建立问题地图", "避免 AI 研究停在平均答案", "把主题转成可采证的研究结构", "把研究结果做成可浏览页面方便查看"],
+  "source_dir": "content/storm-research",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

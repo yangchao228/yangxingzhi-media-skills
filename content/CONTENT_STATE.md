@@ -30,6 +30,26 @@ content_state:
     thesis:
     sections: []
     examples_to_use: []
+  storm_research:
+    topic:
+    purpose:
+    perspectives: []
+    contradiction_map:
+      conflicts: []
+      consensus: []
+      blind_spots: []
+    synthesis_brief:
+      summary:
+      key_findings: []
+      hidden_connection:
+      actionable_insight:
+      frontier_question:
+    confidence_review:
+      scores: []
+      weakest_claim:
+      missing_perspectives: []
+      verification_needed: []
+    evidence_plan: []
   research:
     sources: []
     key_facts: []
@@ -111,6 +131,7 @@ content_state:
 | 总控 | `request`、`next_step`、`handoff` |
 | 路由 | `request`、`distribution`、`next_step` |
 | 探脉/定题 | `topic`、`audience`、`next_step` |
+| storm-research | `storm_research`、`next_step`、`handoff` |
 | 采证 | `research`、`next_step` |
 | 立骨/起稿 | `outline`、`draft` |
 | 诊文 | `diagnosis`、`archive`、`next_step` |
@@ -127,6 +148,7 @@ content_state:
 | 总控 | 用户原始输入、全量 `content_state` | `request`、`next_step`、`handoff` | 固定走单一路径、吞掉人工确认 |
 | 路由 | `request`、用户原始输入 | `request`、`distribution`、`next_step` | 直接生成终稿 |
 | 探脉/定题 | `request`、`audience`、用户素材 | `topic`、`audience`、`next_step` | 替用户最终拍板不可逆发布决策 |
+| storm-research | `topic`、`audience`、用户素材、外部链接摘要 | `storm_research`、`next_step`、`handoff` | 写正文、把角色视角当事实、替代事实核验 |
 | 采证 | `topic`、`outline`、用户素材 | `research`、`next_step` | 写正文、排版、虚构来源 |
 | 立骨/起稿 | `topic`、`audience`、`research` | `outline`、`draft`、`next_step` | 重新发明研究结论 |
 | 诊文/整章 | `topic`、`research`、`draft` | `diagnosis`、必要时更新 `draft`、`next_step` | 为了润色保留无证据断言 |
@@ -203,19 +225,34 @@ handoff:
 完整阶段池：
 
 ```text
-探脉 -> 定题 -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊 -> 配图/卡片/上传 -> 归档
+探脉 -> 定题 -> storm-research -> 采证 -> 立骨 -> 起稿 -> 诊文 -> 整章 -> 出刊 -> 配图/卡片/上传 -> 归档
 ```
 
 总控可以自动推进可自动阶段，但遇到以下情况必须暂停：
 
 - `next_step.user_decision_needed = true`
 - 多个候选选题需要用户确认
+- storm-research 出现 3 个以上同等强度主切口，需要用户选主线
+- storm-research 关键结论依赖未核验事实
 - `research.confidence = Low`
 - 缺少关键来源或反向证据
 - `diagnosis.recommendation` 为 `重写`、`暂不投入`、`转平台`
 - 出刊存在阻塞项
 - 需要配图、卡片、上传外部图片或调用 `md-img-r2`
-- `archive.should_review_for_book = true`
+
+## storm-research 要求
+
+当内容是外部项目、热点链接、趋势判断、产品问题、学习领域或模糊主题时，定题后优先进入 `storm-research`，再进入事实采证。
+
+最小可用 storm 包至少包含：
+
+- 5 个视角的多视角扫描。
+- 矛盾地图：直接冲突、共识底座、证据强弱、关键盲点。
+- 研究简报：关键发现、隐藏连接、行动建议、前沿问题。
+- 可信度评审：最弱结论、缺失视角、必须人工核验的事实。
+- 后续采证计划：要查的问题和建议来源。
+
+`storm-research` 不替代 `wenchang-research`。它只能把主题变成问题地图和采证计划，不能把角色模拟、推断或观点直接写成正文事实。
 
 ## 采证要求
 
