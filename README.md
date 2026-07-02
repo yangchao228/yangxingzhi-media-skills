@@ -126,6 +126,7 @@ Human3.0 成书归档维护在 `human3.0_book/`。只有完成成书守门员审
 - `content/long-to-cards/`
 - `content/xiaohongshu-viral-image-skill-v4/`
 - `content/human3-book-guardian-v6/`
+- `content/superman-blog-publisher/`
 
 ---
 

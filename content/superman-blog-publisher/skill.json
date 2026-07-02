@@ -1,0 +1,13 @@
+{
+  "slug": "superman-blog-publisher",
+  "title": "Superman Blog Publisher",
+  "category": "content",
+  "summary": "将 Markdown 草稿或微信公众号 released 作品导入 superman 个人站博客，生成 frontmatter，处理本地图片到 R2，并完成校验。",
+  "keywords": ["superman", "个人站", "博客发布", "Markdown导入", "released目录", "Cloudflare R2", "md-img-r2"],
+  "user_needs": ["把 Markdown 文章发布到个人站博客", "批量导入微信公众号 released 作品", "上传本地图片到 R2 并替换为 URL", "为博客内容生成标准 frontmatter 和导入报告"],
+  "source_dir": "content/superman-blog-publisher",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}
