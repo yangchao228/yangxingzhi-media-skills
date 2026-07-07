@@ -1,15 +1,49 @@
 ---
 name: loop-builder
-description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把真实任务做成 Loop、判断任务是否适合自动化、设计 Agent Loop、生成 TODO.md state file、Planner/Maker/Checker/Evaluator prompt、Codex Loop、内容生产 Loop、Skill 维护 Loop、学习复盘 Loop、项目维护 Loop，或需要断路器、成本控制、人工确认清单时。
+description: 设计和生成可控 Agent Loop 的 Skill。用于用户用一句自然语言描述任务后，自动识别场景、补问关键信息、判断是否适合 Loop、选择 Loop 策略，并在用户确认工作逻辑后生成可拿去给 Codex 使用的 Prompt、Checklist、Human-in-the-Loop 流程、完整 Loop 脚手架、专用 Loop Agent 包或专用 Skill。支持低信息入口，例如“帮我复刻这个 UI 视觉稿”“帮我修这个 CI”“帮我把这个任务做成自动循环”，也兼容用户误写 lopp-builder。每次完成输出后都要判断本操作是否适合沉淀成 Skill，并在合适时提示用户是否继续生成 Skill 协议草案。生成专用 Skill 前必须先做场景工作流建模和 Skill 协议草案，避免只套通用模板。
 ---
 
 # loop-builder
 
 ## 目标
 
-把一个真实任务判断、拆解并设计成可验证、可停止、可纠错、可交接的 Agent Loop。
+把一个真实任务判断、拆解并设计成可验证、可停止、可纠错、可交接的 Agent Loop，并把结果包装成用户能直接使用的下一步产物。
 
 默认只做设计与脚手架：输出 Loop 设计卡、状态文件、角色 Prompt、验收规则、断路器和复盘方式。长期运行交给 Codex Goal、Automations、cron、GitHub Actions 或后续自建 Harness。
+
+本 Skill 的定位是“Loop 设计工作台”，不是无人值守执行器。优先帮用户把任务从一句模糊需求，升级为可直接交给 Codex 使用的 Prompt、Loop 运行包或专用 Skill。
+
+用户成本必须低。用户可以只说“帮我复刻这个 UI 视觉稿”。`loop-builder` 负责判断、补问、建模和选择产物，不要求用户先写元提示词、先懂 Loop 模式、先选择输出档位。
+
+`loop-builder` 默认不亲自执行项目任务。它可以生成设计、Prompt、Checklist、Loop 包、Agent 包或 Skill 协议；不能因为用户提供了材料就开始读项目、运行命令、截图、改代码或调用其他实现类 Skill。
+
+核心流程：
+
+```text
+自然语言任务
+-> Context Gate 抽取用户上下文
+-> 缺失必需上下文则 hard stop 补问
+-> 上下文补齐后输出任务卡预览
+-> Loop 适配判断
+-> 自动选择产物
+-> 工作逻辑确认卡，等待用户确认或调整
+-> 需要专用 Agent / Skill 时先做场景工作流建模
+-> 直接生成给 Codex 使用的 Prompt / Checklist / Loop / Agent / Skill
+-> 判断是否值得 Skill 化复用
+```
+
+## 阶段状态
+
+每次输出开头必须标注当前阶段：
+
+- `WAITING_FOR_CONTEXT`：缺少必需信息，已停止，等待用户补充。
+- `WAITING_FOR_LOGIC_CONFIRMATION`：信息已够，已输出工作逻辑确认卡，等待用户确认或调整。
+- `READY_TO_GENERATE`：上一轮已输出确认卡，且用户本轮明确确认，可以生成正式产物。
+- `GENERATED`：正式产物已生成，等待用户复制使用、运行或继续确认高风险动作。
+
+`WAITING_FOR_CONTEXT` 和 `WAITING_FOR_LOGIC_CONFIRMATION` 是停机态。处于这两个阶段时，不能生成正式 Prompt、Checklist、Loop 包、Agent 包、Skill 协议，不能执行项目命令，不能读项目文件，不能截图，不能改代码。
+
+确认判定必须严格：只有在上一轮已经输出工作逻辑确认卡后，用户明确回复“确认继续”“按这个逻辑生成”“可以生成正式产物”“生成吧”等授权表达，才算确认。用户补充图片、路径、链接、数据、说“在这里”“补充如下”“继续补充”都只算补上下文，不算确认工作逻辑。
 
 ## 触发条件
 
@@ -22,18 +56,166 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 - 生成 Maker / Checker prompt
 - 帮我搭 Codex Loop
 - 设计内容生产 Loop / Skill 维护 Loop / 学习复盘 Loop / 项目维护 Loop
+- 生成一个专用 Loop Agent / Skill
+- 把这个任务做成可反复运行的 Agent 包
+- 判断业务经验能否抽象回 loop-builder
+- 设计 UI 视觉复刻 Loop / 截图对比 Loop / Visual Match Loop
+- 我有一个任务，不知道能不能做成 Loop
+- 帮我判断这个任务该用 Prompt、Checklist、Agent 还是 Skill
+- 帮我复刻这个 UI 视觉稿
+- 帮我照着这个截图做页面
+- lopp-builder / loop builder / Loop Builder
 
 ## 参考资料
 
 按任务需要读取对应 reference：
 
+- 用户输入不完整或需要生成任务卡预览时，读取 `templates/input-template.md`。
 - 选择 Loop 模式时，读取 `references/loop-patterns.md`。
 - 生成 TODO.md、Planner、Maker、Checker、Evaluator、PR 摘要、失败报告时，读取 `references/templates.md`。
+- 生成专用 Loop Agent 包、反哺闸门、通用规则候选时，读取 `references/agent-package.md`。
+- 生成专用 Skill 或把高频场景沉淀为 Skill 前，读取 `references/skill-generation-contract.md`。
+- 输出收尾的 Skill 化复用建议时，读取 `references/skill-generation-contract.md` 中的生成条件和反例。
 - 生成验收卡、断路器、成本控制、7 天落地计划、复盘清单时，读取 `references/checklists.md`。
 - 设计垂直场景时，按需读取：
   - `references/scenarios/content-production-loop.md`
   - `references/scenarios/skill-maintenance-loop.md`
   - `references/scenarios/learning-review-loop.md`
+  - `references/scenarios/ui-visual-match-loop.md`
+- 用户要把 Loop Engineering 专题继续做成内容生产、电子书、课程或产品化素材时，参考 `examples/loop-engineering-topic-loop.md`。
+- 用户要了解如何由 `loop-builder` 生成 UI 视觉复刻专用 Skill 时，参考 `examples/generate-ui-visual-match-loop.md`。
+
+## Context Gate 与 Intake
+
+所有任务先过 Context Gate。用户只给一句自然语言时，先抽取用户上下文；如果缺失必需上下文，只输出补问卡并停止；上下文补齐后才进入任务卡、Loop 判断和产物生成。
+
+优先从用户原文、当前对话、已提到文件、已知工作目录中自动识别：
+
+- 任务目标和非目标。
+- 输入材料、路径、链接或截图。
+- 成功标准、反馈信号或验收方式。
+- 允许修改范围。
+- 人工确认节点。
+- 任务是否需要多轮执行。
+- 是否存在可观察反馈。
+- 是否需要跨项目复用。
+
+垂直场景参考文件只能在 Context Gate 通过后读取并展开，不能覆盖 hard stop 规则。
+
+缺少信息时不要让用户填长表。补问必须由模型根据当前任务动态判断，禁止套固定问题清单。
+
+先把缺失信息分成三类：
+
+- 必需信息：没有它就无法生成可执行 Prompt / Loop，必须全部列出并请求用户补充。
+- 可默认信息：可以用安全默认值处理，不阻塞用户，按优先级最多展示 5 个。
+- 后置确认：执行中触碰风险时再让 Codex 请求确认。
+
+补问只能针对缺失的必需信息，不限制数量。只要存在缺失必需信息，本轮必须 hard stop：只输出补问卡，不能输出任务卡、Loop 适配判断、自动产物选择、最终 Prompt、Skill 化建议、Skill 协议、Loop 包或写文件；等用户回复后合并新信息并重新进入 Context Gate。可默认信息和后置确认只展示在后续任务卡或 Prompt 里，不作为强制输入要求。
+
+### 低信息入口处理
+
+当用户只给一句任务时，默认按以下方式推进，不要把复杂模板交给用户。
+
+| 用户原话 | 自动识别场景 | 首选产物 |
+| --- | --- | --- |
+| 帮我复刻这个 UI 视觉稿 / 照着这个截图做页面 | UI 视觉复刻 / 截图对比 | 先生成 Codex 可用的 UI 复刻 Loop Prompt；若用户说经常复用或跨项目使用，再生成专用 Skill |
+| 帮我修这个 CI / 自动修测试失败 | CI 自动修复 | 生成 Codex CI 修复 Loop Prompt 或完整 Loop 脚手架 |
+| 帮我把这篇文章做成系列 / 复盘数据继续选题 | 内容生产 / 数据复盘 | 生成 Checklist 或 Human-in-the-Loop 流程 |
+| 帮我把这个任务做成自动循环 | 通用 Loop | 先做任务卡和适配判断，再选择最小产物 |
+
+低信息入口只补问缺失的必需信息。UI 复刻场景通常按以下方式判断：
+
+- 目标图通常是唯一硬输入。
+- 如果用户已上传图片或给出本地图片路径，不问前置问题，直接进入任务卡和工作逻辑确认卡；用户确认前不能生成执行 Prompt，不能开始项目侦察、截图、运行命令或改代码。
+- 如果模型判断没有可用目标图，目标视觉稿就是必需输入，需要请求用户补充。
+- 当前页面入口默认让 Codex 在项目内只读侦察；用户给了 URL、路由或启动命令就使用，没给也不阻塞。
+- 允许修改范围默认只改 UI 组件、页面文件和样式文件；需要越界时由 Codex 在执行中请求确认。
+
+如果用户只是想完成本次任务，默认产物是“给 Codex 使用的执行 Prompt”，不是专用 Skill。只有用户明确要“以后反复用”“跨项目用”“生成 Skill”“全局安装”时，才升级为专用 Skill。
+
+## 任务卡确认
+
+没有缺失必需信息时，才给用户一张任务卡预览。任务卡由 `loop-builder` 生成，不要求用户从零填写。
+
+任务卡必须包含：
+
+- 原始任务。
+- 自动识别的场景。
+- 目标。
+- 输入材料。
+- 成功标准或反馈信号。
+- 允许动作。
+- 禁止动作。
+- 人工确认节点。
+- 推荐产物类型。
+
+输出任务卡后继续给出推荐产物和工作逻辑确认卡，不要让用户填表。无论产物轻重，正式 Prompt、Checklist、Loop 包、Agent 包或 Skill 文件都必须等用户确认工作逻辑后再生成；涉及不可逆动作、写入全局 Skill、提交、发布、生产配置、权限、支付、数据删除、商业上架时，还需要对应动作的单独确认。
+
+## 自动产物选择
+
+不要默认要求用户选择“输出档位”。先判断任务形态，再自动选择最小有用产物。
+
+| 任务形态 | 默认产物 | 说明 |
+| --- | --- | --- |
+| 目标模糊、没有反馈、只需一次完成 | 一次性 Prompt | 不升级为 Loop，给出更好的 Prompt 和检查点 |
+| 有目标，但反馈主要靠人工判断 | Checklist / 人工验收表 | 先把判断标准结构化 |
+| 有反馈，但关键动作必须人确认 | Human-in-the-Loop 流程 | 生成状态文件、人工确认点和验收清单 |
+| 有明确反馈，可多轮修正 | 完整 Loop 脚手架 | 生成 TODO.md、Planner/Maker/Checker/Evaluator Prompt |
+| 同一任务会在同一业务里反复跑 | 专用 Loop Agent 包 | 先做场景工作流建模，再生成 LoopAgent.md、state、input schema、run log、rule candidates |
+| 同一类任务会跨项目复用 | 专用 Skill | 先输出场景工作流分析和 Skill 协议草案，用户确认后再生成 SKILL.md、skill.json |
+
+用户可以显式要求某种产物。若用户要求的产物过重或不适合，先说明原因，并给出更轻方案。
+
+所有产物都必须说明本次采用的 Loop 策略或框架。即使只是一次性 Prompt，也要写清为什么暂不升级为 Loop。
+
+默认优先输出用户下一步能直接使用的产物：具体任务给执行 Prompt，流程给 Loop 运行包，反复业务给专用 Agent，跨项目复用给 Skill 协议草案。
+
+## 工作逻辑确认
+
+正式生成 Prompt、Checklist、Loop、Agent 或 Skill 前，必须先输出工作逻辑确认卡并等待用户确认。确认卡不是分级规则，所有产物类型都使用同一张卡。
+
+确认卡必须说明：目标、非目标、输入、推荐产物、Loop 模式、执行流程、反馈信号、最大轮次推导、停止规则、人工确认点、禁止动作、最终产物。用户明确授权后再生成；用户提出调整时，先更新确认卡并再次等待确认。
+
+## Skill 化复用判断
+
+每次完成主要产物后，都必须主动判断本操作是否值得沉淀成 Skill。不要等用户自己想到“要不要做成 Skill”。详细判断标准读取 `references/skill-generation-contract.md`。
+
+结论只能从“建议 Skill 化 / 观察一次后再 Skill 化 / 暂不建议 Skill 化”中选择，并给出依据。
+
+建议 Skill 化时询问是否继续生成 Skill 协议草案；观察一次时建议先跑本次 Prompt / Loop；暂不建议时给出更轻保存方式。
+
+没有用户明确确认前，不要写入或覆盖任何 Skill 文件。
+
+## 场景工作流建模闸门
+
+当自动产物选择为“专用 Loop Agent 包”或“专用 Skill”时，不得直接生成文件。必须先完成场景工作流建模。
+
+场景工作流建模必须回答：
+
+- 这个任务在真实工作中由什么角色完成。
+- 专业执行者第一步会分析什么，而不是直接动手做什么。
+- 输入材料有哪些，哪些是必需，哪些可以缺省。
+- 专业工作流分几个阶段，每个阶段的进入条件、输出和验收标准是什么。
+- Generator / Evaluator / Human 的边界分别是什么。
+- 每轮反馈信号从哪里来，如何判断是否改善。
+- 最大轮次如何由复杂度、反馈成本、风险、回滚性和用户预算推导，不能使用场景默认值。
+- 哪些动作禁止自动执行。
+- 哪些不确定项必须标注，不能靠模型猜。
+- 什么情况下继续、停止、回滚或交给用户确认。
+
+如果用户要求生成专用 Skill，先输出“Skill 协议草案”，并同时给出一份可立即给 Codex 使用的过渡 Prompt。除非用户明确说“按这个协议直接生成”，否则不要直接写入或覆盖全局 Skill 文件。
+
+Skill 协议草案必须包含：
+
+- 角色定义：这个 Skill 让 Codex 扮演什么专业角色，不扮演什么角色。
+- 输入契约：用户最少需要给什么，缺失必需输入时如何补问。
+- 工作流阶段：先分析什么，再计划什么，再执行什么，再验证什么。
+- 分阶段执行要求：每阶段允许改什么、禁止改什么、如何汇报。
+- 验收标准：工具验收、人工验收、反馈信号和剩余差异。
+- 断路器：最大轮次、连续无改善、越界动作、成本或权限风险。
+- 文件结构：是否需要 `SKILL.md`、`skill.json`、references、templates、validation。
+
+如果无法抽象出稳定专业工作流，不能生成专用 Skill，只能退回 Prompt、Checklist、Human-in-the-Loop 或专用 Agent 包。此时必须给用户一个能继续推进当前任务的可复制 Prompt。
 
 ## 垂直场景选择
 
@@ -44,23 +226,62 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 | 公众号、知乎、小红书、电子书、素材归档、文昌链路 | `references/scenarios/content-production-loop.md` | Explore-Narrow |
 | 新增 Skill、升级 Skill、验证 Skill、生成 Skill 模板 | `references/scenarios/skill-maintenance-loop.md` | Plan-Execute-Verify |
 | 学习输入、读书笔记、课程复盘、知识沉淀、个人系统建设 | `references/scenarios/learning-review-loop.md` | Lifecycle Loop |
+| UI 复刻、视觉稿还原、截图对比、页面视觉验收 | `references/scenarios/ui-visual-match-loop.md` | Plan-Execute-Verify |
 
 ## 固定流程
 
-### 1. 任务适配判断
+### 1. 接收自然语言任务
+
+允许用户只说一句话，例如：
+
+```md
+我想让 Codex 按这张 UI 图复刻页面，但每次改很多轮都不像。
+```
+
+不要把复杂输入表直接丢给用户。先抽取已知信息。
+
+### 2. Context Gate
+
+先抽取用户上下文。如果必需信息缺失，只输出补问卡，本轮到此停止；非必需信息只展示默认处理方式。没有缺失必需信息时，才输出任务卡预览。
+
+补问格式：
+
+```md
+## 状态
+- 当前阶段：WAITING_FOR_CONTEXT
+- 停止原因：缺少必需上下文
+- 下一步触发：用户补充以下必需信息后重新进入 Context Gate
+
+为了生成可执行方案，我缺少以下必需信息：
+1. <问题>（影响：<为什么必需>）
+
+以下信息可默认处理，不需要现在回答：
+- <信息>：<默认处理方式>
+
+请先回复以上必需信息，我会合并后继续下一步。
+```
+
+### 3. 任务卡确认
+
+任务卡必须让用户看懂系统准备做什么。不要把“任务目标、输入材料、成功标准、允许动作、禁止动作、人工确认节点”留给用户自己组织。
+
+补齐必需上下文后，只代表 Context Gate 通过，不代表用户已经确认 Loop 逻辑。若用户只是低信息入口，先输出任务卡、适配判断、自动产物选择和工作逻辑确认卡；只有上一轮已输出确认卡，且用户本轮明确授权，才进入正式产物生成。
+
+### 4. 任务适配判断
 
 先判断任务是否适合进入 Loop。
 
 结论只能从以下几类中选择：
 
-- 适合
-- 暂不适合
-- 只适合 Human-in-the-Loop
+- 适合完整 Loop
+- 适合 Human-in-the-Loop
+- 适合 Loop-ready 结构化流程，但暂不进入自动循环
+- 暂不适合 Loop
 - 先做只读侦察
 
 如果暂不适合，给出更轻替代方案：Prompt、Context、Checklist 或一次性 Planner。
 
-### 2. 模式选择
+### 5. 模式选择
 
 从以下五种模式中选主模式：
 
@@ -72,7 +293,31 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 
 必须说明选择原因、主要风险和停止条件。可以组合模式，但主模式只能有一个。
 
-### 3. 最小 Loop 设计卡
+输出中必须补充“为什么不是其他模式”。例如：数据复盘任务通常是 Explore-Narrow，不是 Retry Loop；发布决策通常需要 Human-in-the-Loop，不应自动执行。
+
+### 6. 场景工作流建模
+
+如果产物是专用 Agent 或专用 Skill，先读取 `references/skill-generation-contract.md`，输出场景工作流分析和协议草案。
+
+只有满足以下条件，才能继续生成专用 Skill：
+
+- 场景有明确、可复用的专业工作流。
+- 输入契约清楚。
+- 反馈或验收方式清楚。
+- 禁止动作和人工确认节点清楚。
+- 用户确认该协议可作为长期资产。
+
+### 7. 工作逻辑确认
+
+输出工作逻辑确认卡，等待用户确认或调整。未确认前，不生成 Prompt、Checklist、Loop 包、Agent 包或 Skill 文件。
+
+### 8. 产物生成
+
+根据自动产物选择结果输出对应内容：一次性 Prompt、Checklist、Human-in-the-Loop、完整 Loop 脚手架、专用 Loop Agent 包或专用 Skill。专用 Skill 先给协议草案，确认后再生成文件结构。
+
+每次输出必须包含“推荐给用户的下一步”和“Skill 化复用判断”。如果本轮不生成 Skill，也要给出用户可以直接复制到 Codex 的 Prompt。
+
+### 9. 最小 Loop 设计卡
 
 输出最小可运行结构：
 
@@ -86,7 +331,7 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 - 人工确认节点
 - 禁止动作
 
-### 4. 模板生成
+### 10. 模板生成
 
 按任务类型生成：
 
@@ -101,31 +346,134 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 
 模板要能被用户直接复制到真实项目中使用。缺少真实路径、命令、工具权限时，用占位符并要求用户确认，不写成确定命令。
 
-### 5. 复盘与资产沉淀
+### 11. 专用 Loop Agent 包
+
+当用户要“后续反复跑”“做成长期系统”“生成一个 agent”时，输出专用 Loop Agent 包。
+
+专用 Agent 包默认放在业务目录，不写入 `content/loop-builder`。业务数据、运行记录、专用阈值和任务经验都留在专用 Agent 的 state 或 run log 中。
+
+专用 Agent 可以记录“候选通用规则”，但不能自动修改 `loop-builder`。候选规则必须经过用户确认，再进入 Skill 维护 Loop。
+
+### 12. 复盘与资产沉淀
 
 给出本轮运行后应沉淀的位置：
 
-- `AGENTS.md`
-- Skill
-- 模板库
-- 失败报告
-- 项目规则
-- 内容素材库
+- `AGENTS.md`、Skill、模板库、失败报告、项目规则、内容素材库、专用 Loop Agent。
 
 默认对齐 Human3.0：保留人的判断权，沉淀数字生产资料，帮助用户建设个人系统。
 
+### 13. Skill 化建议收尾
+
+所有输出最后都要包含 Skill 化建议：是否值得、原因、建议 Skill 名称、用户确认后下一步。
+
+这一步只做建议和询问，不自动创建 Skill。
+
 ## 输出格式
 
+输出必须按阶段选择格式，禁止把确认前和确认后内容合并到同一轮。
+
+### 确认前输出格式
+
+用于 Context Gate 通过后、用户确认工作逻辑前。本阶段只能输出任务理解、判断和确认卡，不能输出正式 Prompt、Checklist、Loop 包、Agent 包、Skill 协议或 Skill 文件。
+
 ```md
+## 状态
+- 当前阶段：WAITING_FOR_LOGIC_CONFIRMATION
+- 停止原因：等待用户确认工作逻辑
+- 下一步触发：用户明确回复“确认继续”或“按这个逻辑生成”
+
+## Intake 摘要
+- 原始任务：
+- 自动识别场景：
+- 已确认信息：
+- 仍需确认：
+
+## 任务卡预览
+| 字段 | 内容 |
+|---|---|
+| 目标 | |
+| 输入材料 | |
+| 成功标准 / 反馈信号 | |
+| 允许动作 | |
+| 禁止动作 | |
+| 人工确认节点 | |
+
 ## Loop 适配判断
 - 结论：
 - 原因：
 - 不适合自动化的部分：
 
-## 推荐 Loop 模式
+## 自动产物选择
+- 产物类型：
+- 选择原因：
+- 为什么不选择更重产物：
+
+## 工作逻辑确认卡
+- 字段：目标 / 不做什么 / 输入材料 / 推荐产物 / Loop 模式 / 执行流程 / 反馈信号 / 最大轮次 / 停止规则 / 人工确认点 / 禁止动作 / 最终产物
+
+请回复“确认继续”后，我再生成正式产物；如果要调整，请直接指出要改哪一项。
+```
+
+确认前禁止输出：
+
+- `## 给 Codex 使用的 Prompt`
+- `## 生成模板`
+- `## 专用 Loop Agent 包`
+- `## Skill 协议草案`
+- `TODO.md`、Planner、Maker、Checker、Evaluator 等可执行模板正文
+- 任何会让 Codex 开始项目侦察、运行命令、截图或改代码的执行指令
+
+### 确认后输出格式
+
+只有上一轮已输出确认卡，且用户本轮明确授权后，才根据推荐产物输出对应内容；不相关的章节省略。
+
+```md
+## 状态
+- 当前阶段：GENERATED
+- 触发原因：上一轮已输出工作逻辑确认卡，且用户本轮明确授权
+
+## 给 Codex 使用的 Prompt
+...
+
+## 本次采用的 Loop 策略
 - 主模式：
-- 可组合模式：
-- 为什么：
+- 辅助模式：
+- 为什么适合：
+- 为什么不是其他模式：
+- 当前阶段：一次性诊断 / 可手动复跑 / 可升级为长期 Loop
+- 升级条件：
+
+## 场景工作流分析
+- 专业角色：
+- 真实工作流：
+- 输入契约：
+- 阶段划分：
+- 反馈信号：
+- 不确定项处理：
+- 人工确认节点：
+- 不适合生成 Skill 的风险：
+
+## Skill 协议草案
+- 角色定义：
+- 工作流阶段：
+- 分阶段执行要求：
+- 验收标准：
+- 断路器：
+- 文件结构：
+- 需要用户确认：
+
+## 推荐下一步
+- 直接复制使用：
+- 需要补充的信息：
+- 是否建议升级为 Skill：
+
+## Skill 化建议
+- 结论：建议 Skill 化 / 观察一次后再 Skill 化 / 暂不建议 Skill 化
+- 判断依据：
+- 适合沉淀的复用场景：
+- 建议 Skill 名称：
+- 用户确认后下一步：
+- 当前不自动生成的原因：
 
 ## 最小 Loop 设计卡
 | 字段 | 内容 |
@@ -140,6 +488,9 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 | 禁止动作 | |
 
 ## 生成模板
+### 一次性 Prompt / Checklist
+...
+
 ### TODO.md
 ...
 
@@ -155,6 +506,16 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 ### Evaluator Prompt
 ...
 
+## 专用 Loop Agent 包
+- Agent 文件：
+- State 文件：
+- 输入 Schema：
+- 运行记录：
+- 反馈候选规则：
+- 业务数据位置：
+- 可抽象回 loop-builder 的候选：
+- 必须人工确认的升级动作：
+
 ## 断路器与成本控制
 ...
 
@@ -164,13 +525,25 @@ description: 设计和生成可控 Agent Loop 的 Skill。用于用户要求把�
 - 可沉淀资产：
 ```
 
+专用 Skill 仍然有二次确认：确认后可以生成 Skill 协议草案和过渡 Prompt，但写入、覆盖或安装 Skill 文件必须等用户再次明确确认。
+
 ## 边界
 
 - 不承诺无人值守。
+- 不亲自执行项目任务；默认只生成设计、Prompt、Checklist、Loop 包、Agent 包或 Skill 协议。
 - 不替用户执行 merge、发布、生产配置、权限、支付、数据删除、商业上架。
 - 不把未验证的工具能力写成确定命令。
 - Codex、Claude Code、Cursor、自建 Harness 必须分清边界。
 - 默认先手动跑通，再建议低频自动化。
+- 不要求用户先填复杂任务表；任务表由 `loop-builder` 生成并让用户确认。
+- 不要求用户先写元提示词。用户一句自然语言输入时，也必须输出可用的下一步产物。
+- 不要求用户自己判断是否要做成 Skill。`loop-builder` 必须在收尾主动给出 Skill 化建议。
+- 不把“结构化上下文 + Prompt”伪装成完整 Loop。没有多轮反馈、停止规则和可纠错动作时，只能称为 Loop-ready。
+- 不把“通用 Loop 模板 + 场景名”伪装成专用 Skill。专用 Skill 必须先有场景工作流分析和协议草案。
 - 没有外部反馈的任务，不进入修复循环，只能进入分析或人工确认流程。
 - 生产、权限、支付、数据删除、公开发布、商业上架都必须保留人工确认。
 - 如果用户要求越过人工确认节点，应拒绝并给出可审计的替代流程。
+- 不把具体业务数据、账号数据、项目私有阈值写入 `loop-builder`。
+- 专用 Loop Agent 可以记录经验和候选规则，但不能自动升级 `loop-builder`。
+- 将业务经验抽象为通用规则前，必须经过用户确认、适用边界说明和反例检查。
+- Skill 化建议不是自动授权。生成、安装、覆盖或提交 Skill 都必须等用户明确确认。

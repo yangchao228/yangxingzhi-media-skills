@@ -1,0 +1,13 @@
+{
+  "slug": "loop-builder",
+  "title": "Loop Builder",
+  "category": "workflow",
+  "summary": "把一句自然语言任务转成用户可直接使用的 Codex Prompt、Loop 运行包、专用 Agent 或专用 Skill；默认先降低当前任务落地成本，并在收尾主动判断是否值得沉淀成 Skill。",
+  "keywords": ["Loop Engineering", "Agent Loop", "Agent Harness", "Codex Loop", "低信息入口", "UI 复刻", "Intake Router", "场景工作流建模", "Skill 化建议", "Skill 协议草案", "自动化工作流", "状态文件", "断路器"],
+  "user_needs": ["用一句话描述任务并拿到可复制 Prompt", "自动补问关键问题", "设计可控 Agent Loop", "生成 TODO.md 状态文件", "生成 Planner/Maker/Checker/Evaluator Prompt", "完成后自动判断是否适合做成 Skill", "生成专用 Loop Agent 或 Skill", "生成专用 Skill 前先做场景工作流建模", "沉淀个人工作流资产"],
+  "source_dir": "content/loop-builder",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}
