@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loop Builder 开源发布贴图</title>
+  <style>
+    :root {
+      --ink: #101512;
+      --forest: #0f3d2e;
+      --green: #4caf72;
+      --green-soft: #dcecdf;
+      --paper: #f7f6f0;
+      --white: #ffffff;
+      --muted: #68736d;
+      --line: #cdd7d0;
+      --amber: #d7a64a;
+      --coral: #d96a5e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      letter-spacing: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      background: #dfe4df;
+      color: var(--ink);
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      padding: 64px 24px;
+    }
+
+    .cards-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+    }
+
+    .card-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card-label {
+      color: #69726d;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .card {
+      position: relative;
+      width: 1080px;
+      height: 1080px;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 22px 55px rgba(16, 21, 18, 0.13);
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      padding: 70px 82px 100px;
+    }
+
+    .eyebrow {
+      color: var(--forest);
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .title {
+      margin-top: 18px;
+      font-size: 62px;
+      font-weight: 760;
+      line-height: 1.16;
+    }
+
+    .title .accent {
+      color: var(--green);
+    }
+
+    .footer {
+      position: absolute;
+      z-index: 5;
+      right: 82px;
+      bottom: 38px;
+      left: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(15, 61, 46, 0.24);
+      padding-top: 16px;
+      color: var(--forest);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .footer.dark {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    .footer .series {
+      color: inherit;
+    }
+
+    .footer .author {
+      color: inherit;
+    }
+
+    .decor {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    /* Card 01 */
+    .c1 {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .c1 .card-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 88px;
+    }
+
+    .c1 .eyebrow {
+      position: absolute;
+      top: 74px;
+      left: 82px;
+      color: var(--green);
+    }
+
+    .c1 .cover-kicker {
+      margin-bottom: 26px;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 25px;
+      font-weight: 600;
+    }
+
+    .c1 .cover-title {
+      position: relative;
+      z-index: 3;
+      max-width: 760px;
+      font-size: 100px;
+      font-weight: 820;
+      line-height: 1.02;
+    }
+
+    .c1 .cover-title .accent {
+      color: var(--green);
+    }
+
+    .c1 .cover-subtitle {
+      max-width: 720px;
+      margin-top: 42px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1.58;
+    }
+
+    .c1 .ring-a,
+    .c1 .ring-b,
+    .c1 .ring-c {
+      right: -95px;
+      border: 2px solid rgba(76, 175, 114, 0.32);
+      border-radius: 50%;
+    }
+
+    .c1 .ring-a {
+      top: 158px;
+      width: 470px;
+      height: 470px;
+    }
+
+    .c1 .ring-b {
+      top: 223px;
+      right: -30px;
+      width: 340px;
+      height: 340px;
+      border-color: rgba(215, 166, 74, 0.34);
+    }
+
+    .c1 .ring-c {
+      top: 293px;
+      right: 40px;
+      width: 200px;
+      height: 200px;
+      border-color: rgba(255, 255, 255, 0.26);
+    }
+
+    .c1 .node {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .c1 .node.n1 { top: 151px; right: 117px; }
+    .c1 .node.n2 { top: 378px; right: 331px; background: var(--amber); }
+    .c1 .node.n3 { top: 575px; right: 108px; background: var(--coral); }
+
+    .c1 .open-source {
+      position: absolute;
+      right: 82px;
+      bottom: 122px;
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* Card 02 */
+    .c2 .card-inner {
+      padding: 52px 68px 94px;
+    }
+
+    .c2 .title {
+      margin-top: 10px;
+      font-size: 51px;
+    }
+
+    .c2 .case-layout {
+      display: grid;
+      grid-template-columns: 1fr 248px;
+      gap: 30px;
+      align-items: center;
+      height: 690px;
+      margin-top: 20px;
+    }
+
+    .c2 .case-image {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 690px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .c2 .case-image img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .c2 .case-flow {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      border-left: 2px solid var(--forest);
+      padding-left: 28px;
+    }
+
+    .c2 .flow-step {
+      position: relative;
+      padding: 13px 0;
+      color: var(--forest);
+      font-size: 25px;
+      font-weight: 720;
+      line-height: 1.25;
+    }
+
+    .c2 .flow-step::before {
+      position: absolute;
+      top: 24px;
+      left: -36px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--green);
+      content: "";
+    }
+
+    .c2 .flow-step.emphasis {
+      color: var(--coral);
+    }
+
+    .c2 .flow-step.emphasis::before {
+      background: var(--coral);
+    }
+
+    .c2 .case-note {
+      position: absolute;
+      right: 68px;
+      bottom: 99px;
+      left: 68px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    /* Card 03 */
+    .c3 .card-inner {
+      padding-top: 66px;
+    }
+
+    .c3 .problem-list {
+      margin-top: 45px;
+      border-top: 2px solid var(--forest);
+    }
+
+    .c3 .problem-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 26px;
+      align-items: center;
+      min-height: 166px;
+      border-bottom: 1px solid var(--line);
+      padding: 24px 0;
+    }
+
+    .c3 .problem-no {
+      color: var(--green);
+      font-size: 45px;
+      font-weight: 800;
+    }
+
+    .c3 .problem-row:nth-child(2) .problem-no {
+      color: var(--amber);
+    }
+
+    .c3 .problem-row:nth-child(3) .problem-no {
+      color: var(--coral);
+    }
+
+    .c3 .problem-title {
+      color: var(--ink);
+      font-size: 34px;
+      font-weight: 760;
+      line-height: 1.25;
+    }
+
+    .c3 .problem-desc {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 23px;
+      line-height: 1.55;
+    }
+
+    .c3 .problem-conclusion {
+      margin-top: 42px;
+      border-left: 8px solid var(--green);
+      padding: 7px 0 7px 24px;
+      color: var(--forest);
+      font-size: 32px;
+      font-weight: 760;
+      line-height: 1.4;
+    }
+
+    /* Card 04 */
+    .c4 {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .c4 .eyebrow {
+      color: var(--green);
+    }
+
+    .c4 .title {
+      font-size: 58px;
+    }
+
+    .c4 .pipeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 36px;
+    }
+
+    .c4 .pipeline::before {
+      position: absolute;
+      top: 43px;
+      bottom: 43px;
+      left: 35px;
+      width: 2px;
+      background: rgba(76, 175, 114, 0.42);
+      content: "";
+    }
+
+    .c4 .pipe-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: 74px 220px 1fr;
+      gap: 20px;
+      align-items: center;
+      min-height: 116px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .c4 .pipe-no {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 70px;
+      height: 70px;
+      border: 2px solid var(--green);
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--green);
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .c4 .pipe-name {
+      color: var(--white);
+      font-size: 25px;
+      font-weight: 760;
+    }
+
+    .c4 .pipe-desc {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 25px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .c4 .pipe-note {
+      margin-top: 32px;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 24px;
+      line-height: 1.5;
+    }
+
+    /* Card 05 */
+    .c5 .decision-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 58px;
+      margin-top: 48px;
+      border-top: 2px solid var(--forest);
+    }
+
+    .c5 .decision-item {
+      min-height: 158px;
+      border-bottom: 1px solid var(--line);
+      padding: 25px 0;
+    }
+
+    .c5 .decision-task {
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 560;
+      line-height: 1.3;
+    }
+
+    .c5 .decision-output {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 14px;
+      color: var(--forest);
+      font-size: 31px;
+      font-weight: 790;
+      line-height: 1.25;
+    }
+
+    .c5 .decision-arrow {
+      color: var(--green);
+      font-size: 27px;
+    }
+
+    .c5 .decision-item:nth-child(3) .decision-output,
+    .c5 .decision-item:nth-child(4) .decision-output {
+      color: #8a671d;
+    }
+
+    .c5 .decision-item:nth-child(5) .decision-output,
+    .c5 .decision-item:nth-child(6) .decision-output {
+      color: #a2453b;
+    }
+
+    .c5 .decision-conclusion {
+      margin-top: 42px;
+      color: var(--forest);
+      font-size: 31px;
+      font-weight: 760;
+      text-align: center;
+    }
+
+    /* Card 06 */
+    .c6 {
+      background: var(--forest);
+      color: var(--white);
+    }
+
+    .c6 .eyebrow {
+      color: var(--green-soft);
+    }
+
+    .c6 .title {
+      font-size: 58px;
+    }
+
+    .c6 .role-list {
+      margin-top: 36px;
+      border-top: 2px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .c6 .role-row {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 28px;
+      align-items: center;
+      min-height: 143px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 22px 0;
+    }
+
+    .c6 .role-name {
+      border-left: 7px solid var(--green);
+      padding-left: 20px;
+      color: var(--white);
+      font-size: 30px;
+      font-weight: 790;
+      line-height: 1.22;
+    }
+
+    .c6 .role-row:nth-child(2) .role-name { border-color: var(--amber); }
+    .c6 .role-row:nth-child(3) .role-name { border-color: #7bb6e7; }
+    .c6 .role-row:nth-child(4) .role-name { border-color: var(--coral); }
+
+    .c6 .role-desc {
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 24px;
+      line-height: 1.5;
+    }
+
+    .c6 .role-desc strong {
+      color: var(--white);
+      font-weight: 720;
+    }
+
+    .c6 .boundary {
+      margin-top: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 6px;
+      padding: 19px 24px;
+      color: var(--white);
+      font-size: 24px;
+      font-weight: 690;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    /* Card 07 */
+    .c7 .scene-list {
+      margin-top: 42px;
+      border-top: 2px solid var(--forest);
+    }
+
+    .c7 .scene-row {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 30px;
+      align-items: center;
+      min-height: 145px;
+      border-bottom: 1px solid var(--line);
+      padding: 22px 0;
+    }
+
+    .c7 .scene-name {
+      color: var(--forest);
+      font-size: 30px;
+      font-weight: 790;
+      line-height: 1.3;
+    }
+
+    .c7 .scene-flow {
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 560;
+      line-height: 1.5;
+    }
+
+    .c7 .scene-flow .arrow {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .c7 .scene-conclusion {
+      margin-top: 38px;
+      border-left: 8px solid var(--amber);
+      padding: 6px 0 6px 24px;
+      color: var(--forest);
+      font-size: 29px;
+      font-weight: 740;
+      line-height: 1.45;
+    }
+
+    /* Card 08 */
+    .c8 {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .c8 .eyebrow {
+      color: var(--green);
+    }
+
+    .c8 .cta-grid {
+      display: grid;
+      grid-template-columns: 1fr 344px;
+      gap: 52px;
+      align-items: center;
+      margin-top: 42px;
+    }
+
+    .c8 .cta-title {
+      font-size: 70px;
+      font-weight: 820;
+      line-height: 1.08;
+    }
+
+    .c8 .cta-title .accent {
+      color: var(--green);
+    }
+
+    .c8 .prompt-label {
+      margin-top: 40px;
+      color: rgba(255, 255, 255, 0.58);
+      font-size: 20px;
+      font-weight: 650;
+    }
+
+    .c8 .prompt-box {
+      margin-top: 13px;
+      border-left: 7px solid var(--green);
+      background: rgba(255, 255, 255, 0.07);
+      padding: 22px 24px;
+      color: var(--white);
+      font-size: 28px;
+      font-weight: 680;
+      line-height: 1.45;
+    }
+
+    .c8 .repo-url {
+      margin-top: 26px;
+      color: var(--green-soft);
+      font-size: 23px;
+      font-weight: 620;
+      line-height: 1.4;
+    }
+
+    .c8 .qr-wrap {
+      background: var(--white);
+      padding: 18px;
+    }
+
+    .c8 .qr-wrap img {
+      display: block;
+      width: 308px;
+      height: 308px;
+    }
+
+    .c8 .qr-caption {
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .c8 .interaction {
+      position: absolute;
+      right: 82px;
+      bottom: 116px;
+      left: 82px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 24px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 25px;
+      line-height: 1.5;
+    }
+
+    .c8 .interaction strong {
+      color: var(--white);
+      font-weight: 760;
+    }
+
+    body.single {
+      width: 1080px;
+      height: 1080px;
+      min-height: 1080px;
+      overflow: hidden;
+      background: transparent;
+      padding: 0;
+    }
+
+    body.single .cards-wrap {
+      display: block;
+    }
+
+    body.single .card-unit {
+      display: none;
+    }
+
+    body.single .card-unit.active {
+      display: block;
+    }
+
+    body.single .card-label {
+      display: none;
+    }
+
+    body.single .card {
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="cards-wrap">
+    <section class="card-unit" data-card="1">
+      <div class="card-label">01 / COVER</div>
+      <article class="card c1">
+        <span class="decor ring-a"></span>
+        <span class="decor ring-b"></span>
+        <span class="decor ring-c"></span>
+        <span class="decor node n1"></span>
+        <span class="decor node n2"></span>
+        <span class="decor node n3"></span>
+        <div class="card-inner">
+          <div class="eyebrow">LOOP ENGINEERING · OPEN SOURCE 01</div>
+          <div class="cover-kicker">昨天用它复刻 UI，今天把脚手架交出来</div>
+          <h1 class="cover-title">我把<br><span class="accent">Loop Builder</span><br>开源了</h1>
+          <p class="cover-subtitle">一句自然语言任务，转成可验证、可停止、可纠错的 Agent Loop</p>
+          <div class="open-source">Turn messy tasks into controllable Agent Loops.</div>
+        </div>
+        <footer class="footer dark">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="2">
+      <div class="card-label">02 / REAL CASE</div>
+      <article class="card c2">
+        <div class="card-inner">
+          <div class="eyebrow">CASE / UI VISUAL MATCH</div>
+          <h2 class="title">昨天，先用它跑了一个真实任务</h2>
+          <div class="case-layout">
+            <div class="case-image">
+              <img src="../13-ui-visual-match-assets/03-final-target-vs-current.png" alt="安心记目标 UI 与当前实现对比">
+            </div>
+            <div class="case-flow">
+              <div class="flow-step">目标图</div>
+              <div class="flow-step">当前截图</div>
+              <div class="flow-step">差异清单</div>
+              <div class="flow-step emphasis">修 Top 3</div>
+              <div class="flow-step">再截图</div>
+            </div>
+          </div>
+          <p class="case-note">从第一版“能跑”，收敛到接近目标稿；最后的审美判断仍然交给人。</p>
+        </div>
+        <footer class="footer">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="3">
+      <div class="card-label">03 / WHY</div>
+      <article class="card c3">
+        <div class="card-inner">
+          <div class="eyebrow">WHY LOOP BUILDER</div>
+          <h2 class="title">为什么要做 Loop Builder</h2>
+          <div class="problem-list">
+            <div class="problem-row">
+              <div class="problem-no">01</div>
+              <div>
+                <div class="problem-title">上下文缺失仍继续</div>
+                <div class="problem-desc">缺目标图、失败日志或验收标准，Agent 只能猜。</div>
+              </div>
+            </div>
+            <div class="problem-row">
+              <div class="problem-no">02</div>
+              <div>
+                <div class="problem-title">每轮没有外部反馈</div>
+                <div class="problem-desc">没有测试、截图或数据，结果只剩自我确认。</div>
+              </div>
+            </div>
+            <div class="problem-row">
+              <div class="problem-no">03</div>
+              <div>
+                <div class="problem-title">没有停止与确认规则</div>
+                <div class="problem-desc">改动扩散、成本上涨，风险动作越过人。</div>
+              </div>
+            </div>
+          </div>
+          <div class="problem-conclusion">先把执行方式设计清楚，再让 Agent 动手。</div>
+        </div>
+        <footer class="footer">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="4">
+      <div class="card-label">04 / WORKFLOW</div>
+      <article class="card c4">
+        <div class="card-inner">
+          <div class="eyebrow">HOW IT WORKS</div>
+          <h2 class="title">一句话进去，它先做 5 个判断</h2>
+          <div class="pipeline">
+            <div class="pipe-row">
+              <div class="pipe-no">01</div>
+              <div class="pipe-name">Context Gate</div>
+              <div class="pipe-desc">关键输入够不够</div>
+            </div>
+            <div class="pipe-row">
+              <div class="pipe-no">02</div>
+              <div class="pipe-name">Loop Fit</div>
+              <div class="pipe-desc">Prompt、Checklist 还是 Loop</div>
+            </div>
+            <div class="pipe-row">
+              <div class="pipe-no">03</div>
+              <div class="pipe-name">Strategy</div>
+              <div class="pipe-desc">选择合适的 Loop 模式</div>
+            </div>
+            <div class="pipe-row">
+              <div class="pipe-no">04</div>
+              <div class="pipe-name">Logic Confirmation</div>
+              <div class="pipe-desc">人先确认执行逻辑</div>
+            </div>
+            <div class="pipe-row">
+              <div class="pipe-no">05</div>
+              <div class="pipe-name">Artifact</div>
+              <div class="pipe-desc">生成 Prompt、Agent 或 Skill</div>
+            </div>
+          </div>
+          <p class="pipe-note">缺少关键输入时停下来；逻辑确认后再生成正式产物。</p>
+        </div>
+        <footer class="footer dark">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="5">
+      <div class="card-label">05 / OUTPUT MAP</div>
+      <article class="card c5">
+        <div class="card-inner">
+          <div class="eyebrow">OUTPUT MAP</div>
+          <h2 class="title">任务不同，产物也不同</h2>
+          <div class="decision-grid">
+            <div class="decision-item">
+              <div class="decision-task">一次性任务</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> Prompt</div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-task">主要靠人验收</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> Checklist</div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-task">高风险动作</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> Human-in-the-Loop</div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-task">有反馈、需多轮修正</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> 完整 Loop</div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-task">同一业务反复运行</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> 专用 Agent</div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-task">跨项目长期复用</div>
+              <div class="decision-output"><span class="decision-arrow">→</span> 专用 Skill</div>
+            </div>
+          </div>
+          <div class="decision-conclusion">优先生成当下够用的最轻产物。</div>
+        </div>
+        <footer class="footer">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="6">
+      <div class="card-label">06 / RESPONSIBILITY</div>
+      <article class="card c6">
+        <div class="card-inner">
+          <div class="eyebrow">RESPONSIBILITY</div>
+          <h2 class="title">一套 Loop，四方各司其职</h2>
+          <div class="role-list">
+            <div class="role-row">
+              <div class="role-name">Loop Builder</div>
+              <div class="role-desc"><strong>设计工作流</strong>：整理输入、反馈、停止与权限。</div>
+            </div>
+            <div class="role-row">
+              <div class="role-name">Agent</div>
+              <div class="role-desc"><strong>执行任务</strong>：可以是 Codex、Claude Code 或 Cursor。</div>
+            </div>
+            <div class="role-row">
+              <div class="role-name">Evaluator</div>
+              <div class="role-desc"><strong>提供证据</strong>：使用测试、截图、数据和规则验收。</div>
+            </div>
+            <div class="role-row">
+              <div class="role-name">Human</div>
+              <div class="role-desc"><strong>保留判断</strong>：确认执行逻辑、高风险动作和最终结果。</div>
+            </div>
+          </div>
+          <div class="boundary">公开发布、merge、生产配置、权限与删除始终由人确认。</div>
+        </div>
+        <footer class="footer dark">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="7">
+      <div class="card-label">07 / USE CASES</div>
+      <article class="card c7">
+        <div class="card-inner">
+          <div class="eyebrow">MORE USE CASES</div>
+          <h2 class="title">UI 复刻只是第一个公开案例</h2>
+          <div class="scene-list">
+            <div class="scene-row">
+              <div class="scene-name">CI 自动修复</div>
+              <div class="scene-flow">失败日志 <span class="arrow">→</span> 修复 <span class="arrow">→</span> 测试 <span class="arrow">→</span> 人工合并</div>
+            </div>
+            <div class="scene-row">
+              <div class="scene-name">内容专题生产</div>
+              <div class="scene-flow">选题 <span class="arrow">→</span> 草稿 <span class="arrow">→</span> 审核 <span class="arrow">→</span> 发布确认</div>
+            </div>
+            <div class="scene-row">
+              <div class="scene-name">Skill 维护</div>
+              <div class="scene-flow">规则候选 <span class="arrow">→</span> 修改 <span class="arrow">→</span> 验证 <span class="arrow">→</span> 人工升级</div>
+            </div>
+            <div class="scene-row">
+              <div class="scene-name">学习复盘</div>
+              <div class="scene-flow">输入 <span class="arrow">→</span> 提炼 <span class="arrow">→</span> 复习 <span class="arrow">→</span> 更新记忆</div>
+            </div>
+          </div>
+          <div class="scene-conclusion">先用一个真实任务跑通，再决定是否 Agent 化或 Skill 化。</div>
+        </div>
+        <footer class="footer">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="8">
+      <div class="card-label">08 / ACTION</div>
+      <article class="card c8">
+        <div class="card-inner">
+          <div class="eyebrow">OPEN SOURCE / GITHUB</div>
+          <div class="cta-grid">
+            <div>
+              <h2 class="cta-title">把你的真实任务<br>丢给 <span class="accent">Loop Builder</span></h2>
+              <div class="prompt-label">最短使用入口</div>
+              <div class="prompt-box">帮我把这个任务做成 Loop</div>
+              <div class="repo-url">github.com/yangchao228/loop-builder</div>
+            </div>
+            <div>
+              <div class="qr-wrap">
+                <img src="assets/github-loop-builder-qr.png" alt="Loop Builder GitHub 仓库二维码">
+              </div>
+              <div class="qr-caption">长按识别，查看开源仓库</div>
+            </div>
+          </div>
+          <div class="interaction"><strong>留言告诉我：</strong>你最想把哪个任务搭成 Loop？<br>我会选一个继续公开跑完整链路。</div>
+        </div>
+        <footer class="footer dark">
+          <span class="series">LOOP ENGINEERING</span>
+          <span class="author">AI生命克劳德</span>
+        </footer>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const cardNumber = new URLSearchParams(window.location.search).get("card");
+    if (cardNumber) {
+      document.body.classList.add("single");
+      const selected = document.querySelector(`[data-card="${cardNumber}"]`);
+      if (selected) selected.classList.add("active");
+    }
+  </script>
+</body>
+</html>

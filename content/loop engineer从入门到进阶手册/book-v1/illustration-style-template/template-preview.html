@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loop Engineering 插图统一视觉模板 v1</title>
+  <style>
+    :root {
+      --bg: #101112;
+      --panel: #181b1f;
+      --panel-2: #12171a;
+      --text: #f3ebdd;
+      --muted: #b8b2a7;
+      --gold: #d4a84b;
+      --cyan: #38c6d9;
+      --blue: #4d8dff;
+      --red: #e75d57;
+      --line: rgba(243, 235, 221, .18);
+      --soft-line: rgba(243, 235, 221, .1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #0a0b0c;
+      color: var(--text);
+      font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", Inter, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .page-title {
+      width: 1600px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .preview-frame {
+      width: calc(1600px * var(--preview-scale, 1));
+      height: calc(900px * var(--preview-scale, 1));
+      margin: 0 auto 40px;
+    }
+
+    .canvas {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      margin: 0;
+      overflow: hidden;
+      transform: scale(var(--preview-scale, 1));
+      transform-origin: left top;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        radial-gradient(circle at 50% 12%, rgba(212,168,75,.12), transparent 32%),
+        radial-gradient(circle at 18% 70%, rgba(56,198,217,.09), transparent 30%),
+        linear-gradient(135deg, #111315, #090a0b);
+      background-size: 80px 80px, 80px 80px, auto, auto, auto;
+      border: 1px solid rgba(243,235,221,.12);
+    }
+
+    .canvas::before {
+      content: "";
+      position: absolute;
+      inset: 40px;
+      border: 1px solid rgba(243,235,221,.09);
+      pointer-events: none;
+    }
+
+    .title {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 66px;
+      text-align: center;
+      font-size: 64px;
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 146px;
+      text-align: center;
+      color: var(--gold);
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .body {
+      position: absolute;
+      left: 96px;
+      right: 96px;
+      top: 230px;
+      bottom: 132px;
+    }
+
+    .bottom-note {
+      position: absolute;
+      left: 140px;
+      right: 140px;
+      bottom: 54px;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid rgba(212,168,75,.45);
+      border-bottom: 1px solid rgba(212,168,75,.28);
+      color: var(--text);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .highlight {
+      color: var(--gold);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 38px;
+      align-items: center;
+    }
+
+    .step-card,
+    .quad-card,
+    .role-card,
+    .side-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(24,27,31,.94), rgba(18,23,26,.92));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: 0 16px 42px rgba(0,0,0,.25);
+    }
+
+    .step-card {
+      height: 430px;
+      padding: 36px 28px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .step-card::after {
+      content: "";
+      position: absolute;
+      right: -31px;
+      top: 50%;
+      width: 24px;
+      height: 2px;
+      background: var(--soft-line);
+    }
+
+    .step-card:last-child::after {
+      display: none;
+    }
+
+    .num {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid currentColor;
+      color: var(--cyan);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .icon {
+      width: 92px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 1px solid currentColor;
+      color: var(--cyan);
+      font-size: 46px;
+      font-weight: 700;
+    }
+
+    .step-card h3,
+    .quad-card h3,
+    .role-card h3,
+    .side-card h3 {
+      margin: 0;
+      font-size: 44px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .step-card p,
+    .quad-card p,
+    .role-card p,
+    .side-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 27px;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .gold-card {
+      border-color: rgba(212,168,75,.5);
+      box-shadow: 0 0 0 1px rgba(212,168,75,.12), 0 20px 52px rgba(212,168,75,.12);
+    }
+
+    .gold-card .num,
+    .gold-card .icon,
+    .gold-card h3 {
+      color: var(--gold);
+    }
+
+    .quad-layout {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 32px 320px;
+      align-items: stretch;
+    }
+
+    .loop-core {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 324px;
+      height: 324px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(212,168,75,.62);
+      background:
+        conic-gradient(from 30deg, rgba(212,168,75,.22), rgba(56,198,217,.16), rgba(77,141,255,.15), rgba(212,168,75,.22));
+      box-shadow: inset 0 0 60px rgba(0,0,0,.45), 0 0 42px rgba(212,168,75,.13);
+      font-size: 54px;
+      font-weight: 800;
+    }
+
+    .quad-card {
+      padding: 34px 38px;
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .quad-card h3 {
+      margin-bottom: 14px;
+    }
+
+    .quad-card.stop {
+      border-color: rgba(231,93,87,.42);
+    }
+
+    .quad-card.stop .icon,
+    .quad-card.stop h3 {
+      color: var(--red);
+    }
+
+    .role-layout {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      align-items: center;
+    }
+
+    .role-card {
+      position: relative;
+      width: auto;
+      min-height: 340px;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      justify-content: center;
+    }
+
+    .planner {
+      border-color: rgba(212,168,75,.46);
+    }
+
+    .maker {
+      border-color: rgba(56,198,217,.45);
+    }
+
+    .checker {
+      border-color: rgba(231,93,87,.4);
+    }
+
+    .boundary-layout {
+      display: grid;
+      grid-template-columns: 1fr 92px 1fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    .side-card {
+      padding: 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .side-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 20px;
+    }
+
+    .side-card li {
+      color: var(--muted);
+      font-size: 30px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    .side-card li::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 14px;
+      border-radius: 50%;
+      background: currentColor;
+      vertical-align: 5px;
+      opacity: .7;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 70px;
+      font-weight: 200;
+    }
+
+    .tag {
+      align-self: flex-start;
+      padding: 9px 16px;
+      border: 1px solid rgba(212,168,75,.42);
+      color: var(--gold);
+      font-size: 24px;
+      font-weight: 800;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-title">Loop Engineering 书内插图统一视觉模板 v1 / 预览样张</div>
+
+  <div class="preview-frame">
+    <section class="canvas">
+      <div class="title">Prompt → Context → Harness → <span class="highlight">Loop</span></div>
+      <div class="subtitle">AI 协作能力的四层演进</div>
+      <div class="body flow">
+        <article class="step-card">
+          <div class="num">01</div>
+          <div class="icon">P</div>
+          <h3>Prompt</h3>
+          <p>一次性表达<br>完成单轮任务</p>
+        </article>
+        <article class="step-card">
+          <div class="num">02</div>
+          <div class="icon">C</div>
+          <h3>Context</h3>
+          <p>稳定背景<br>减少重复解释</p>
+        </article>
+        <article class="step-card">
+          <div class="num">03</div>
+          <div class="icon">H</div>
+          <h3>Harness</h3>
+          <p>工具与规则<br>接入真实环境</p>
+        </article>
+        <article class="step-card gold-card">
+          <div class="num">04</div>
+          <div class="icon">L</div>
+          <h3>Loop</h3>
+          <p>反馈闭环<br>跨轮次持续推进</p>
+        </article>
+      </div>
+      <div class="bottom-note">人的工作重心，从写提示词，上移到设计反馈、状态和边界。</div>
+    </section>
+  </div>
+
+  <div class="preview-frame">
+    <section class="canvas">
+      <div class="title">一个好 Loop，必须满足四条标准</div>
+      <div class="subtitle">可验证、可停止、可纠错、可交接</div>
+      <div class="body quad-layout">
+        <article class="quad-card">
+          <div class="icon">✓</div>
+          <div>
+            <h3 style="color: var(--blue)">可验证</h3>
+            <p>有外部反馈，不靠自我确认</p>
+          </div>
+        </article>
+        <article class="quad-card stop">
+          <div class="icon">!</div>
+          <div>
+            <h3>可停止</h3>
+            <p>失败、超时、高风险时停下</p>
+          </div>
+        </article>
+        <article class="quad-card">
+          <div class="icon">↺</div>
+          <div>
+            <h3 style="color: var(--cyan)">可纠错</h3>
+            <p>记录失败原因，支持下一轮修正</p>
+          </div>
+        </article>
+        <article class="quad-card">
+          <div class="icon">↗</div>
+          <div>
+            <h3 style="color: var(--gold)">可交接</h3>
+            <p>别人或下一轮 Agent 能接手</p>
+          </div>
+        </article>
+        <div class="loop-core">Loop</div>
+      </div>
+      <div class="bottom-note">缺少这四项，自动化越快，风险扩散越快。</div>
+    </section>
+  </div>
+
+  <div class="preview-frame">
+    <section class="canvas">
+      <div class="title">三角色闭环：规划、生成、验收分离</div>
+      <div class="subtitle">不要让同一个 Agent 既实现，又宣布自己通过</div>
+      <div class="body role-layout">
+        <article class="role-card planner">
+          <span class="tag">Planner</span>
+          <h3 style="color: var(--gold)">定目标和边界</h3>
+          <p>拆目标、写约束、定义验收标准</p>
+        </article>
+        <article class="role-card maker">
+          <span class="tag">Generator / Maker</span>
+          <h3 style="color: var(--cyan)">最小实现</h3>
+          <p>按计划生成、修改、提交可检查结果</p>
+        </article>
+        <article class="role-card checker">
+          <span class="tag">Evaluator / Checker</span>
+          <h3 style="color: var(--red)">独立验收</h3>
+          <p>验证结果、指出风险、不替生成者背书</p>
+        </article>
+      </div>
+      <div class="bottom-note">角色分离，是减少自我确认和范围失控的基础。</div>
+    </section>
+  </div>
+
+  <div class="preview-frame">
+    <section class="canvas">
+      <div class="title">人机确认边界</div>
+      <div class="subtitle">Agent 准备证据，人保留最终判断权</div>
+      <div class="body boundary-layout">
+        <article class="side-card">
+          <span class="tag">Agent</span>
+          <h3 style="color: var(--cyan)">可以自动准备</h3>
+          <ul>
+            <li>收集上下文和候选方案</li>
+            <li>运行检查并整理证据</li>
+            <li>给出风险、差异和建议</li>
+            <li>生成可交接的记录</li>
+          </ul>
+        </article>
+        <div class="divider">|</div>
+        <article class="side-card" style="border-color: rgba(231,93,87,.45)">
+          <span class="tag">Human</span>
+          <h3 style="color: var(--red)">必须人工确认</h3>
+          <ul>
+            <li>生产发布和外部提交</li>
+            <li>权限、资金和敏感数据</li>
+            <li>高风险改动和不可逆操作</li>
+            <li>价值判断和最终取舍</li>
+          </ul>
+        </article>
+      </div>
+      <div class="bottom-note">好的 Loop 会把证据推到人面前，而不是替人做最终判断。</div>
+    </section>
+  </div>
+
+  <script>
+    function setPreviewScale() {
+      var scale = Math.min(1, Math.max(0.4, (window.innerWidth - 80) / 1600));
+      document.documentElement.style.setProperty("--preview-scale", String(scale));
+    }
+
+    window.addEventListener("resize", setPreviewScale);
+    setPreviewScale();
+  </script>
+</body>
+</html>

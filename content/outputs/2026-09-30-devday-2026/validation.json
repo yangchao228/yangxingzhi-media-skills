@@ -1,0 +1,37 @@
+{
+  "schema_nodes_checked": 199,
+  "han_characters": 3631,
+  "article_heading_count": 10,
+  "external_citation_links": 13,
+  "unique_cited_sources": 9,
+  "title_codepoints": 39,
+  "article_sha256": "d970d73e8a64ed530cb695cb21dddc4f41a97f36890fe06eb3524f9ca480ac4c",
+  "passed": [
+    "current schema supported rules",
+    "clean reader draft",
+    "banned wording",
+    "single body source",
+    "citation registry",
+    "local reference targets",
+    "trailing whitespace",
+    "publication status",
+    "git no-index whitespace diagnostics for all new files"
+  ],
+  "not_performed": [
+    "independent product benchmark",
+    "image generation",
+    "WeChat backend preview",
+    "publication"
+  ],
+  "image_prompt_validation": {
+    "prompt_count": 4,
+    "schema_nodes_checked": 203,
+    "article_unchanged": true,
+    "exact_insertion_anchors": 3,
+    "independent_prompts": true,
+    "local_links": "pass",
+    "decision_recorded": "继续",
+    "rendered_images": 0,
+    "scope": "提示词与插图位置"
+  }
+}

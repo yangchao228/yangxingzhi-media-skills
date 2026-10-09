@@ -1,0 +1,102 @@
+{
+  "content_state": {
+    "request": {
+      "raw_intent": "启动文昌总控，诊断并优化用户提供的中国 Creator × 入境游小红书初稿。",
+      "current_stage": "文案出刊检查完成",
+      "target_platforms": ["小红书"],
+      "entry_type": "已有初稿",
+      "completed_stages": ["入口判断", "诊文", "局部编辑", "文案出刊检查"],
+      "execution_scope": "文字优化与配套文案；未进入图片制作或发布"
+    },
+    "audience": {
+      "primary": "寻找本地创作者合作对象的入境游商家",
+      "pain_points": ["难以区分内容吸引力、招募能力和体验能力", "合作想法缺少小规模验证路径"]
+    },
+    "topic": {
+      "source": "用户在本任务粘贴的完整初稿",
+      "core_angle": "中国创作者能否成为外国游客选择主题体验的理由；保留为待验证假设。",
+      "title_candidates": ["外国游客会为中国创作者报名吗？", "中国创作者，能带外国游客怎么玩？", "入境游找创作者，还能怎么合作？"],
+      "selected_title": "外国游客会为中国创作者报名吗？",
+      "title_status": "编辑推荐，未声称用户已确认",
+      "long_term_value": "保存入境游与本地创作者合作的可测试产品假设"
+    },
+    "research": {
+      "sources": ["用户提供的原稿"],
+      "key_facts": [],
+      "contrarian_points": ["评论询问不等于付款", "有人报名不能直接证明 Creator 带来的溢价", "国内受欢迎不等于能够招募外国游客"],
+      "contradictions": [],
+      "confidence": null,
+      "confidence_scope": "未做外部研究；不对商业可行性打分。本文只提出假设。",
+      "external_research_performed": false,
+      "statement_register": "2026-09-24-chinese-creator-inbound-editorial-pack.md#statement-register"
+    },
+    "draft": {
+      "status": "优化稿完成，供作者终审",
+      "file": "content/outputs/2026-09-24-chinese-creator-inbound-xiaohongshu.md",
+      "summary": "以成都摄影师的假设体验解释同行主理人，分别讨论招募和体验能力，再给出半天或一天的观察方案。"
+    },
+    "diagnosis": {
+      "recommendation": "局部精简后保留",
+      "key_issues": ["开头依赖上一篇", "原题超过仓库 20 字符规则", "身份差异容易被写成能力定论", "重复列举与设问", "兴趣、付款与溢价尚未分开"],
+      "minimum_fixes": ["问题前置", "缩短标题", "保留条件表达", "聚焦成都摄影师设想", "明确付费与溢价的验证边界"],
+      "text_fixes_completed": true,
+      "file": "content/outputs/2026-09-24-chinese-creator-inbound-editorial-pack.md"
+    },
+    "publish_assets": {
+      "body_file": "content/outputs/2026-09-24-chinese-creator-inbound-xiaohongshu.md",
+      "title": "外国游客会为中国创作者报名吗？",
+      "cover_text": "让游客想见的人",
+      "tags": ["入境游", "旅行产品设计", "内容创作者", "旅行社", "本地体验"],
+      "images": [],
+      "comment_prompt": "你最想先找哪一类本地创作者合作？",
+      "xiaohongshu": {
+        "title_candidates": ["外国游客会为中国创作者报名吗？", "中国创作者，能带外国游客怎么玩？", "入境游找创作者，还能怎么合作？"],
+        "title_pairs": [
+          {"cover": "让游客想见的人", "cover_codepoints": 7, "post": "外国游客会为中国创作者报名吗？", "post_codepoints": 15},
+          {"cover": "跟本地创作者玩一天", "cover_codepoints": 9, "post": "中国创作者，能带外国游客怎么玩？", "post_codepoints": 16},
+          {"cover": "从拍视频到共同体验", "cover_codepoints": 9, "post": "入境游找创作者，还能怎么合作？", "post_codepoints": 15}
+        ],
+        "body_description": "做入境游，怎样判断一位本地创作者值不值得合作？这篇把“同行主理人”的想法拆成四件事：他能提供什么主题体验、外国客人从哪里来、如何与旅行社分工、怎样用半天或一天的小团验证报名意愿。成都摄影师扫街是产品设想，付费需求和溢价仍待验证。写给正在寻找合作对象的入境游商家，先把内容创作者的吸引力和实际招募能力分别看清。你最想先找哪一类本地创作者合作？",
+        "description_codepoints": 170,
+        "hot_topic_tags": ["入境游", "旅行产品设计", "内容创作者", "旅行社", "本地体验"],
+        "tag_status": "按内容相关性建议，未核实热度",
+        "comment_prompt": "你最想先找哪一类本地创作者合作？"
+      }
+    },
+    "distribution": {
+      "primary_platform": "小红书",
+      "secondary_platforms": [],
+      "card_skill": null,
+      "image_skill": null,
+      "platform_preview_verified": false,
+      "publication_status": "未发布"
+    },
+    "archive": {
+      "should_review_for_book": false,
+      "material_type": "未验证的产品假设草稿",
+      "suggested_bucket": "入境游 × 本地创作者合作",
+      "reason": "当前只具备设想，缺实际试验和复盘；保存项目文稿，暂不进入 Human3.0 成书审查。"
+    },
+    "decisions": [
+      {
+        "stage": "入口",
+        "question": "本轮任务范围",
+        "user_choice": "启动文昌总控，诊断并优化这篇小红书",
+        "timestamp": "2026-09-24",
+        "impact": "从已有初稿进入诊文并完成局部编辑，不重新定题，不把假设改成结论。"
+      }
+    ],
+    "next_step": {
+      "skill": null,
+      "reason": "本轮文字优化已完成，可供作者终审。若另行制作卡片，先确认视觉方案。",
+      "user_decision_needed": false
+    },
+    "handoff": {
+      "from_stage": "文案出刊检查",
+      "to_stage": "作者终审",
+      "accepted_inputs": ["正文唯一维护源", "三组双标题", "170 字符独立描述", "诊断及 Statement register"],
+      "ignored_context": ["未提供的上一篇全文", "其他项目的市场或业务状态", "未经验证的真实案例和平台热度"],
+      "stop_condition": "当前文字任务已完成；需要新增事实或把假设改成结论时补证，需要图片制作时另行确认视觉方案，不自动发布。"
+    }
+  }
+}

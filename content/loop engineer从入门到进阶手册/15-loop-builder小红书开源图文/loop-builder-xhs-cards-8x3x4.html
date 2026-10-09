@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>loop-builder 小红书开源图文｜8 张 3:4</title>
+  <style>
+    :root {
+      --paper: #f7faff;
+      --paper-2: #edf3ff;
+      --panel: #ffffff;
+      --navy: #071a3b;
+      --navy-2: #15315e;
+      --blue: #2457e6;
+      --blue-2: #3f72ff;
+      --blue-soft: #e9efff;
+      --teal: #0d918b;
+      --teal-soft: #e1f5f2;
+      --orange: #f28c28;
+      --orange-soft: #fff2e1;
+      --muted: #60718d;
+      --line: #d7e2f2;
+      --shadow: 0 24px 60px rgba(34, 62, 111, .13);
+      --font: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: var(--font); color: var(--navy); }
+    body { padding: 54px 24px; background: #e7edf6; }
+    .cards-wrap { display: flex; flex-direction: column; align-items: center; gap: 54px; }
+    .card-unit { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .card-label { color: #7b899f; font-size: 15px; font-weight: 800; letter-spacing: .16em; }
+
+    .card {
+      position: relative;
+      width: 1080px;
+      height: 1440px;
+      overflow: hidden;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 88% 7%, rgba(36, 87, 230, .12), transparent 27%),
+        radial-gradient(circle at 78% 74%, rgba(13, 145, 139, .08), transparent 31%),
+        linear-gradient(145deg, #fbfdff 0%, #f1f6fd 58%, #eaf2fc 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(36, 87, 230, .034) 1px, transparent 1px),
+        linear-gradient(rgba(36, 87, 230, .034) 1px, transparent 1px);
+      background-size: 72px 72px;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 9px;
+      background: linear-gradient(90deg, var(--blue), var(--teal));
+    }
+
+    .shell { position: absolute; inset: 0; padding: 64px 72px 54px; }
+    .header { height: 56px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 14px; color: var(--navy); font-size: 23px; font-weight: 900; }
+    .brand-mark { position: relative; width: 40px; height: 40px; border: 6px solid var(--blue); border-right-color: transparent; border-radius: 13px; }
+    .brand-mark::before { content: ""; position: absolute; right: -7px; top: 5px; width: 14px; height: 14px; border-right: 6px solid var(--blue); border-bottom: 6px solid var(--blue); transform: rotate(45deg); }
+    .brand-mark::after { content: ""; position: absolute; right: -4px; bottom: -8px; width: 11px; height: 11px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 4px var(--paper); }
+    .page-no { color: var(--muted); font-size: 18px; font-weight: 800; letter-spacing: .14em; }
+    .kicker { display: inline-flex; margin-top: 44px; padding: 10px 18px; border: 1px solid rgba(36, 87, 230, .25); border-radius: 999px; background: rgba(255,255,255,.76); color: var(--blue); font-size: 19px; font-weight: 900; letter-spacing: .07em; }
+    .title { margin: 22px 0 0; color: var(--navy); font-size: 65px; line-height: 1.13; font-weight: 950; letter-spacing: -.045em; }
+    .subtitle { margin: 18px 0 0; color: var(--muted); font-size: 27px; line-height: 1.52; font-weight: 650; }
+    .footer { position: absolute; left: 72px; right: 72px; bottom: 44px; display: flex; align-items: center; justify-content: space-between; padding-top: 17px; border-top: 1px solid rgba(7, 26, 59, .13); color: var(--muted); font-size: 17px; font-weight: 800; letter-spacing: .06em; }
+    .footer .series { color: var(--blue); }
+    .accent-blue { color: var(--blue); }
+    .accent-teal { color: var(--teal); }
+    .accent-orange { color: var(--orange); }
+
+    /* 01 Cover */
+    .c1 .cover-title { margin-top: 86px; width: 790px; font-size: 91px; line-height: 1.03; font-weight: 950; letter-spacing: -.06em; }
+    .c1 .cover-title strong { color: var(--blue); }
+    .c1 .cover-title em { color: var(--teal); font-style: normal; }
+    .c1 .cover-sub { width: 760px; margin-top: 32px; color: var(--navy-2); font-size: 31px; line-height: 1.5; font-weight: 720; }
+    .open-sticker { position: absolute; right: 80px; top: 224px; width: 205px; height: 205px; display: grid; place-items: center; border: 3px solid var(--orange); border-radius: 50%; background: var(--orange-soft); color: #b75d05; text-align: center; font-size: 22px; line-height: 1.2; font-weight: 950; transform: rotate(8deg); box-shadow: 0 16px 30px rgba(242,140,40,.17); }
+    .cover-flow { margin-top: 92px; padding: 42px 34px 38px; border: 2px solid rgba(36,87,230,.16); border-radius: 32px; background: rgba(255,255,255,.82); box-shadow: var(--shadow); }
+    .flow-label { margin-bottom: 28px; color: var(--muted); font-size: 18px; font-weight: 850; letter-spacing: .12em; }
+    .flow-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+    .flow-step { position: relative; min-height: 158px; padding: 23px 14px; border: 1px solid var(--line); border-radius: 22px; background: #fff; text-align: center; }
+    .flow-step::after { content: ""; position: absolute; top: 73px; right: -18px; width: 18px; height: 3px; background: var(--blue); opacity: .45; }
+    .flow-step:last-child::after { display: none; }
+    .flow-num { width: 38px; height: 38px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 12px; background: var(--blue-soft); color: var(--blue); font-size: 18px; font-weight: 950; }
+    .flow-step:nth-child(4) .flow-num { background: var(--teal-soft); color: var(--teal); }
+    .flow-step:nth-child(5) .flow-num { background: var(--orange-soft); color: var(--orange); }
+    .flow-step b { display: block; color: var(--navy); font-size: 20px; line-height: 1.28; }
+    .benefit-row { margin-top: 34px; display: flex; justify-content: center; gap: 18px; }
+    .benefit-pill { min-width: 180px; padding: 15px 22px; border: 1px solid rgba(13,145,139,.28); border-radius: 999px; background: var(--teal-soft); color: var(--teal); text-align: center; font-size: 21px; font-weight: 900; }
+
+    /* 02 Pain */
+    .pain-grid { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .pain-card { min-height: 238px; padding: 30px 30px 27px; border: 1px solid var(--line); border-radius: 28px; background: rgba(255,255,255,.88); box-shadow: 0 18px 38px rgba(34,62,111,.08); }
+    .pain-top { display: flex; align-items: center; justify-content: space-between; }
+    .pain-index { color: rgba(36,87,230,.23); font-size: 54px; font-weight: 950; }
+    .pain-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 8px var(--blue-soft); }
+    .pain-card:nth-child(2) .pain-dot, .pain-card:nth-child(4) .pain-dot { background: var(--teal); box-shadow: 0 0 0 8px var(--teal-soft); }
+    .pain-card h3 { margin: 26px 0 10px; font-size: 31px; line-height: 1.22; }
+    .pain-card p { margin: 0; color: var(--muted); font-size: 22px; line-height: 1.48; font-weight: 630; }
+    .pain-conclusion { margin-top: 36px; padding: 24px 28px; border-left: 7px solid var(--orange); border-radius: 0 20px 20px 0; background: var(--orange-soft); color: var(--navy); font-size: 27px; line-height: 1.42; font-weight: 850; }
+
+    /* 03 Mechanism */
+    .mechanism-list { margin-top: 42px; display: flex; flex-direction: column; gap: 16px; }
+    .mechanism-item { position: relative; display: grid; grid-template-columns: 72px 230px 1fr; align-items: center; min-height: 126px; padding: 20px 28px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.88); }
+    .mechanism-item:not(:last-child)::after { content: ""; position: absolute; left: 62px; bottom: -17px; width: 3px; height: 18px; background: var(--blue); opacity: .38; }
+    .mech-num { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 16px; background: var(--blue); color: #fff; font-size: 22px; font-weight: 950; }
+    .mechanism-item:nth-child(4) .mech-num { background: var(--teal); }
+    .mechanism-item:nth-child(5) .mech-num { background: var(--orange); }
+    .mechanism-item h3 { margin: 0; font-size: 28px; }
+    .mechanism-item p { margin: 0; color: var(--muted); font-size: 21px; line-height: 1.46; font-weight: 630; }
+    .human-note { margin-top: 28px; padding: 22px 28px; display: flex; gap: 18px; align-items: center; border: 2px solid rgba(242,140,40,.4); border-radius: 24px; background: var(--orange-soft); }
+    .human-icon { flex: 0 0 52px; width: 52px; height: 52px; border: 4px solid var(--orange); border-radius: 50% 50% 42% 42%; position: relative; }
+    .human-icon::after { content: ""; position: absolute; left: -10px; right: -10px; bottom: -15px; height: 24px; border: 4px solid var(--orange); border-bottom: 0; border-radius: 24px 24px 0 0; }
+    .human-note p { margin: 0; color: var(--navy); font-size: 24px; line-height: 1.45; font-weight: 820; }
+
+    /* 04 Outputs */
+    .output-grid { margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .output-card { min-height: 194px; padding: 25px 26px; border: 1px solid var(--line); border-radius: 26px; background: rgba(255,255,255,.91); box-shadow: 0 14px 28px rgba(34,62,111,.07); }
+    .output-card:nth-child(4), .output-card:nth-child(5), .output-card:nth-child(6) { border-color: rgba(13,145,139,.28); }
+    .output-head { display: flex; align-items: center; gap: 16px; }
+    .output-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 15px; background: var(--blue-soft); color: var(--blue); font-size: 18px; font-weight: 950; letter-spacing: -.03em; }
+    .output-card:nth-child(n+4) .output-icon { background: var(--teal-soft); color: var(--teal); }
+    .output-card h3 { margin: 0; font-size: 27px; }
+    .output-card p { margin: 18px 0 0; color: var(--muted); font-size: 21px; line-height: 1.42; font-weight: 650; }
+    .output-conclusion { margin-top: 30px; padding: 21px 26px; border-radius: 22px; background: var(--navy); color: #fff; font-size: 24px; line-height: 1.4; font-weight: 820; text-align: center; }
+
+    /* 05 CI */
+    .case-badge { display: inline-flex; margin-top: 42px; padding: 10px 18px; border-radius: 999px; background: var(--blue-soft); color: var(--blue); font-size: 19px; font-weight: 900; letter-spacing: .05em; }
+    .ci-figure { margin: 34px 0 0; overflow: hidden; border: 1px solid rgba(7,26,59,.14); border-radius: 28px; background: #fff; box-shadow: var(--shadow); }
+    .ci-figure img { display: block; width: 100%; height: 500px; object-fit: cover; }
+    .signal-row { margin-top: 28px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .signal { padding: 16px 10px; border: 1px solid var(--line); border-radius: 18px; background: #fff; color: var(--navy); text-align: center; font-size: 20px; font-weight: 900; }
+    .warning { margin-top: 25px; padding: 23px 26px; border: 2px solid rgba(242,140,40,.46); border-radius: 24px; background: var(--orange-soft); color: var(--navy); font-size: 23px; line-height: 1.46; font-weight: 820; }
+
+    /* 06 UI */
+    .ui-stages { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .ui-stage { padding: 16px 14px 18px; border: 1px solid var(--line); border-radius: 25px; background: #fff; box-shadow: 0 16px 32px rgba(34,62,111,.09); }
+    .stage-label { margin-bottom: 13px; display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-size: 20px; font-weight: 900; }
+    .stage-label span { color: var(--blue); font-size: 16px; letter-spacing: .08em; }
+    .stage-shot { position: relative; height: 500px; overflow: hidden; border-radius: 18px; background: #f7f8f7; }
+    .stage-shot img { position: absolute; display: block; max-width: none; }
+    .stage-shot.target img, .stage-shot.first img { height: 520px; width: 520px; top: -4px; }
+    .stage-shot.target img { left: 0; }
+    .stage-shot.first img { left: -260px; }
+    .stage-shot.final img { width: 540px; height: auto; left: -270px; top: -8px; }
+    .diff-row { margin-top: 24px; display: flex; justify-content: center; gap: 14px; }
+    .diff-pill { padding: 12px 18px; border-radius: 999px; background: var(--teal-soft); color: var(--teal); font-size: 18px; font-weight: 900; }
+    .ui-loop { margin-top: 22px; padding: 20px 22px; border-radius: 22px; background: var(--navy); color: #fff; text-align: center; font-size: 22px; line-height: 1.4; font-weight: 850; }
+    .ui-note { margin-top: 15px; color: var(--muted); text-align: center; font-size: 19px; line-height: 1.4; font-weight: 680; }
+
+    /* 07 Repo */
+    .asset-grid { margin-top: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .asset-card { min-height: 142px; display: grid; grid-template-columns: 62px 1fr; gap: 18px; align-items: center; padding: 20px 24px; border: 1px solid var(--line); border-radius: 24px; background: rgba(255,255,255,.9); }
+    .asset-icon { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 18px; background: var(--blue-soft); color: var(--blue); font-size: 19px; font-weight: 950; }
+    .asset-card:nth-child(even) .asset-icon { background: var(--teal-soft); color: var(--teal); }
+    .asset-card h3 { margin: 0 0 7px; font-size: 25px; line-height: 1.2; }
+    .asset-card p { margin: 0; color: var(--muted); font-size: 19px; line-height: 1.38; font-weight: 640; }
+    .repo-fact { margin-top: 30px; padding: 25px 28px; border-left: 7px solid var(--orange); border-radius: 0 22px 22px 0; background: var(--orange-soft); color: var(--navy); font-size: 23px; line-height: 1.5; font-weight: 800; }
+
+    /* 08 CTA */
+    .c8 { background: linear-gradient(155deg, #071a3b 0%, #0c2856 58%, #0d5b68 100%); color: #fff; }
+    .c8::before { background: linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px); background-size: 72px 72px; }
+    .c8 .brand, .c8 .title { color: #fff; }
+    .c8 .brand-mark { border-color: #fff; border-right-color: transparent; }
+    .c8 .brand-mark::before { border-color: #fff; }
+    .c8 .brand-mark::after { background: #45d1c7; box-shadow: 0 0 0 4px #071a3b; }
+    .c8 .page-no { color: rgba(255,255,255,.62); }
+    .c8 .case-badge { background: rgba(69,209,199,.16); color: #7de2da; border: 1px solid rgba(125,226,218,.28); }
+    .c8 .title { font-size: 76px; }
+    .c8 .subtitle { color: rgba(255,255,255,.72); }
+    .action-grid { margin-top: 54px; display: grid; grid-template-columns: 1fr 350px; gap: 42px; align-items: center; }
+    .prompt-box { padding: 30px 32px; border: 1px solid rgba(255,255,255,.2); border-radius: 28px; background: rgba(255,255,255,.08); }
+    .prompt-label { color: #7de2da; font-size: 18px; font-weight: 900; letter-spacing: .1em; }
+    .prompt-text { margin-top: 20px; color: #fff; font-size: 27px; line-height: 1.52; font-weight: 760; }
+    .prompt-text strong { color: #7de2da; }
+    .qr-wrap { padding: 18px; border-radius: 28px; background: #fff; box-shadow: 0 24px 55px rgba(0,0,0,.25); }
+    .qr-wrap img { display: block; width: 314px; height: 314px; }
+    .repo-address { margin-top: 42px; padding: 24px 28px; border: 1px solid rgba(255,255,255,.17); border-radius: 22px; background: rgba(255,255,255,.07); color: #fff; text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 25px; font-weight: 760; }
+    .cta-bar { margin-top: 28px; padding: 24px 28px; border-radius: 22px; background: linear-gradient(90deg, var(--blue-2), #16a39b); color: #fff; text-align: center; font-size: 26px; line-height: 1.35; font-weight: 900; box-shadow: 0 18px 42px rgba(0,0,0,.22); }
+    .c8 .footer { border-top-color: rgba(255,255,255,.17); color: rgba(255,255,255,.65); }
+    .c8 .footer .series { color: #7de2da; }
+
+    body.single { padding: 0; background: transparent; overflow: hidden; }
+    body.single .cards-wrap { display: block; }
+    body.single .card-unit { display: none; }
+    body.single .card-unit.active-export { display: block; }
+    body.single .card-label { display: none; }
+    body.single .card { box-shadow: none; }
+  </style>
+</head>
+<body>
+  <main class="cards-wrap">
+    <section class="card-unit" data-card="1">
+      <div class="card-label">01 / COVER</div>
+      <article class="card c1">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">01 / 08</div></header>
+          <div class="kicker">loop-builder 已开源</div>
+          <h1 class="cover-title"><strong>提示词</strong><br>越补越乱？<br>给任务搭个<em> Loop</em></h1>
+          <p class="cover-sub">把临时对话沉淀成可验证、可复用的执行资产。</p>
+          <div class="open-sticker">OPEN<br>SOURCE<br>开源</div>
+          <div class="cover-flow">
+            <div class="flow-label">FROM MESSY TASK TO REUSABLE ASSET</div>
+            <div class="flow-row">
+              <div class="flow-step"><span class="flow-num">01</span><b>一句<br>自然语言</b></div>
+              <div class="flow-step"><span class="flow-num">02</span><b>上下文<br>闸门</b></div>
+              <div class="flow-step"><span class="flow-num">03</span><b>产物<br>选择</b></div>
+              <div class="flow-step"><span class="flow-num">04</span><b>受控<br>循环</b></div>
+              <div class="flow-step"><span class="flow-num">05</span><b>可复用<br>资产</b></div>
+            </div>
+          </div>
+          <div class="benefit-row"><span class="benefit-pill">可验证</span><span class="benefit-pill">可停止</span><span class="benefit-pill">可复用</span></div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="2">
+      <div class="card-label">02 / PAIN</div>
+      <article class="card c2">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">02 / 08</div></header>
+          <div class="kicker">你可能也遇到过</div>
+          <h2 class="title">反复补提示词，<br>任务还是容易失控</h2>
+          <p class="subtitle">Prompt 能启动任务，但很难独自承担反馈、停止和复用。</p>
+          <div class="pain-grid">
+            <div class="pain-card"><div class="pain-top"><span class="pain-index">01</span><i class="pain-dot"></i></div><h3>目标越改越散</h3><p>这一轮修布局，下一轮又把边界带跑。</p></div>
+            <div class="pain-card"><div class="pain-top"><span class="pain-index">02</span><i class="pain-dot"></i></div><h3>缺少证据只能猜</h3><p>没有截图、测试或 diff，Agent 只能凭感觉继续。</p></div>
+            <div class="pain-card"><div class="pain-top"><span class="pain-index">03</span><i class="pain-dot"></i></div><h3>每轮改动太多</h3><p>问题和新问题混在一起，越改越难验收。</p></div>
+            <div class="pain-card"><div class="pain-top"><span class="pain-index">04</span><i class="pain-dot"></i></div><h3>经验无法复用</h3><p>同类任务再次出现，又从零解释一遍。</p></div>
+          </div>
+          <div class="pain-conclusion">任务需要进入一个可验证、可停止的闭环。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="3">
+      <div class="card-label">03 / MECHANISM</div>
+      <article class="card c3">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">03 / 08</div></header>
+          <div class="kicker">一句话入口，五个关口</div>
+          <h2 class="title">loop-builder<br>先替你接住复杂性</h2>
+          <div class="mechanism-list">
+            <div class="mechanism-item"><span class="mech-num">1</span><h3>一句自然语言</h3><p>先说真实任务，不要求你懂 Loop 术语。</p></div>
+            <div class="mechanism-item"><span class="mech-num">2</span><h3>上下文闸门</h3><p>补齐会影响判断的目标、证据和边界。</p></div>
+            <div class="mechanism-item"><span class="mech-num">3</span><h3>产物选择</h3><p>在 Prompt、Checklist、Loop、Agent、Skill 中选最轻方案。</p></div>
+            <div class="mechanism-item"><span class="mech-num">4</span><h3>反馈与停止</h3><p>明确怎么验证、何时继续、何时停止。</p></div>
+            <div class="mechanism-item"><span class="mech-num">5</span><h3>可复用资产</h3><p>生成可直接使用、迁移或继续沉淀的文件。</p></div>
+          </div>
+          <div class="human-note"><span class="human-icon"></span><p>缺少关键证据时暂停；正式执行逻辑先交给人确认。</p></div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="4">
+      <div class="card-label">04 / OUTPUT MAP</div>
+      <article class="card c4">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">04 / 08</div></header>
+          <div class="kicker">OUTPUT DECISION</div>
+          <h2 class="title">先选最轻方案，<br>再逐级升级</h2>
+          <p class="subtitle">任务需要多少结构，由目标、反馈和风险共同决定。</p>
+          <div class="output-grid">
+            <div class="output-card"><div class="output-head"><span class="output-icon">P</span><h3>Prompt</h3></div><p>目标明确，只需一次完成。</p></div>
+            <div class="output-card"><div class="output-head"><span class="output-icon">CL</span><h3>Checklist</h3></div><p>反馈主要依赖人工核对。</p></div>
+            <div class="output-card"><div class="output-head"><span class="output-icon">H</span><h3>Human-in-the-Loop</h3></div><p>风险动作需要人工确认。</p></div>
+            <div class="output-card"><div class="output-head"><span class="output-icon">L</span><h3>Loop 脚手架</h3></div><p>有明确反馈，可多轮验证。</p></div>
+            <div class="output-card"><div class="output-head"><span class="output-icon">A</span><h3>Agent 包</h3></div><p>同一业务会反复运行。</p></div>
+            <div class="output-card"><div class="output-head"><span class="output-icon">S</span><h3>专用 Skill</h3></div><p>同类任务要跨项目复用。</p></div>
+          </div>
+          <div class="output-conclusion">一次性任务不会被强行包装成完整 Loop。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="5">
+      <div class="card-label">05 / CI SCENARIO</div>
+      <article class="card c5">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">05 / 08</div></header>
+          <div class="case-badge">典型落地场景 · CI</div>
+          <h2 class="title">CI 修复为什么<br>适合做成 Loop</h2>
+          <p class="subtitle">失败信号清楚，修复范围可控，结果可以被工具验收。</p>
+          <figure class="ci-figure"><img src="assets/ci-inspection-loop.png" alt="CI 巡检 Loop 流程图"></figure>
+          <div class="signal-row"><div class="signal">test</div><div class="signal">lint</div><div class="signal">build</div><div class="signal">git diff</div></div>
+          <div class="warning">不削弱测试，不做无关重构，不自动 merge；最终 diff 等待人工确认。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="6">
+      <div class="card-label">06 / UI CASE</div>
+      <article class="card c6">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">06 / 08</div></header>
+          <div class="case-badge" style="background:var(--teal-soft);color:var(--teal)">真实跑通案例 · UI</div>
+          <h2 class="title">页面能跑以后，<br>怎么继续逼近目标图</h2>
+          <div class="ui-stages">
+            <div class="ui-stage"><div class="stage-label"><b>目标稿</b><span>TARGET</span></div><div class="stage-shot target"><img src="assets/ui-target-vs-first.png" alt="目标 UI"></div></div>
+            <div class="ui-stage"><div class="stage-label"><b>第一版</b><span>FIRST</span></div><div class="stage-shot first"><img src="assets/ui-target-vs-first.png" alt="UI 第一版"></div></div>
+            <div class="ui-stage"><div class="stage-label"><b>最终版</b><span>FINAL</span></div><div class="stage-shot final"><img src="assets/ui-target-vs-final.png" alt="UI 最终版"></div></div>
+          </div>
+          <div class="diff-row"><span class="diff-pill">日期卡片</span><span class="diff-pill">字体字重</span><span class="diff-pill">文字颜色</span></div>
+          <div class="ui-loop">目标图 → 当前截图 → Top 3 差异 → 修正 → 再截图</div>
+          <div class="ui-note">最终审美判断、提交和发布继续由人完成。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="7">
+      <div class="card-label">07 / REPOSITORY</div>
+      <article class="card c7">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">07 / 08</div></header>
+          <div class="kicker">OPEN SOURCE ASSETS</div>
+          <h2 class="title">仓库里已经准备好<br>这些可复用资产</h2>
+          <div class="asset-grid">
+            <div class="asset-card"><span class="asset-icon">S</span><div><h3>主 Skill</h3><p>任务识别、闸门、产物选择与边界。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">中EN</span><div><h3>中英文说明</h3><p>README 与 quick-start 快速入口。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">P</span><div><h3>Prompt 模板</h3><p>一次性任务和可复制执行入口。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">CL</span><div><h3>Checklist</h3><p>人工验收与反馈标准。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">L</span><div><h3>Loop 协议</h3><p>状态、角色、反馈与停止规则。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">A</span><div><h3>Agent / Skill</h3><p>业务复跑与跨项目复用协议。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">V</span><div><h3>验证记录</h3><p>真实样例与边界回归检查。</p></div></div>
+            <div class="asset-card"><span class="asset-icon">MIT</span><div><h3>MIT License</h3><p>开放使用、修改与再分发。</p></div></div>
+          </div>
+          <div class="repo-fact">仓库当前提供 Codex Skill 形态；核心方法可以迁移到其他 Agent 工作流。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+
+    <section class="card-unit" data-card="8">
+      <div class="card-label">08 / GITHUB ACTION</div>
+      <article class="card c8">
+        <div class="shell">
+          <header class="header"><div class="brand"><span class="brand-mark"></span>loop-builder</div><div class="page-no">08 / 08</div></header>
+          <div class="case-badge">OPEN SOURCE · GITHUB</div>
+          <h2 class="title">拿你的任务，<br>先跑一次</h2>
+          <p class="subtitle">从一句真实任务开始，先拿到最轻、最可用的下一步产物。</p>
+          <div class="action-grid">
+            <div class="prompt-box"><div class="prompt-label">MINIMUM INPUT</div><div class="prompt-text">请使用 <strong>$loop-builder</strong>，把这个反复出现的任务做成一个可控 Agent Loop。</div></div>
+            <div class="qr-wrap"><img src="assets/github-loop-builder-qr.png" alt="loop-builder GitHub 二维码"></div>
+          </div>
+          <div class="repo-address">github.com/yangchao228/loop-builder</div>
+          <div class="cta-bar">访问仓库，先跑一次，再决定是否沉淀成长期 Skill。</div>
+          <footer class="footer"><span class="series">LOOP ENGINEERING · OPEN SOURCE</span><span>AI生命克劳德</span></footer>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const cardNumber = Number(params.get('card'));
+    if (cardNumber) {
+      document.body.classList.add('single');
+      const active = document.querySelector(`[data-card="${cardNumber}"]`);
+      if (active) active.classList.add('active-export');
+    }
+  </script>
+</body>
+</html>

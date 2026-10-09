@@ -1,0 +1,181 @@
+{
+  "content_state": {
+    "project": {
+      "name": "文昌.skill",
+      "account": "AI生命克劳德",
+      "long_term_goal": "Human3.0"
+    },
+    "request": {
+      "raw_intent": "启用文昌总控，根据 ChatGPT Work 在 8 月 25 日加入事件触发、任务分享及登录后浏览器能力的素材开始内容创作。",
+      "current_stage": "出刊 / 配图确认",
+      "target_platforms": ["公众号"],
+      "entry_type": "明确主题与热点摘要",
+      "platform_basis": "文昌默认平台，用户尚未单独指定",
+      "completed_stages": ["路由", "定题 brief", "storm-research", "一手来源核验", "人工事实确认", "立骨", "起稿", "诊文与局部小修", "素材候选审查", "出刊检查"],
+      "paused": true
+    },
+    "audience": {
+      "primary": "Human3.0 / AI 实践读者，重点为工程师和创作者",
+      "pain_points": ["反复查看消息", "不清楚自动化权限边界", "工作流经验难以复用"]
+    },
+    "topic": {
+      "source": "用户提供的 8 月 25 日热点摘要；部分表述仍待补证",
+      "core_angle": "事件触发增加工作流启动入口，个人系统应明确触发、信息范围、输出、验收和人工确认。",
+      "title_candidates": ["ChatGPT 加入事件触发：个人 AI OS 从“定时跑”走向“按事响应”"],
+      "selected_title": "ChatGPT 加入事件触发：个人 AI OS 从“定时跑”走向“按事响应”",
+      "title_status": "沿用推荐作为工作标题，待人工终审",
+      "why_now": "OpenAI 官方 2026-08-25 更新，2026-08-27 核验。",
+      "long_term_value": "沉淀个人事件工作流规则卡，服务认知主权、数字生产资料与人机边界。"
+    },
+    "outline": {
+      "thesis": "为事件工作流提前定义范围、产物、验收和停止条件，保留人的判断权。",
+      "sections": ["先分清按时跑和按事跑", "先拿一封合作邮件试跑", "能登录，还要分清能做什么", "把省下的注意力留给判断"],
+      "examples_to_use": ["合作邮件到达后整理需求并生成待审回复，明确为未实测的设计示例"]
+    },
+    "storm_research": {
+      "topic": "事件触发与个人 AI OS",
+      "purpose": "为公众号建立问题地图与事实边界，不把解释框架写成官方定位。",
+      "perspectives": ["实践者", "学者", "怀疑者", "经济观察者", "历史观察者"],
+      "detail_reference": "2026-08-27-chatgpt-work-events-source-pack.md#storm-多视角扫描",
+      "contradiction_map": {
+        "conflicts": ["及时响应与通知噪音", "少审批与少越权", "规则复用与权限差异"],
+        "consensus": ["明确输入、输出、验收与停止条件"],
+        "blind_spots": ["任务分享机制", "延迟与重复事件语义", "真实运行成本", "具体账号可用性"]
+      },
+      "synthesis_brief": {
+        "summary": "已证实事件入口与浏览器边界；分享复制支线缺少一手证据。",
+        "key_findings": ["F1/F2：支持的应用事件入口", "F3/L3：浏览器权限与确认", "L1：触发方式限制", "作者建议：可复用规则卡", "U1：分享复制待证实"],
+        "hidden_connection": "把启动条件保存为个人判断规则。",
+        "actionable_insight": "后续先验证只产出草稿的低风险流程。",
+        "frontier_question": "自动启动后，用户如何看清原因、输入与停止条件？"
+      },
+      "confidence_review": {
+        "scores": [
+          {"claim_ref": "F1/F2", "editorial_score_out_of_5": 5},
+          {"claim_ref": "F3/L3", "editorial_score_out_of_5": 5},
+          {"claim_ref": "L1及其场景推断", "editorial_score_out_of_5": 4},
+          {"claim_ref": "规则卡建议", "editorial_score_out_of_5": 3},
+          {"claim_ref": "U1", "editorial_score_out_of_5": 1}
+        ],
+        "weakest_claim": "U1：任务分享与接收者独立授权副本",
+        "missing_perspectives": ["真实试用者", "组织管理员", "失败案例与成本记录"],
+        "verification_needed": [],
+        "resolved_by_scope": ["2026-08-27 用户确认暂不写 U1，仍保留其 UNKNOWN 状态", "2026-08-27 用户确认 U2 采用事件触发表述，不写任意 Webhook 接口"]
+      },
+      "evidence_plan": ["本篇仅使用研究包允许事实，U1 不再作为前置阻塞", "未来若写分享功能，先补一手来源", "未来实测单独授权并记录结果"]
+    },
+    "research": {
+      "sources": [
+        "S1 https://learn.chatgpt.com/docs/changelog",
+        "S2 https://learn.chatgpt.com/docs/automations",
+        "S3 https://learn.chatgpt.com/docs/browser",
+        "S4 https://learn.chatgpt.com/docs/whats-new",
+        "S5 https://learn.chatgpt.com/docs/get-started-with-work",
+        "S6 https://learn.chatgpt.com/docs/projects"
+      ],
+      "key_facts": ["F1：日期与事件入口", "F2：可用入口与事件范围", "F3：登录后的执行"],
+      "contrarian_points": ["L1：触发方式与合并运行", "L2：连接与事件范围", "L3：登录与行动授权", "L4：没有账号实测或收益数据"],
+      "usable_quotes": [],
+      "contradictions": ["U1 暂无本轮一手依据；不等于证伪", "U2 可能被误读为任意 Webhook 接口", "U3 为作者解释框架", "U4 不能补编小时或全量覆盖时间"],
+      "confidence": "High",
+      "confidence_scope": "仅指本篇采用的 F1-F3 与 L1-L3 产品文档口径；U1 仍为 UNKNOWN，已从正文范围排除；方法和设计示例未实测。",
+      "verified_on": "2026-08-27",
+      "source_pack": "2026-08-27-chatgpt-work-events-source-pack.md",
+      "runtime_verification": "未执行"
+    },
+    "draft": {
+      "status": "正文与小修已完成，待人工终审",
+      "file": "content/outputs/2026-08-27-chatgpt-work-events-wechat.md",
+      "summary": "用合作邮件设计示例解释事件、范围、产物、验收与停点，保留平台限制和人工确认。"
+    },
+    "diagnosis": {
+      "recommendation": "轻改后发布",
+      "key_issues": ["标题较长，备有短搜索标题", "没有实测，不能宣称提效成果", "移动端表格尚未实机排版验收"],
+      "minimum_fixes": ["修复重复字", "补齐年份", "收紧可靠性措辞"],
+      "text_fixes_completed": true,
+      "file": "content/outputs/2026-08-27-chatgpt-work-events-editorial-pack.md"
+    },
+    "publish_assets": {
+      "body_file": "content/outputs/2026-08-27-chatgpt-work-events-wechat.md",
+      "title": "ChatGPT 加入事件触发：个人 AI OS 从“定时跑”走向“按事响应”",
+      "search_title": "ChatGPT 事件触发：个人 AI 工作流的五项规则",
+      "social_title": "让 AI 自动开始之前，先写清它该停在哪里",
+      "summary": "ChatGPT 增加事件触发后，个人工作流可以怎样设计？用一封合作邮件，讲清事件、范围、产物、验收和停点，把判断权留在自己手里。",
+      "search_summary": "解读 ChatGPT Scheduled Tasks 的事件触发与使用边界，结合合作邮件场景，给出个人 AI 工作流的五项规则及人工确认建议。",
+      "search_keywords": ["ChatGPT 事件触发", "Scheduled Tasks", "个人 AI OS", "AI 工作流", "人工确认"],
+      "body_keyword_notes": ["首屏已有核心词与发布日期", "规则表前后有文字说明，无需堆砌关键词"],
+      "cover_text": "让 AI 按事开工 / 把判断权留给自己",
+      "tags": ["ChatGPT", "AI Agent", "个人系统", "Human3.0", "工作流"],
+      "images": [],
+      "share_copy": "ChatGPT 的任务又多了一种启动方式：相关事件发生后再开工。对个人工作流，更值得提前写清的是范围、产物、验收和停点。我用一封合作邮件拆了五项规则：让 AI 做整理，把判断和承诺留给自己。",
+      "comment_prompt": "你最想先交给 AI 整理哪一类事件？也写下你希望它停在哪一步。",
+      "wechat_search": {
+        "source_reference": "weixin/如何让公众号文章获取更多搜索流量|微信搜一搜.md",
+        "opening_notes": "按可读性检查首屏，未承诺当前搜索算法或流量效果。",
+        "originality_recommendation": "作者按平台当前要求核对资格后决定；本轮未操作原创声明。"
+      },
+      "visual_proposal": {
+        "count": 2,
+        "structure": ["封面", "五项规则图"],
+        "aspect_ratios": ["2.35:1", "16:9"],
+        "style": "简洁浅色信息图",
+        "output": "仅完整可复制图片提示词",
+        "upload": false,
+        "user_confirmed": false
+      },
+      "publication_status": "补齐后发布，未获最终发布授权",
+      "blockers": ["正文及最终标题人工终审", "封面与规则图方案确认", "公众号手机端排版验收"],
+      "file": "content/outputs/2026-08-27-chatgpt-work-events-editorial-pack.md"
+    },
+    "distribution": {
+      "primary_platform": "公众号",
+      "secondary_platforms": [],
+      "card_skill": null,
+      "image_skill": null
+    },
+    "archive": {
+      "should_review_for_book": true,
+      "material_type": "个人工作流方法素材候选",
+      "suggested_bucket": "Part 3｜结构杠杆（条件通过候选）",
+      "status": "已完成审查与本地候选条目；待实测补齐后再判断正式入书",
+      "review_result": "条件通过",
+      "review_file": "content/outputs/2026-08-27-chatgpt-work-events-editorial-pack.md",
+      "formal_book_inclusion": false
+    },
+    "decisions": [
+      {
+        "stage": "定题",
+        "question": "使用什么素材和工作流开始？",
+        "user_choice": "启用文昌总控，根据所给 ChatGPT Work 事件触发热点开始。",
+        "timestamp": "2026-08-27",
+        "impact": "按明确主题进入，默认公众号；不另行筛选热点，不视为发布授权。"
+      },
+      {
+        "stage": "采证",
+        "question": "暂不写分享功能、统一采用事件触发表述，按这个口径继续成稿，可以吗？",
+        "user_choice": "好的",
+        "timestamp": "2026-08-27",
+        "impact": "排除 U1，按 U2 精确表述继续立骨、起稿、诊文和出刊检查；不构成最终标题、图片生成、上传或发布的单独批准。"
+      },
+      {
+        "stage": "归档",
+        "question": "是否保留 Human3.0 素材候选审查？",
+        "user_choice": "默认归档（用户未撤销）",
+        "timestamp": "2026-08-27",
+        "impact": "生成 Part 3 条件通过的本地候选条目，不进入正式书稿，不上传或发布。"
+      }
+    ],
+    "next_step": {
+      "skill": "wenchang-orchestrator",
+      "reason": "正文与出刊检查已完成；待确认的两图方案为封面和五项规则图，简洁浅色，仅提示词、不上传。",
+      "user_decision_needed": true
+    },
+    "handoff": {
+      "from_stage": "出刊检查",
+      "to_stage": "人工视觉确认",
+      "accepted_inputs": ["独立正文", "出刊资产", "封面和五项规则图建议", "用户下一次明确回复"],
+      "ignored_context": ["未证实功能断言", "作者亲测假设", "其他项目材料", "未确认多平台扩写"],
+      "stop_condition": "未确认图数、结构、风格、输出形式及上传范围前，不生成提示词或图片；最终发布仍需单独批准。"
+    }
+  }
+}

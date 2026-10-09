@@ -1,0 +1,167 @@
+{
+  "content_state": {
+    "request": {
+      "raw_intent": "启动文昌总控，诊断并优化这篇小红书",
+      "entry_type": "已有初稿",
+      "current_stage": "出刊文字检查完成",
+      "target_platforms": [
+        "小红书"
+      ]
+    },
+    "completed_stages": [
+      "入口判断",
+      "诊文",
+      "定向采证",
+      "文字轻改",
+      "出刊文字检查",
+      "Human3.0 素材候选审查"
+    ],
+    "topic": {
+      "core": "由 AI Max 报表预告讨论 AI 可观测性与业务优化产品机会",
+      "audience": "关注 AI 获客产品的独立开发者和产品实践者"
+    },
+    "research": {
+      "sources": [
+        {
+          "id": "S1",
+          "url": "https://blog.google/products/ads-commerce/ai-max-language-reporting-features/"
+        },
+        {
+          "id": "S2",
+          "url": "https://blog.google/products/ads-commerce/google-ai-max-for-search-campaigns/"
+        },
+        {
+          "id": "S3",
+          "url": "https://support.google.com/google-ads/answer/16470459?hl=en"
+        },
+        {
+          "id": "S4",
+          "url": "https://opentelemetry.io/blog/2026/genai-observability/"
+        }
+      ],
+      "checked_at": "2026-09-24",
+      "confidence": "High for bounded official facts; opportunity unvalidated",
+      "contrarian_points": [
+        "尚未公布具体可用时间",
+        "此前已有相关报表，精确新增范围待披露",
+        "过程记录不等于决策解释或因果归因",
+        "可观测性已有技术实践；商业机会未验证"
+      ],
+      "file": "sources.md"
+    },
+    "diagnosis": {
+      "recommendation": "轻改后发布",
+      "key_issues": [
+        "预告写成可用",
+        "把路径可见等同于解释",
+        "新概念与空白赛道暗示",
+        "类比过多",
+        "缺读者可用框架"
+      ],
+      "minimum_fixes": [
+        "补绝对日期与可用性边界",
+        "说明已有能力",
+        "区分观察解释因果",
+        "收拢场景",
+        "四项产品检查"
+      ]
+    },
+    "draft": {
+      "status": "优化稿，待用户审阅",
+      "file": "body.md",
+      "body_code_points": 731,
+      "body_without_whitespace_code_points": 658
+    },
+    "publish_assets": {
+      "body_file": "body.md",
+      "title": "从谷歌新报表，看AI创业机会",
+      "cover_text": "看懂AI，也有产品机会",
+      "editorial_pack": "editorial-pack.md",
+      "images": [],
+      "xiaohongshu": {
+        "title_candidates": [
+          {
+            "angle": "趋势与搜索",
+            "cover": "AI开始干活，人要看懂",
+            "post": "AI可观测性，机会在哪里？",
+            "coverCount": 11,
+            "postCount": 13
+          },
+          {
+            "angle": "业务痛点",
+            "cover": "AI花的钱，要能复盘",
+            "post": "AI帮你获客，过程能查账吗？",
+            "coverCount": 10,
+            "postCount": 14
+          },
+          {
+            "angle": "产品思考",
+            "cover": "看懂AI，也有产品机会",
+            "post": "从谷歌新报表，看AI创业机会",
+            "coverCount": 11,
+            "postCount": 14
+          }
+        ],
+        "recommended_index": 3,
+        "body_description": "给正在做 AI 获客产品的独立开发者，这篇提供一套判断“可观测性”产品价值的检查框架。借 Google AI Max 的报表预告，拆开四个问题：广告路径里能看到什么；过程记录为何还不能解释决策原因；怎样把异常变成可测试的建议；如何用后续数据验证改动。你可以把它用于审视自己的 AI 营销工具：记录能否串起来，建议有没有证据，结果能否回看。文中区分官方已披露信息与我的产品假设，方便继续研究 AI 可观测性。你最想补上哪一环？",
+        "description_code_points": 212,
+        "tags": [
+          "AI可观测性",
+          "AI创业",
+          "独立开发",
+          "AI营销",
+          "GoogleAds",
+          "产品思考"
+        ]
+      }
+    },
+    "archive": {
+      "should_review_for_book": true,
+      "status": "条件通过，已保存待补证素材候选",
+      "review_file": "editorial-pack.md",
+      "suggested_bucket": "Part 3",
+      "final_book_inclusion": false
+    },
+    "publication": {
+      "performed": false,
+      "status": "文字可审阅；封面卡片未制作；平台排版未验"
+    },
+    "next_step": {
+      "skill": null,
+      "reason": "当前文字诊断与优化请求已完成；后续按用户反馈局部修改。若制作视觉资产，先确认规格。",
+      "user_decision_needed": false,
+      "optional_followup": "视觉资产阶段尚未启动"
+    },
+    "decisions": [
+      {
+        "stage": "诊文",
+        "user_choice": "诊断并优化现有小红书",
+        "timestamp": "2026-09-24",
+        "impact": "执行现有主线内的轻改，不扩展为全新选题或发布"
+      },
+      {
+        "stage": "归档",
+        "user_choice": "默认归档（用户未撤销）",
+        "timestamp": "2026-09-24",
+        "impact": "按总控默认规则保存条件通过的素材审查候选，未最终入书"
+      }
+    ],
+    "handoff": {
+      "from_stage": "出刊文字检查",
+      "to_stage": "用户审阅",
+      "accepted_inputs": [
+        "用户原稿",
+        "官方核验事实",
+        "原有产品机会立场",
+        "小红书双标题与独立描述规则"
+      ],
+      "ignored_context": [
+        "未验证市场规模",
+        "未授权投放与发布",
+        "其他项目未完成工作"
+      ],
+      "stop_condition": "当前文字请求完成；后续视觉制作先确认规格，实际发布需用户明确授权"
+    }
+  }
+}
+

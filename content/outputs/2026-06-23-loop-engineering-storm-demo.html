@@ -596,7 +596,7 @@
         </div>
         <div class="metric-card">
           <div class="metric-label">建议下一步</div>
-          <div class="metric-value">进入 wenchang-research 深采证</div>
+          <div class="metric-value">进入深度事实核查</div>
         </div>
       </aside>
     </header>
@@ -615,7 +615,7 @@
     <section id="demo">
       <div class="section-kicker">Demo 说明</div>
       <h2>这次如何使用 storm-research</h2>
-      <p class="lead">本 demo 把「Loop Engineering 是否真的提效？」作为研究对象，按 `storm-research` 协议先拆视角，再找冲突，最后输出研究简报、可信度评审和可交给 `wenchang-research` 的采证清单。这里展示的是研究结构，不是公众号正文。</p>
+      <p class="lead">本 demo 把「Loop Engineering 是否真的提效？」作为研究对象，按 `storm-research` 协议先拆视角，再找冲突，最后输出研究简报、可信度评审和可继续核验的采证清单。这里展示的是研究结构，不是公众号正文。</p>
       <div class="signal-row">
         <div class="signal soft-teal">
           <strong>输入</strong>
@@ -631,7 +631,7 @@
         </div>
         <div class="signal soft-green">
           <strong>交接</strong>
-          <p>给出 content_state 和 handoff，便于进入 `wenchang-research`。</p>
+          <p>给出 content_state 和 handoff，便于进入事实采证。</p>
         </div>
       </div>
     </section>
@@ -869,7 +869,7 @@
 
     <section id="evidence">
       <div class="section-kicker">后续采证计划</div>
-      <h2>进入深采证前要查什么</h2>
+      <h2>进入深度事实核查前要查什么</h2>
       <div class="plan-list">
         <div class="plan-item">
           <span class="priority p0">P0</span>
@@ -912,7 +912,7 @@
     <section id="state">
       <div class="section-kicker">content_state / handoff</div>
       <h2>可交接给下一阶段的结构</h2>
-      <p class="lead">这段结构化状态用于把 `storm-research` 的结果交给 `wenchang-research`，避免下一步重新解释背景。</p>
+      <p class="lead">这段结构化状态用于把 `storm-research` 的结果交给事实采证环节，避免下一步重新解释背景。</p>
       <pre><code>content_state:
   storm_research:
     topic: "Loop Engineering 是否真的提效？"
@@ -956,12 +956,12 @@
         - "真实 CI loop 执行日志"
         - "token 和人工成本记录"
   next_step:
-    skill: "wenchang-research"
+    stage: "事实采证"
     reason: "关键产品事实和提效幅度需要一手来源与真实日志核验。"
-    user_decision_needed: "是否围绕 CI 自动检查与修复 loop 做深采证。"
+    user_decision_needed: "是否围绕 CI 自动检查与修复 loop 做深度事实核查。"
   handoff:
     from_stage: "storm-research"
-    to_stage: "wenchang-research"
+    to_stage: "事实采证"
     stop_condition: "如果缺少官方文档、论文原文或真实执行日志，不进入公开结论写作。"</code></pre>
     </section>
 
@@ -969,10 +969,10 @@
       <div class="section-kicker">下一步建议</div>
       <div class="next-step">
         <div>
-          <h2>建议进入 wenchang-research 深采证</h2>
+          <h2>建议进入深度事实核查</h2>
           <p class="lead">原因很简单：当前 `storm-research` 已经找到了问题地图、冲突点和最弱结论，但公开写作需要一手来源和真实数据。下一步应核验官方文档、论文、生产案例，并做一个两周 CI 侦察 loop 小样本。</p>
           <div class="callout">
-            <h3>最小深采证任务</h3>
+            <h3>最小事实核查任务</h3>
             <p>用一个真实仓库跑只读 CI 侦察 loop，记录候选命中率、误报率、token 成本、人工接管次数和节省时间。拿到这组数据后，再决定是否写成公众号案例。</p>
           </div>
         </div>

@@ -1,0 +1,13 @@
+{
+  "slug": "ui-visual-match-loop",
+  "title": "UI Visual Match Loop",
+  "category": "frontend",
+  "summary": "把按视觉稿复刻 UI 做成可控闭环：目标图、实现、截图、差异评估、多轮修正、停止规则和人工确认。",
+  "keywords": ["UI复刻", "视觉稿", "Playwright截图", "视觉验收", "Agent Loop", "前端", "Codex"],
+  "user_needs": ["让 Codex 按截图复刻页面", "减少来回口头反馈", "用截图差异驱动 UI 修正", "控制 UI 复刻范围和轮次", "生成可复盘的视觉验收记录"],
+  "source_dir": "content/ui-visual-match-loop",
+  "entry": "SKILL.md",
+  "package_strategy": "on-demand",
+  "package_format": "skill",
+  "status": "ready"
+}

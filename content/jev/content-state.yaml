@@ -1,0 +1,81 @@
+content_state:
+  project: "Jev Decision Engineering 公众号专栏"
+  request:
+    raw_intent: "启用文昌总控，根据用户大纲设计公众号专栏并完成引导篇"
+    current_stage: "视觉资产完成，等待人工终审与发布确认"
+    target_platforms:
+      - "微信公众号"
+  audience:
+    primary: "AI Builder、工程师、内容实践者、Human3.0 读者"
+    reader_gain: "理解 Decision Layer，掌握 Choice/Score/Noul 的基础分工，并获得一套可验证的 AI Judge 实验路径"
+  topic:
+    series_title: "Jev 实战指南：让 AI 从‘写答案’变成‘做判断’"
+    intro_title: "Jev 到底在解决什么问题？AI 应用正在从‘生成’走向‘判断’"
+    core_thesis: "很多 AI 任务最终只需要一个可执行判断；Jev 值得作为 Decision Layer 的实验对象，但业务效果必须用 gold set 验证"
+    long_term_value: "Decision Layer 方法论、AI Judge 验证协议、AI Distribution 实验案例"
+  outline:
+    series_arc: "概念 → 用法 → 工程 → 实验 → 方法论"
+    intro_sections:
+      - "有限判断任务"
+      - "Jev 的 Decision Layer 位置"
+      - "Choice / Score / Noul"
+      - "confidence 与人工升级"
+      - "China Clearly 实验"
+      - "模型分工边界"
+      - "后续路线"
+  storm_research:
+    confidence: "产品事实高；架构主张中；业务效果低"
+    verification_needed:
+      - "中文场景效果"
+      - "真实成本和人工复核率"
+      - "gold set 上的 precision/recall/F1"
+      - "CJK 与中英混合输入的分层结果"
+      - "版本化 model ID、输入长度与真实用量"
+  research:
+    source_pack: "content/jev/source-packs/00-jev-intro-source-pack.md"
+    source_count: 9
+    contrarian_points:
+      - "结构化输出不等于值正确"
+      - "confidence 不等于单次准确率"
+      - "官方性能与成本数字不可外推"
+  draft:
+    file: "content/jev/articles/00-jev-decision-engineering-wechat.md"
+    status: "整章编辑完成"
+  diagnosis:
+    file: "content/jev/reviews/00-jev-intro-review.md"
+    recommendation: "进入出刊"
+  publish_assets:
+    file: "content/jev/publish-packs/00-jev-intro-publish-pack.md"
+    status: "视觉资产已完成，人工终审后发布"
+  distribution:
+    primary_platform: "微信公众号"
+    secondary_platforms: []
+  archive:
+    should_review_for_book: true
+    material_type: "Decision Layer 方法论与 AI Distribution 实验案例"
+    suggested_bucket: "Human3.0 / 生产者系统 / AI 判断基础设施"
+  decisions:
+    - stage: "定题"
+      question: "是否以 Decision Engineering 为系列灵魂"
+      user_choice: "采用用户大纲主线"
+      timestamp: "2026-09-21"
+      impact: "不写普通产品介绍，采用概念—实验—方法论结构"
+    - stage: "归档"
+      question: "是否进入 Human3.0 素材审查"
+      user_choice: "默认归档（用户未撤销）"
+      timestamp: "2026-09-21"
+      impact: "作为方法论与实验案例候选沉淀，不等于最终入书或发布"
+  next_step:
+    skill: "人工终审 / 外部上传"
+    reason: "正文与视觉资产已齐，等待最终确认后再上传或发布"
+    user_decision_needed: true
+  handoff:
+    from_stage: "出刊"
+    to_stage: "人工终审 / 上传 / 发布"
+    accepted_inputs:
+      - "正文唯一源"
+      - "三张结构图与封面 brief"
+      - "标题、摘要、关键词和分发文案"
+    ignored_context:
+      - "未验证的 benchmark、价格、准确率和替代人工结论"
+    stop_condition: "完成视觉资产确认；不自动上传或发布"

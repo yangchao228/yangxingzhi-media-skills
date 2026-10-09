@@ -1,0 +1,50 @@
+{
+  "request": {
+    "raw_intent": "启动文昌总控，根据用户提供的大纲生成3000字以内的爆款微信公众号长文",
+    "current_stage": "起稿与文字检查完成",
+    "target_platforms": ["微信公众号"],
+    "audience": ["AI实践者", "出海团队", "增长与产品负责人", "独立创作者"]
+  },
+  "topic": {
+    "title": "OpenAI DevDay 之后，企业真正要优化的是 AI 决策链",
+    "core_question": "当用户把搜索、比较和选择交给 AI，企业未来应该优化什么？",
+    "core_conclusion": "GEO 只是 AI Distribution 的一段可见性工作；更大的问题是品牌能否进入 AI 的理解、发现、推荐、决策与行动链路，并验证真实商业结果。"
+  },
+  "storm_research": {
+    "perspectives": ["实践者", "研究者", "怀疑者", "经济观察者", "历史观察者"],
+    "contradiction_map": {
+      "conflicts": ["可见性与真实获客", "推荐自动化与权限边界", "一次截图与长期稳定性", "AI入口与业务系统之间的距离"],
+      "consensus": ["业务信息要清楚", "结果需要逐层验证", "曝光不能替代成交数据"],
+      "blind_spots": ["跨平台长期稳定性", "AI带来的净新增Lead", "推荐与成交的因果关系"]
+    },
+    "confidence_review": {
+      "confidence": "Medium-High",
+      "weakest_claim": "AI Distribution 能成为稳定获客渠道仍无本地实验数据支撑",
+      "verification_needed": ["重复Prompt实验", "来源与推荐理由记录", "Lead、Sales、Revenue归因"]
+    }
+  },
+  "research": {
+    "sources": ["OpenAI DevDay 2026 Recap", "OpenAI Plugin Extensions", "MCP official introduction", "Google Search Central AI features", "GEO academic paper"],
+    "contrarian_points": ["GEO不等于获客", "AI推荐不等于成交", "Google未要求额外AI专用标记", "单次Prompt结果不具备长期代表性"]
+  },
+  "next_step": {
+    "skill": "wenchang-review / wenchang-publish-check",
+    "reason": "作者终审标题与正文；如需配图，再单独确认页数、结构、风格与输出形式",
+    "user_decision_needed": true
+  },
+  "decisions": [
+    {
+      "stage": "起稿",
+      "question": "是否按AI决策链作为主线",
+      "user_choice": "按用户大纲执行",
+      "impact": "文章从GEO名词解释转向AI Distribution商业链路"
+    }
+  ],
+  "handoff": {
+    "from_stage": "起稿与采证",
+    "to_stage": "作者终审",
+    "accepted_inputs": ["用户提供的大纲", "官方DevDay回顾", "官方插件文档", "MCP官方简介", "Google Search Central指南"],
+    "ignored_context": ["未验证的品牌推荐结果", "未发生的Lead或成交", "单次截图排名"],
+    "stop_condition": "作者确认标题和正文后，才进入配图或发布准备"
+  }
+}

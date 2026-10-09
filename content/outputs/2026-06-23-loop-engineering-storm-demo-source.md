@@ -24,7 +24,7 @@
 
 ## 研究结论
 
-- 是否适合继续写作 / 调研 / 学习：适合继续，但公开发布前建议进入 `wenchang-research` 深采证。
+- 是否适合继续写作 / 调研 / 学习：适合继续，但公开发布前建议进入深度事实核查。
 - 推荐下一步：围绕“CI 自动检查与修复 loop 是否真的省时间”做一轮小样本采证，补官方文档、工程论文、真实执行日志和成本记录。
 - 主要原因：Loop Engineering 的提效判断不能停在“让 Agent 自动跑”这一层。更稳的判断是：它在重复、可验证、可回滚、低风险任务上有提效潜力；在缺少评估器、停止规则、权限边界、成本记录时，会把人工调度成本转成 token 成本、误修成本和排障成本。
 
@@ -66,7 +66,7 @@
 | 适用场景判断 | 中高 | 本地系列给出 Retry、Plan-Execute-Verify、Human-in-the-Loop、Lifecycle Loop 的决策表。 | 需要外部案例补强。 |
 | 成本风险判断 | 中 | 本地素材记录 token、误修、排障、权限、上下文漂移风险。 | 需要真实日志和费用数据。 |
 | 实际提效幅度 | 弱 | 当前没有本地 A/B 数据或真实团队样本。 | 发布时应降级为“有潜力”，不能写成确定百分比。 |
-| 长期可靠性 | 弱到中 | 有反向论文线索和失败案例线索，但未在本轮实时复核。 | 需要 `wenchang-research` 重新核一手来源。 |
+| 长期可靠性 | 弱到中 | 有反向论文线索和失败案例线索，但未在本轮实时复核。 | 需要继续核验一手来源。 |
 
 ### 关键盲点
 
@@ -180,7 +180,7 @@ Loop Engineering 和 `storm-research` 的共同点，是把“AI 输出”变成
 content_state:
   storm_research:
     topic: "Loop Engineering 是否真的提效？"
-    purpose: "展示 storm-research skill 的研究前置效果，并为后续 wenchang-research 深采证提供交接。"
+    purpose: "展示 storm-research skill 的研究前置效果，并为后续深度事实核查提供交接。"
     target_reader: "Human3.0 / AI 实践读者 / 公众号前置研究"
     content_type: "research_demo_html"
     perspectives:
@@ -270,12 +270,12 @@ content_state:
         question: "Maker / Checker 分工效果"
         suggested_sources: ["自建对照实验", "PR review 记录"]
   next_step:
-    skill: "wenchang-research"
+    stage: "事实采证"
     reason: "关键产品事实和提效幅度需要一手来源与真实日志核验，当前 storm-research 只完成问题地图和可信度评审。"
-    user_decision_needed: "是否围绕 CI 自动检查与修复 loop 做深采证，并允许补查官方文档、论文和真实案例。"
+    user_decision_needed: "是否围绕 CI 自动检查与修复 loop 做深度事实核查，并允许补查官方文档、论文和真实案例。"
   handoff:
     from_stage: "storm-research"
-    to_stage: "wenchang-research"
+    to_stage: "事实采证"
     accepted_inputs:
       - "本源文件"
       - "本地 Loop Engineering 系列素材"
