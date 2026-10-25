@@ -5,6 +5,7 @@ import { check } from './build.js';
 import { collect } from './project.js';
 import { atomic, input, json, output, readJson, ref, sha, TOOL_ROOT } from './io.js';
 import { resolveMap, normalizeText } from './zhihu-sync.js';
+import { archiveReceipt, newAttempt, readTransferState, recoveryAction, writeTransferState, type TransferState } from './transfer-state.js';
 import type { XhsConfig } from './model.js';
 
 export interface XhsPlan {
@@ -22,9 +23,11 @@ export function prepareXhs(directory: string, options: { account: string; reuseM
   if (!options.account.trim()) throw new Error('ACCOUNT_REQUIRED');
   const dir=output(d.root,path.join(d.dir,'transfers','xiaohongshu',d.bundleVersion));fs.mkdirSync(dir,{recursive:true});
   const lock=output(d.root,path.join(dir,'.prepare.lock')),fd=fs.openSync(lock,'wx');
+  const attempt = newAttempt();
   try {
     if (fs.existsSync(path.join(dir,'plan.json')) && readJson<XhsPlan>(path.join(dir,'plan.json')).account!==options.account) throw new Error('ACCOUNT_PLAN_MISMATCH');
-    atomic(output(d.root,path.join(dir,'status.json')),json({status:'preparing',publication_performed:false}));
+    archiveReceipt(dir, path.join(dir, 'receipt.json'));
+    writeTransferState(path.join(dir,'status.json'), {status:'preparing', ...attempt});
     const byHash=new Map<string,string>();
     // Reuse the same immutable bytes across platforms, even when source references differ.
     if (options.reuseMap) {
@@ -64,11 +67,12 @@ export function prepareXhs(directory: string, options: { account: string; reuseM
     const plan:XhsPlan={schema_version:1,bundle_version:d.bundleVersion,source_hash:d.sourceHash,account:options.account,title:cfg.post_title,description:cfg.description,tags:cfg.tags,images,publication_performed:false};
     atomic(output(d.root,path.join(dir,'r2-map.json')),json({bundle_version:d.bundleVersion,images:images.map(({upload_file,...a})=>a)}));
     atomic(output(d.root,path.join(dir,'plan.json')),json(plan));
-    atomic(output(d.root,path.join(dir,'status.json')),json({status:'ready_for_browser',publication_performed:false}));
+    writeTransferState(path.join(dir,'status.json'), {status:'ready_for_browser', bundle_version:d.bundleVersion, plan_hash:sha(json(plan)), ...attempt});
     return {status:'ready_for_browser',plan:path.join(dir,'plan.json'),plan_hash:sha(json(plan)),images:images.length,reused_from_r2_map:images.length-missing.length,publication_performed:false};
   } catch(e) {
-    atomic(output(d.root,path.join(dir,'status.json')),json({status:'blocked',code:e instanceof Error&&/^[A-Z_]+$/.test(e.message)?e.message:'PREPARE_FAILED',publication_performed:false}));throw e;
-  } finally {fs.closeSync(fd);fs.unlinkSync(lock);}
+    const code=e instanceof Error&&/^[A-Z][A-Z0-9_]{0,80}$/.test(e.message)?e.message:'PREPARE_FAILED';
+    writeTransferState(path.join(dir,'status.json'), {status:'blocked', last_error_code:code, recovery_action:recoveryAction(code), ...attempt});throw e;
+  } finally {fs.closeSync(fd);if(fs.existsSync(lock))fs.unlinkSync(lock);}
 }
 export interface XhsObservation {
   account:string; title:string; description:string; images:{src:string;complete:boolean;width:number;height:number}[];
@@ -100,9 +104,17 @@ export function validateXhs(plan:XhsPlan,o:XhsObservation,reopened:boolean) {
 }
 export function verifyXhs(directory:string,evidenceFile:string) {
   const d=current(directory),dir=path.join(d.dir,'transfers','xiaohongshu',d.bundleVersion);
+  const statusFile = path.join(dir, 'status.json');
+  const existing: TransferState = readTransferState(statusFile) || { ...newAttempt(), status: 'ready_for_browser', publication_performed: false };
   try {
     const plan=readJson<XhsPlan>(input(d.root,dir,'plan.json')),e=readJson(evidenceFile);
-    if(plan.bundle_version!==d.bundleVersion||plan.source_hash!==d.sourceHash||e.plan_hash!==sha(json(plan)))throw new Error('PLAN_MISMATCH');
+    const planHash = sha(json(plan));
+    writeTransferState(statusFile, { ...existing, status:'verifying', plan_hash:planHash });
+    if(plan.bundle_version!==d.bundleVersion||plan.source_hash!==d.sourceHash||e.plan_hash!==planHash)throw new Error('PLAN_MISMATCH');
+    if ((e.code === 'WAIT_TIMEOUT' || e.code === 'SAVE_PENDING_READBACK') || (e.status && e.status !== 'draft_verified')) throw new Error(e.code || 'SAVE_PENDING_READBACK');
+    if (existing.last_error_code === 'WAIT_TIMEOUT' || existing.last_error_code === 'SAVE_PENDING_READBACK') {
+      if (!e.checked_at || Date.parse(e.checked_at) <= Date.parse(existing.updated_at)) throw new Error('FRESH_EVIDENCE_REQUIRED');
+    }
     for(const a of plan.images)if(sha(fs.readFileSync(input(d.root,dir,a.upload_file)))!==a.sha256)throw new Error('UPLOAD_FILE_CHANGED');
     if(e.saved_in_list!==true||e.reopened_from_list!==true||e.independent_reopen!==true)throw new Error('SAVE_AND_REOPEN_NOT_CONFIRMED');
     validateXhs(plan,e.uploaded,false);validateXhs(plan,e.reopened,true);
@@ -110,9 +122,11 @@ export function verifyXhs(directory:string,evidenceFile:string) {
     if(e.reopened.images.some((im:{src:string})=>im.src.startsWith('blob:')&&uploadedSources.has(im.src)))throw new Error('BLOB_REOPEN_NOT_INDEPENDENT');
     if(new Set(e.reopened.images.map((im:{src:string})=>im.src)).size!==plan.images.length)throw new Error('DUPLICATE_IMAGE_SOURCE');
     if(e.visual_order_verified!==true)throw new Error('VISUAL_ORDER_REVIEW_REQUIRED');
-    const receipt={status:'draft_verified',bundle_version:d.bundleVersion,account:plan.account,title:plan.title,checked_at:e.checked_at,images:e.reopened.images,evidence_sha256:sha(fs.readFileSync(evidenceFile)),publication_performed:false};
-    atomic(output(d.root,path.join(dir,'receipt.json')),json(receipt));atomic(output(d.root,path.join(dir,'status.json')),json(receipt));return receipt;
+    const receipt={status:'draft_verified',bundle_version:d.bundleVersion,account:plan.account,title:plan.title,checked_at:e.checked_at,images:e.reopened.images,evidence_sha256:sha(fs.readFileSync(evidenceFile)),publication_performed:false,attempt_id:existing.attempt_id,started_at:existing.started_at,updated_at:new Date().toISOString(),plan_hash:planHash};
+    atomic(output(d.root,path.join(dir,'receipt.json')),json(receipt));
+    writeTransferState(statusFile, { ...existing, status:'draft_verified', checked_at:receipt.checked_at, plan_hash:planHash });return receipt;
   } catch(e) {
-    atomic(output(d.root,path.join(dir,'status.json')),json({status:'blocked',code:e instanceof Error&&/^[A-Z_]+$/.test(e.message)?e.message:'VERIFY_FAILED',publication_performed:false}));throw e;
+    const code=e instanceof Error&&/^[A-Z][A-Z0-9_]{0,80}$/.test(e.message)?e.message:'VERIFY_FAILED';
+    writeTransferState(statusFile, { ...existing, status:'blocked', last_error_code:code, recovery_action:recoveryAction(code) });throw e;
   }
 }

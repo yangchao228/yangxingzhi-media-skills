@@ -5,6 +5,7 @@ import { check } from './build.js';
 import { collect } from './project.js';
 import { atomic, input, json, output, readJson, ref, sha, TOOL_ROOT } from './io.js';
 import { article, markdown, scan } from './render.js';
+import { archiveReceipt, newAttempt, readTransferState, recoveryAction, writeTransferState, type TransferState } from './transfer-state.js';
 import type { ArticleConfig } from './model.js';
 
 export const normalizeText = (s: string) => s.normalize('NFC').replace(/\s+/gu, '');
@@ -57,13 +58,16 @@ export function prepareZhihu(directory: string, options: { draft: string; accoun
   fs.mkdirSync(transfer, { recursive: true });
   const lock = output(data.root, path.join(transfer, '.prepare.lock'));
   const fd = fs.openSync(lock, 'wx');
+  const attempt = newAttempt();
   try {
     const priorPlanPath = path.join(transfer, 'plan.json');
     if (fs.existsSync(priorPlanPath)) {
       const prior = readJson<ZhihuPlan>(priorPlanPath);
       if (prior.draft_url !== options.draft || prior.account !== options.account) throw new Error('EXISTING_PLAN_TARGET_MISMATCH');
     }
-    atomic(output(data.root, path.join(transfer, 'status.json')), json({ status: 'preparing', publication_performed: false }));
+    // A new prepare is a new attempt. Preserve an earlier successful receipt as history.
+    archiveReceipt(transfer, path.join(transfer, 'receipt.json'));
+    writeTransferState(path.join(transfer, 'status.json'), { status: 'preparing', ...attempt });
     const sourceFile = input(data.root, data.dir, data.project.source_ref);
     const files = new Map([...data.bodyImages.values()].map(a => [data.assetFiles.get(a.source_ref)!, a]));
     const manifest = path.join(transfer, 'upload-input.md');
@@ -95,9 +99,13 @@ export function prepareZhihu(directory: string, options: { draft: string; accoun
     atomic(output(data.root, path.join(transfer, 'r2-map.json')), json({ bundle_version: data.bundleVersion, source_hash: data.sourceHash, images }));
     atomic(output(data.root, path.join(transfer, 'article.fragment.html')), plan.html);
     atomic(output(data.root, path.join(transfer, 'plan.json')), json(plan));
-    atomic(output(data.root, path.join(transfer, 'status.json')), json({ status: 'ready_for_browser', bundle_version: data.bundleVersion, publication_performed: false }));
+    writeTransferState(path.join(transfer, 'status.json'), { status: 'ready_for_browser', bundle_version: data.bundleVersion, plan_hash: sha(json(plan)), ...attempt });
     return { status: 'ready_for_browser', plan: path.join(transfer, 'plan.json'), plan_hash: sha(json(plan)), images: images.length, draft_url: plan.draft_url, publication_performed: false };
-  } finally { fs.closeSync(fd); fs.unlinkSync(lock); }
+  } catch (e) {
+    const code = e instanceof Error && /^[A-Z][A-Z0-9_]{0,80}$/.test(e.message) ? e.message : 'PREPARE_FAILED';
+    writeTransferState(path.join(transfer, 'status.json'), { status: 'blocked', last_error_code: code, recovery_action: recoveryAction(code), ...attempt });
+    throw e;
+  } finally { fs.closeSync(fd); if (fs.existsSync(lock)) fs.unlinkSync(lock); }
 }
 
 export interface Observation {
@@ -119,18 +127,34 @@ export function validateObservation(plan: ZhihuPlan, o: Observation) {
 export function verifyZhihu(directory: string, evidenceFile: string) {
   const data = current(directory);
   const transfer = path.join(data.dir, 'transfers', 'zhihu', data.bundleVersion);
-  atomic(output(data.root, path.join(transfer, 'status.json')), json({ status: 'verifying', publication_performed: false }));
-  const plan = readJson<ZhihuPlan>(input(data.root, transfer, 'plan.json'));
-  if (plan.bundle_version !== data.bundleVersion || plan.source_hash !== data.sourceHash) throw new Error('PLAN_STALE');
-  const evidence = readJson<{ plan_hash: string; imported: Observation; reopened: Observation; independent_reopen: boolean; checked_at: string }>(evidenceFile);
-  if (evidence.plan_hash !== sha(json(plan)) || evidence.independent_reopen !== true) throw new Error('EVIDENCE_PLAN_OR_REOPEN_MISMATCH');
-  validateObservation(plan, evidence.imported); validateObservation(plan, evidence.reopened);
-  if (evidence.imported.images.some((im, i) => im.src !== evidence.reopened.images[i].src)) throw new Error('REOPEN_IMAGE_IDENTITY_MISMATCH');
-  const receipt = { status: 'draft_verified', bundle_version: data.bundleVersion, source_hash: data.sourceHash, draft_url: plan.draft_url,
-    account: plan.account, checked_at: evidence.checked_at, evidence_sha256: sha(fs.readFileSync(evidenceFile)), images: evidence.reopened.images,
-    validation: ['title', 'normalized_body', 'image_count_order', 'platform_host', 'loaded_dimensions', 'saved', 'independent_reopen'],
-    visual_review: 'separate_screenshot_review_required', publication_performed: false };
-  atomic(output(data.root, path.join(transfer, 'receipt.json')), json(receipt));
-  atomic(output(data.root, path.join(transfer, 'status.json')), json({ status: 'draft_verified', checked_at: receipt.checked_at, publication_performed: false }));
-  return receipt;
+  const statusFile = path.join(transfer, 'status.json');
+  const existing: TransferState = readTransferState(statusFile) || { ...newAttempt(), status: 'ready_for_browser', publication_performed: false };
+  let plan: ZhihuPlan | undefined;
+  let planHash: string | undefined;
+  try {
+    plan = readJson<ZhihuPlan>(input(data.root, transfer, 'plan.json'));
+    planHash = sha(json(plan));
+    writeTransferState(statusFile, { ...existing, status: 'verifying', plan_hash: planHash });
+    if (plan.bundle_version !== data.bundleVersion || plan.source_hash !== data.sourceHash) throw new Error('PLAN_STALE');
+    const evidence = readJson<{ plan_hash: string; imported: Observation; reopened: Observation; independent_reopen: boolean; checked_at: string; code?: string; status?: string }>(evidenceFile);
+    if ((evidence.code === 'WAIT_TIMEOUT' || evidence.code === 'SAVE_PENDING_READBACK') || (evidence.status && evidence.status !== 'draft_verified')) throw new Error(evidence.code || 'SAVE_PENDING_READBACK');
+    if (existing.last_error_code === 'WAIT_TIMEOUT' || existing.last_error_code === 'SAVE_PENDING_READBACK') {
+      if (!evidence.checked_at || Date.parse(evidence.checked_at) <= Date.parse(existing.updated_at)) throw new Error('FRESH_EVIDENCE_REQUIRED');
+    }
+    if (evidence.plan_hash !== planHash || evidence.independent_reopen !== true) throw new Error('EVIDENCE_PLAN_OR_REOPEN_MISMATCH');
+    validateObservation(plan, evidence.imported); validateObservation(plan, evidence.reopened);
+    if (evidence.imported.images.some((im, i) => im.src !== evidence.reopened.images[i].src)) throw new Error('REOPEN_IMAGE_IDENTITY_MISMATCH');
+    const receipt = { status: 'draft_verified', bundle_version: data.bundleVersion, source_hash: data.sourceHash, draft_url: plan.draft_url,
+      account: plan.account, checked_at: evidence.checked_at, evidence_sha256: sha(fs.readFileSync(evidenceFile)), images: evidence.reopened.images,
+      validation: ['title', 'normalized_body', 'image_count_order', 'platform_host', 'loaded_dimensions', 'saved', 'independent_reopen'],
+      visual_review: 'separate_screenshot_review_required', publication_performed: false,
+      attempt_id: existing.attempt_id, started_at: existing.started_at, updated_at: new Date().toISOString(), plan_hash: planHash };
+    atomic(output(data.root, path.join(transfer, 'receipt.json')), json(receipt));
+    writeTransferState(statusFile, { ...existing, status: 'draft_verified', checked_at: receipt.checked_at, plan_hash: planHash });
+    return receipt;
+  } catch (e) {
+    const code = e instanceof Error && /^[A-Z][A-Z0-9_]{0,80}$/.test(e.message) ? e.message : 'VERIFY_FAILED';
+    writeTransferState(statusFile, { ...existing, status: 'blocked', ...(planHash ? { plan_hash: planHash } : {}), last_error_code: code, recovery_action: recoveryAction(code) });
+    throw e;
+  }
 }

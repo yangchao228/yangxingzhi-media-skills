@@ -35,6 +35,12 @@ test('only independent reopen and visually verified order produce success',t=>{
  assert.equal(JSON.parse(fs.readFileSync(path.join(path.dirname(r.plan),'status.json'))).status,'blocked');
  e.reopened=obs(plan);e.independent_reopen=false;fs.writeFileSync(f,json(e));assert.throws(()=>verifyXhs(dir,f),/NOT_CONFIRMED/);
 });
+test('verify failure is blocked with recovery metadata and does not replace plan',t=>{
+ const {root,dir,r,plan}=setup(t),e={plan_hash:r.plan_hash,uploaded:obs(plan,false),reopened:obs(plan),saved_in_list:false,reopened_from_list:false,independent_reopen:false,visual_order_verified:false,checked_at:new Date().toISOString()};
+ const f=path.join(root,'failed.json');fs.writeFileSync(f,json(e));assert.throws(()=>verifyXhs(dir,f),/SAVE_AND_REOPEN_NOT_CONFIRMED/);
+ const base=path.dirname(r.plan),state=JSON.parse(fs.readFileSync(path.join(base,'status.json')));assert.equal(state.status,'blocked');assert.equal(state.last_error_code,'SAVE_AND_REOPEN_NOT_CONFIRMED');assert.match(state.recovery_action,/保存.*回读/);assert.equal(state.publication_performed,false);
+ assert.ok(fs.existsSync(path.join(base,'plan.json')));
+});
 test('wrong account/text, missing image and off-platform URL fail',()=>{
  const p={account:'a',title:'t',description:'d',images:[{width:1080,height:1440}]};
  for(const change of [{account:'other'},{description:'truncated'},{images:[]},{images:[{...obs(p).images[0],src:'https://example.com/image.png'}]}])assert.throws(()=>validateXhs(p,{...obs(p),...change},true));

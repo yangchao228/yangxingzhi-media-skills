@@ -8,6 +8,7 @@ import { init, collect } from '../dist/project.js';
 import { build } from '../dist/build.js';
 import { prepareZhihu, resolveMap, sourceText, validateObservation, verifyZhihu } from '../dist/zhihu-sync.js';
 import { sha, json } from '../dist/io.js';
+import { publishingStatus } from '../dist/status.js';
 import { waitForDraft, importDraft } from '../browser/zhihu-draft.mjs';
 const fixture = fileURLToPath(new URL('../../../content/publishing/p0/fixture/', import.meta.url));
 const draft = 'https://zhuanlan.zhihu.com/p/123/edit';
@@ -43,6 +44,23 @@ test('verify binds version and independently reopened image identity; no success
  e.reopened.images.reverse();fs.writeFileSync(f,json(e));assert.throws(()=>verifyZhihu(dir,f),/IDENTITY/);
  e.reopened=o;e.independent_reopen=false;fs.writeFileSync(f,json(e));assert.throws(()=>verifyZhihu(dir,f),/REOPEN/);
  fs.appendFileSync(path.join(root,'source/body.md'),'new');assert.throws(()=>verifyZhihu(dir,f),/STALE/);
+});
+test('verify failure is blocked with recovery metadata and requires fresh evidence after timeout',t=>{
+ const {dir,plan,result,root}=setup(t),o=observation(plan),e={plan_hash:result.plan_hash,imported:o,reopened:structuredClone(o),independent_reopen:true,checked_at:new Date().toISOString(),status:'saved_pending_readback',code:'WAIT_TIMEOUT'};
+ const f=path.join(root,'timeout.json');fs.writeFileSync(f,json(e));assert.throws(()=>verifyZhihu(dir,f),/WAIT_TIMEOUT/);
+ const base=path.dirname(result.plan),state=JSON.parse(fs.readFileSync(path.join(base,'status.json')));
+ assert.equal(state.status,'blocked');assert.equal(state.last_error_code,'WAIT_TIMEOUT');assert.match(state.recovery_action,/新.*回读证据/);assert.equal(state.publication_performed,false);
+ e.status=undefined;e.code=undefined;fs.writeFileSync(f,json(e));assert.throws(()=>verifyZhihu(dir,f),/FRESH_EVIDENCE_REQUIRED/);
+ e.checked_at='2099-01-01T00:00:00.000Z';fs.writeFileSync(f,json(e));assert.equal(verifyZhihu(dir,f).status,'draft_verified');
+});
+test('new prepare archives a prior successful receipt; blocked retry exposes it as historical',t=>{
+ const {dir,plan,result,root,file}=setup(t),o=observation(plan),e={plan_hash:result.plan_hash,imported:o,reopened:structuredClone(o),independent_reopen:true,checked_at:new Date().toISOString()};
+ const f=path.join(root,'evidence.json');fs.writeFileSync(f,json(e));assert.equal(verifyZhihu(dir,f).status,'draft_verified');
+ const again=prepareZhihu(dir,{draft,account:'test',mapFile:file});const againPlan=JSON.parse(fs.readFileSync(again.plan));
+ const bad={...e,plan_hash:'0'.repeat(64)};fs.writeFileSync(f,json(bad));assert.throws(()=>verifyZhihu(dir,f),/EVIDENCE_PLAN/);
+ const state=JSON.parse(fs.readFileSync(path.join(path.dirname(again.plan),'status.json')));assert.equal(state.status,'blocked');
+ const history=path.join(path.dirname(again.plan),'history');assert.ok(fs.readdirSync(history).length>0);
+ const current=publishingStatus(dir).platforms.find(x=>x.platform==='zhihu');assert.equal(current.state,'blocked');assert.ok(current.historical?.some(x=>x.state==='historical_verified'));
 });
 test('text expectation preserves code punctuation and excludes image alt',()=>{
  assert.equal(sourceText('# title\n\nHello **world**\n\n![ALT](a.png)\n\n`x*y`'),'Helloworldx*y');
