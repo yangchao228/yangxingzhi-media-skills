@@ -118,7 +118,7 @@ node tools/wenchang-publishing/dist/wechat-cli.js preflight --config .local/wech
 读取成功只标记 `read_permissions_verified`：不能据此认定新增草稿、图片上传或账号身份已经核实。
 账号名称来自用户配置，必须人工确认 AppID 与目标账号对应。
 
-权限确认后使用下述sync入口上传图片、封面，执行draft/add和draft/get回读；当前CLI不提供通用draft/update命令。
+权限确认后使用下述sync入口上传图片、封面；首次执行draft/add，已有草稿改稿后执行draft/update，并通过draft/get回读。入口仅处理本工具记录的单篇草稿，不接受任意草稿ID或强制覆盖参数。
 写入超时不得盲目重新 add，以免重复草稿。发布接口不在此工具范围内。
 此前浏览器后台访问受到站点安全策略限制；此入口是独立的开发凭证核验，不读取浏览器登录态，
 也不访问被限制的后台页面。真实账号同步结果见下节；preflight自身仍只核验读取权限。
@@ -131,15 +131,45 @@ node tools/wenchang-publishing/dist/wechat-cli.js sync --config .local/wechat/cr
 
 仅在用户授权保存草稿且账号凭证对应正确公众号后执行。先 `build` / `check`，再同步。
 当前适配器支持单篇图文、静态 PNG/JPEG，使用 macOS `/usr/bin/sips` 生成 JPEG 上传副本（原图不变），超过 1MB 的副本阻塞。
-GIF 尚未接入，不静默转换；上传回执按原图哈希复用。只允许 token、草稿读取/新增、正文图片和永久封面素材接口；没有发布或删除能力。
+GIF 尚未接入，不静默转换；上传回执按原图哈希复用。只允许 token、草稿读取/新增/更新、正文图片和永久封面素材接口；没有发布或删除能力。
 
 同名已有草稿会停止，由人工核对；同一内容重复执行复用本地记录的草稿 ID，仅回读，不重复新增。
-内容变更目前阻塞，更新已有草稿尚未实现。写入之前持久化 `add_pending`，写入结果不确定时禁止自动重试新增。
+已有可信基线时，内容变更更新同一个media_id，不重新新增。先比较完整远端快照（含HTML、链接、封面裁切、来源、评论和未知编辑字段），发现改动立即停止。只改摘要时保留远端原HTML及未修改字段。写入之前持久化 `add_pending` 或 `update_pending`；新增结果不确定时禁止自动重试，更新结果不确定时先读取原草稿对账。
 本地记录位于私密配置目录的 `sync/` 下；不要删除后重试。并发锁异常残留需先确认无进程在运行。
 
 同步结果保存在分发目录 `wechat-sync-receipt.json`。`draft_verified` 表示 API 回读的标题、作者、摘要、正文文字、封面 ID 和有序图片标识一致；不等于后台视觉验收。
 实测微信会将正文图片 HTTP 改成 HTTPS，将末尾 `/0` 改成 `/640`；只对这两个已观察到的变换归一化，素材路径不同仍判定失败。
 账号名称来自用户配置，本工具未通过 API 独立核验账号名称。2026-10-24 已使用用户指定正式稿完成上传、保存、回读，未发布。
+
+### 公众号原草稿更新与恢复（2026-10-25）
+
+继续使用同一条 `wechat-cli sync` 命令。journal v2在私密配置目录保存最后成功的本地输入、完整远端基线和待确认更新，文件权限600；不存token。单次调用最多发送一次更新。回执 `operation` 分为 `create`、`update`、`verify`、`reconciled`。
+
+| 条件 | 行为与下一步 |
+| --- | --- |
+| 本地与远端均未变 | 只回读已有草稿，不新增、不更新 |
+| 本地已改、远端仍为上次基线 | 最后一次读取复查后更新原ID，回读通过才推进基线 |
+| 远端HTML、链接、摘要、封面或其他编辑字段已改 | `REMOTE_CONFLICT_DRAFT_PRESERVED`；保留草稿，由用户决定如何合并 |
+| 旧journal无快照，本地仍是上次成功输入 | 仅在回读核心字段及严格HTML匹配时只读迁移；只允许已观察到的图片协议和尺寸别名 |
+| 旧journal无快照且本地已改 | `LEGACY_BASELINE_REQUIRED`；先恢复上次成功输入并完成只读迁移 |
+| 旧journal的远端HTML有未知差异 | `LEGACY_REMOTE_REVIEW_REQUIRED`；先审阅差异，不能删journal或直接吸收远端基线 |
+| 用户确认保留已审远端版式与纯文字引用 | `adopt-baseline --expected-remote-hash`只读重核该快照；本地须为上次成功输入、无pending，核心字段须匹配；不会新增、上传或更新 |
+| 确认后远端快照再次变化 | `REMOTE_SNAPSHOT_CHANGED_REVIEW_REQUIRED`；重新审阅，不能用旧确认覆盖 |
+| 已有pending的HTML差异经用户明确接受 | `reconcile-baseline --expected-remote-hash`只读匹配新快照、pending目标版本、核心内容及其他字段；归档旧基线/确认/pending后完成对账 |
+| 更新响应丢失，回读等于目标 | 记为 `reconciled`，不再次写入 |
+| 更新响应不确定，回读仍等于原基线 | 保留pending；输入不变的下次调用先读取，确认后最多重发一次 |
+| 回读失败或既不等于基线也不等于目标 | 保留pending或标记冲突；不得以旧成功回执替代本次结果 |
+| pending期间再次改稿 | `PENDING_UPDATE_INPUT_CHANGED`；先恢复待确认版本完成对账，再继续改稿 |
+
+更新前的最后一次读取只能缩短并发窗口；客户端没有已核验的原子条件写入能力，不能保证消除读取与写入之间的其他编辑。建议验收期间关闭该草稿的其他编辑窗口。
+
+当前已通过56项公众号更新离线回归及130项完整工具回归，包含快照采纳、平台样式处理后阻塞、显式批准对账及只读重跑。真实稿的同ID测试摘要修改与原摘要恢复已回读，样式变化曾触发冲突；用户确认当前版式可接受后，reconcile-baseline重读匹配新快照并归档旧基线/确认/pending，原本地目标保留。连续两次普通sync均verify、同ID、快照不变，当前无pending且status为verified_current。本轮只读对账及重跑共三组token/get，未追加更新或发布。详见 [最新真实验收](../../content/publishing/p2/agent-review-burden/wechat-reconciliation-acceptance-20261025.md)；[前轮阻塞](../../content/publishing/p2/agent-review-burden/wechat-update-acceptance-20261025.md) 保留历史。
+
+`adopt-baseline`不是强制覆盖：它不能处理已有pending，也不能替换既有基线；仅允许初次采纳用户已审的精确快照，或幂等重核同一采纳记录。实际命令及失败处理见下方操作手册。
+
+`reconcile-baseline`只处理已有冲突pending或同一批准的幂等重核；它要求已审哈希、目标本地版本、核心内容和HTML之外的编辑字段全部匹配。成功前把旧完整基线、原确认和resolved_pending_update归档到私密journal的baseline_reconciliations；保持本地target_local_article，防止下一次仅改摘要被误判为正文改动。它不会写入远端，不接受任意新基线覆盖。
+
+官方完整字段文档本轮访问受限，未绕过访问策略；尤其不把未知裁切字段原样回传的合成测试升级为通用线上兼容性结论。具体操作见 [公众号更新与冲突处理](../../content/wenchang-publish-check/references/wechat-update.md)。
 
 ### R2 → 知乎草稿分发（只保存草稿）
 

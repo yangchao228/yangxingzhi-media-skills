@@ -83,6 +83,24 @@ cp -R content/wechat-writing-skill-ai-human3 ~/.claude/skills/
 
 图片上传、对象存储和公开外链不在首版售卖包范围内。首版只交付内容生产流程、模板和示例，避免新买家第一天就被 R2、密钥和存储配置卡住。
 
+## 可选：安装本地分发工具源码包
+
+`wenchang-publishing-pack-v版本.zip` 是显式使用 `--with-publishing` 生成的可选交付包，另含 Node.js 分发工具、R2 Python 源码、锁定依赖、浏览器桥接、测试与纯合成样稿。旧 v0.1 包不自动获得这些文件，默认内容生产包仍保持原范围。
+
+需要 Node.js 22+、npm 和 Python 3.8+；不安装全局运行时，不附真实账号或凭证。在解压目录运行：
+
+```sh
+python3 scripts/validate_publishing_package.py --package . --check-runtimes
+npm --prefix tools/wenchang-publishing ci
+npm --prefix tools/wenchang-publishing run build
+npm --prefix tools/wenchang-publishing run typecheck
+npm --prefix tools/wenchang-publishing test
+```
+
+`npm ci` 需要 registry 或完整本地缓存；缓存齐全时可以加 `--offline`。公众号 API 上传当前依赖 macOS `sips`；知乎、小红书浏览器步骤依赖 Codex 受控浏览器工具和用户自行登录的账号。该包不提供独立全自动分发或预置账号。安装验证不会上传内容。
+
+完整说明见[本地分发工具安装与交付](../docs/publishing-install.md)，包括纯本地样稿、文件清单校验和各平台前置条件。
+
 ## 验证是否可用
 
 安装后在 AI 工具里输入：
