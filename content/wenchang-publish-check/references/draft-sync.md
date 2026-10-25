@@ -45,7 +45,11 @@ node tools/wenchang-publishing/dist/wechat-cli.js preflight --config .local/wech
 node tools/wenchang-publishing/dist/wechat-cli.js sync --config .local/wechat/credentials.json --dir content/my-article/distribution
 ```
 
-preflight读取草稿数量、素材数量，成功只证明读取权限；写权限在同步中检验。sync上传图片和封面、保存单篇草稿、回读。当前实现支持PNG/JPEG静态图。重复执行同一内容时复用journal中的media_id并回读；内容变化、已有同名稿、写入结果不确定均先核对，不能删journal强行新增。
+preflight读取草稿数量、素材数量，成功只证明读取权限；写权限在同步中检验。sync上传图片和封面、保存单篇草稿、回读。当前实现支持PNG/JPEG静态图。重复执行同一内容时复用journal中的media_id并回读；已有可信基线时，改稿更新同一ID。远端变化、旧HTML差异、同名稿或不确定写入均先核对，不能删journal强行新增。详见[公众号更新与冲突处理](wechat-update.md)。
+
+旧记录的HTML差异经用户审阅确认后，只能用绑定该快照哈希的adopt-baseline重读采纳；有pending或快照再变则阻止采纳。摘要更新也可能触发平台重写正文样式，必须完整回读，文字与图片匹配不能替代版式核验。
+
+更新后的HTML差异经用户明确接受，且核心内容和其他字段仍匹配时，使用reconcile-baseline绑定新快照只读对账。旧基线及pending先归档，再清除已完成pending；随后连续普通sync核验同ID且只回读。该入口不能替代用户审阅，也不发送草稿更新。
 
 回执 `wechat-sync-receipt.json` 的 `draft_verified` 是API回读通过，`visual_review: pending` 必须如实保留。程序不调用发布接口。
 
