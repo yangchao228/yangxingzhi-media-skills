@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wenchang.local/publishing/v1/wechat",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "platform": {
+      "const": "wechat"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "author": {
+      "type": "string"
+    },
+    "digest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cover": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "platform",
+    "title",
+    "author",
+    "digest",
+    "cover"
+  ]
+}

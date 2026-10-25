@@ -172,7 +172,7 @@ def build_missing_config_message(missing: List[str], dotenv_path: Optional[Path]
         "3. --env-file /path/to/.env",
         "",
         "Start from this template:",
-        "md-img-r2/r2-config.env",
+        "md-img-r2/.env.example",
     ]
     if dotenv_path:
         lines.extend(["", f"Detected .env file: {dotenv_path}"])
@@ -217,7 +217,7 @@ def resolve_config(args, dotenv: Dict[str, str], dotenv_path: Optional[Path]) ->
     if not endpoint:
         raise SystemExit(
             "Missing R2 endpoint. Set CF_R2_ENDPOINT or CF_R2_ACCOUNT_ID.\n"
-            "You can fill it in your .env based on md-img-r2/r2-config.env"
+            "You can fill it in your .env based on md-img-r2/.env.example"
         )
 
     return {
@@ -364,7 +364,10 @@ def upload_file(config: dict, local_path: Path, object_key: str) -> str:
 
 def process_one_file(md_file: Path, args, config: dict) -> dict:
     original = md_file.read_text(encoding="utf-8")
+    upload_only = getattr(args, "upload_only", False)
     report = {
+        "mode": "upload-only" if upload_only else "replace",
+        "assets": [],
         "file": str(md_file),
         "bucket": config["bucket"],
         "endpoint": config["endpoint"],
@@ -447,10 +450,21 @@ def process_one_file(md_file: Path, args, config: dict) -> dict:
                 }
             )
 
+    for abs_path, url in uploaded_map.items():
+        asset_path = Path(abs_path)
+        report["assets"].append({
+            "local_path": os.path.relpath(asset_path, md_file.parent),
+            "sha256": hashlib.sha256(asset_path.read_bytes()).hexdigest(),
+            "bytes": asset_path.stat().st_size,
+            "object_key": upload_plan[abs_path]["object_key"],
+            "url": url,
+            "status": "planned" if args.dry_run else "uploaded",
+        })
+
     spans: List[Tuple[int, int, str]] = []
     for kind, start, end, link, tail, abs_path in occurrences:
         url = uploaded_map.get(abs_path)
-        if not url:
+        if not url or upload_only:
             continue
         if kind == "md":
             spans.append((start, end, f"{url}{tail}"))
@@ -469,10 +483,11 @@ def process_one_file(md_file: Path, args, config: dict) -> dict:
         )
 
     new_text = replace_in_text(original, spans)
-    report_path = md_file.with_suffix(md_file.suffix + ".replace-report.json")
+    suffix = ".asset-map.json" if upload_only else ".replace-report.json"
+    report_path = md_file.with_suffix(md_file.suffix + suffix)
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    if (not args.dry_run) and new_text != original:
+    if (not upload_only) and (not args.dry_run) and new_text != original:
         backup_file(md_file)
         md_file.write_text(new_text, encoding="utf-8")
 
@@ -484,6 +499,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
         description="Upload local images in Markdown directly to Cloudflare R2 and replace paths with public URLs."
     )
     parser.add_argument("target", help="Markdown file or directory")
+    parser.add_argument("--upload-only", action="store_true", help="Upload images and write .asset-map.json without modifying Markdown")
     parser.add_argument("--recursive", action="store_true", help="If target is a directory, process *.md recursively")
     parser.add_argument("--dry-run", action="store_true", help="Do not modify files; only generate report")
     parser.add_argument("--key-prefix", default=None, help="Override CF_R2_KEY_PREFIX")
@@ -510,19 +526,24 @@ def main() -> int:
         print("No markdown files found.")
         return 0
 
+    failed = False
     for md_file in md_files:
         report = process_one_file(md_file, args, config)
-        print(f"[OK] {md_file}")
+        has_errors = bool(report["missing_files"] or report["upload_failed"])
+        failed = failed or has_errors
+        print(f"[{'ERROR' if has_errors else 'OK'}] {md_file}")
         print(
             "  "
+            + f"assets={len(report['assets'])} "
             + f"replaced={len(report['replaced'])} "
             + f"skipped_remote={len(report['skipped_remote'])} "
             + f"missing={len(report['missing_files'])} "
             + f"upload_failed={len(report['upload_failed'])}"
         )
-        print(f"  report={md_file.with_suffix(md_file.suffix + '.replace-report.json')}")
+        suffix = ".asset-map.json" if args.upload_only else ".replace-report.json"
+        print(f"  report={md_file.with_suffix(md_file.suffix + suffix)}")
 
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

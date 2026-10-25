@@ -1,0 +1,47 @@
+{
+  "fixture_id": "wenchang-p0-20261021",
+  "title": "文昌P0草稿同步测试",
+  "source": "synthetic_local_fixture",
+  "task_scope": "synthetic P0 draft-only fixture; no publication",
+  "wechat": {
+    "author": "",
+    "digest": "文昌 P0 合成排版样稿，仅用于草稿验证，不公开发布。",
+    "cover": "assets/image-01.png"
+  },
+  "xiaohongshu": {
+    "cover_title": "本地排版草稿测试",
+    "post_title": "文昌P0草稿同步测试",
+    "description": "这是一份面向内容工作流搭建者的合成测试样稿，只用于检查本地 Markdown 到平台草稿的传输过程。本次核对四件事：中文与标点能否保留，图片能否按顺序显示，列表和引用是否完整，以及草稿关闭后能否重新打开。配图中的编号用于识别顺序，正文中的测试标记用于检查内容是否被截断。所有内容都停留在草稿状态，不包含真实业务数据、个人隐私或效果承诺。核验时请对照标题、图片数量和末尾标记逐项检查。",
+    "images": [
+      "assets/image-01.png",
+      "assets/image-02.png"
+    ]
+  },
+  "checks": {
+    "title_code_points": 10,
+    "description_code_points": 191
+  },
+  "files": [
+    {
+      "path": "body.md",
+      "sha256": "185ab8d31a996a1d1fc4434746408daf814c6d731d962530116a336063222436",
+      "bytes": 945
+    },
+    {
+      "path": "preview.html",
+      "sha256": "5b6c712479de80abca3251bee944797a848639b9a6691ea693bcffd51f0af6fd",
+      "bytes": 1684
+    },
+    {
+      "path": "assets/image-01.png",
+      "sha256": "0dbaa91236d83646806dc965c7958e2b4455b366f8d7237ddd4501232ddc3e70",
+      "bytes": 65581
+    },
+    {
+      "path": "assets/image-02.png",
+      "sha256": "358f7c4eeb7620271cfda637172ee39ce7676b11f68867070b6622fe7aaf88cf",
+      "bytes": 65147
+    }
+  ],
+  "execution_authorization": "Confirm target accounts and fixture per run; this fixture is not upload authorization."
+}

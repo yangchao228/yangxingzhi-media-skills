@@ -396,3 +396,11 @@ decisions:
 - 小红书/知乎二次分发建议
 - 是否进入 Human3.0 素材库的判断
 - 一份可复用的 `content_state`
+
+## 三平台草稿同步
+
+已有正式稿可直接说：“把这篇稿同步到公众号、知乎和小红书，保存后重新打开核验，只存草稿不发布。”文昌出刊会复用本地分发包和R2只上传映射，分别采用公众号官方草稿API、知乎图片转存、小红书有序文件上传。小红书网页草稿保存在当前浏览器；跨设备同步不在本轮保证内。
+
+详细见[操作说明](../content/wenchang-publish-check/references/draft-sync.md)和[失败排查](../content/wenchang-publish-check/references/draft-troubleshooting.md)。凭证仅在本机填写，遇到写入结果不确定先核对既有草稿，不盲目重传。
+
+小红书默认使用日常 Chrome（yangchao 配置），只保存草稿、不发布。入口为「发布笔记 → 上传图文 → 草稿箱 → 图文笔记」。完整连接和验收见[Chrome 草稿流程](../content/wenchang-publish-check/references/chrome-drafts.md)。

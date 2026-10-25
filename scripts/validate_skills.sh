@@ -219,14 +219,14 @@ fi
 
 if [[ -d md-img-r2 ]]; then
   log "run md-img-r2 dry-run fixture"
-  TMPDIR="$(mktemp -d /tmp/md-img-r2-validate.XXXXXX)"
-  export TMPDIR
+  R2_VALIDATE_TMP="$(mktemp -d /tmp/md-img-r2-validate.XXXXXX)"
+  export R2_VALIDATE_TMP
   "$PY" <<'PY'
 import base64
 import os
 import pathlib
 
-root = pathlib.Path(os.environ["TMPDIR"])
+root = pathlib.Path(os.environ["R2_VALIDATE_TMP"])
 (root / "assets").mkdir(parents=True, exist_ok=True)
 png = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
@@ -250,8 +250,12 @@ png = base64.b64decode(
     encoding="utf-8",
 )
 PY
-  ./md-img-r2/run.sh "$TMPDIR/article.md" --dry-run --public-base-url https://img.example.com --key-prefix smoke >/dev/null
-  "$PY" - "$TMPDIR/article.md.replace-report.json" <<'PY'
+  R2_FIXTURE_STATUS=0
+  ./md-img-r2/run.sh "$R2_VALIDATE_TMP/article.md" --dry-run --public-base-url https://img.example.com --key-prefix smoke >/dev/null || R2_FIXTURE_STATUS=$?
+  if [[ "$R2_FIXTURE_STATUS" -ne 1 ]]; then
+    fail "missing-image dry-run must return exit code 1 (got $R2_FIXTURE_STATUS)"
+  fi
+  "$PY" - "$R2_VALIDATE_TMP/article.md.replace-report.json" <<'PY'
 import json
 import pathlib
 import sys

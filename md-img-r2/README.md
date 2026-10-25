@@ -241,3 +241,15 @@ articles/6d8f1e2ab4c9d011-cover.png
 - 环境变量更适合临时执行或 CI
 - `.env` 更适合项目本地长期使用
 - 对这个 skill 来说，`.env` 只是把那几项环境变量写进一个文件，方便复用和分发
+
+## 只上传并生成映射
+
+`./run.sh path/to/article.md --upload-only`
+
+生成 `article.md.asset-map.json`，不改原稿、不生成备份。assets 按本地文件去重，记录相对路径、SHA-256、字节数、对象键、URL、状态。配合 --dry-run 不上传，状态 planned；实际成功为 uploaded，尚不代表 URL 可访问或平台导入成功。失败资源不进入 assets，缺失/失败返回非零退出码。默认替换模式保留。仅处理文内引用，独立封面和卡片需另外列入输入。
+
+正式分发流程使用仓库根目录 `md-img-r2/` 源码；`.codex/skills/md-img-r2/` 是安装副本。凭证通过 --env-file 指定，不复制到仓库源目录。
+
+## 文昌分发集成
+
+文昌分发工具通过 `zhihu-cli prepare` 调用本目录脚本，自动生成只含正文资源的输入清单，并在 `distribution/transfers/zhihu/<version>/` 保存映射与导入计划。原文继续使用本地相对路径。参见 [分发工具说明](../tools/wenchang-publishing/README.md)。

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wenchang.local/publishing/v1/zhihu",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "platform": {
+      "const": "zhihu"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "platform",
+    "title"
+  ]
+}

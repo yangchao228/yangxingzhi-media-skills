@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wenchang.local/publishing/v1/project",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "content_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$"
+    },
+    "workspace_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_state_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theme": {
+      "const": "paper-v1"
+    },
+    "target_platforms": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "zhihu",
+          "wechat",
+          "xiaohongshu"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schema_version",
+    "content_id",
+    "workspace_ref",
+    "source_ref",
+    "theme"
+  ]
+}

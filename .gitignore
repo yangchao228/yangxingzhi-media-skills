@@ -1,5 +1,6 @@
 # Secrets
 .env
+/.local/wechat/
 
 # OS
 .DS_Store

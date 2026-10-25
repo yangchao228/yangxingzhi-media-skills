@@ -264,6 +264,7 @@
           "type": "object",
           "additionalProperties": true,
           "properties": {
+            "package_ref": { "type": "string", "minLength": 1, "description": "相对状态文件的本地 bundle.json 引用；不代表审核或同步完成" },
             "primary_platform": { "type": ["string", "null"] },
             "secondary_platforms": {
               "type": "array",

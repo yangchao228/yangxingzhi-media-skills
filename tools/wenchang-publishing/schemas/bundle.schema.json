@@ -1,0 +1,569 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wenchang.local/publishing/v1/bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "content_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "bundle_version": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "built_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "renderer_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theme": {
+      "const": "paper-v1"
+    },
+    "status": {
+      "const": "local_ready"
+    },
+    "publication_performed": {
+      "const": false
+    },
+    "approval": {
+      "const": "not_requested"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "ref",
+          "sha256"
+        ]
+      },
+      "minItems": 1
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "type": {
+            "enum": [
+              "png",
+              "jpg",
+              "gif",
+              "webp"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "source_ref",
+          "sha256",
+          "bytes",
+          "type",
+          "width",
+          "height"
+        ]
+      },
+      "minItems": 0
+    },
+    "platforms": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "zhihu": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "preview": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fragment": {
+              "type": "string",
+              "minLength": 1
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "local_ready"
+            },
+            "transfer_status": {
+              "const": "not_started"
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256"
+                ]
+              },
+              "minItems": 1
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256",
+                  "bytes"
+                ]
+              },
+              "minItems": 1
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "action": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "enum": [
+                      "zhihu",
+                      "wechat",
+                      "xiaohongshu"
+                    ]
+                  },
+                  "severity": {
+                    "enum": [
+                      "error",
+                      "warning"
+                    ]
+                  }
+                },
+                "required": [
+                  "code",
+                  "message",
+                  "action",
+                  "severity"
+                ]
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "version",
+            "preview",
+            "status",
+            "transfer_status",
+            "inputs",
+            "outputs",
+            "warnings"
+          ]
+        },
+        "wechat": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "preview": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fragment": {
+              "type": "string",
+              "minLength": 1
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "local_ready"
+            },
+            "transfer_status": {
+              "const": "not_started"
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256"
+                ]
+              },
+              "minItems": 1
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256",
+                  "bytes"
+                ]
+              },
+              "minItems": 1
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "action": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "enum": [
+                      "zhihu",
+                      "wechat",
+                      "xiaohongshu"
+                    ]
+                  },
+                  "severity": {
+                    "enum": [
+                      "error",
+                      "warning"
+                    ]
+                  }
+                },
+                "required": [
+                  "code",
+                  "message",
+                  "action",
+                  "severity"
+                ]
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "version",
+            "preview",
+            "status",
+            "transfer_status",
+            "inputs",
+            "outputs",
+            "warnings"
+          ]
+        },
+        "xiaohongshu": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "preview": {
+              "type": "string",
+              "minLength": 1
+            },
+            "fragment": {
+              "type": "string",
+              "minLength": 1
+            },
+            "images": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1
+            },
+            "status": {
+              "const": "local_ready"
+            },
+            "transfer_status": {
+              "const": "not_started"
+            },
+            "inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256"
+                ]
+              },
+              "minItems": 1
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "ref",
+                  "sha256",
+                  "bytes"
+                ]
+              },
+              "minItems": 1
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "action": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "platform": {
+                    "enum": [
+                      "zhihu",
+                      "wechat",
+                      "xiaohongshu"
+                    ]
+                  },
+                  "severity": {
+                    "enum": [
+                      "error",
+                      "warning"
+                    ]
+                  }
+                },
+                "required": [
+                  "code",
+                  "message",
+                  "action",
+                  "severity"
+                ]
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "version",
+            "preview",
+            "status",
+            "transfer_status",
+            "inputs",
+            "outputs",
+            "warnings"
+          ]
+        }
+      },
+      "minProperties": 1
+    },
+    "preview": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checks": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "ref",
+          "sha256",
+          "bytes"
+        ]
+      },
+      "minItems": 2
+    }
+  },
+  "required": [
+    "schema_version",
+    "content_id",
+    "source_ref",
+    "source_hash",
+    "bundle_version",
+    "built_at",
+    "renderer_version",
+    "theme",
+    "status",
+    "publication_performed",
+    "approval",
+    "inputs",
+    "assets",
+    "platforms",
+    "preview",
+    "checks",
+    "outputs"
+  ]
+}
