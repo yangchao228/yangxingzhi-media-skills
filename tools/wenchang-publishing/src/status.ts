@@ -201,7 +201,7 @@ function browserStatus(dir: string, bundle: Bundle, platform: 'zhihu' | 'xiaohon
       result.updated_at = iso(status.updated_at);
       result.recovery_action = typeof status.recovery_action === 'string' ? status.recovery_action : undefined;
     }
-    result.checked_at = iso(status?.checked_at) || iso(receipt?.checked_at);
+    result.checked_at = iso(status?.checked_at) || iso(status?.updated_at) || iso(receipt?.checked_at);
     if (status && status.status !== 'draft_verified') {
       result.state = status.status === 'ready_for_browser' && candidate.version === bundle.bundle_version ? 'ready_for_browser' : 'blocked';
       if (result.state === 'ready_for_browser') {

@@ -23,6 +23,23 @@ export function previewServer(directory: string) {
         if (req.method === 'HEAD') res.end(); else res.end(JSON.stringify(publishingStatus(dir)));
         return;
       }
+      if (requested === 'workbench') {
+        const status = publishingStatus(dir);
+        let bundle: Bundle | undefined;
+        try { bundle = readJson<Bundle>(path.join(dir, 'bundle.json')); } catch { /* status page remains useful when no bundle exists */ }
+        const rows = status.platforms.map(item => {
+          const preview = status.local.state === 'local_ready' && bundle?.platforms[item.platform]?.preview
+            ? `/${url(bundle.platforms[item.platform].preview)}` : '';
+          const link = preview ? `<a href="${esc(preview)}">打开本地预览</a>` : '<span class="badge">无当前预览</span>';
+          const recovery = item.recovery_action ? `<p class="meta">恢复：${esc(item.recovery_action)}</p>` : '';
+          return `<tr><th>${esc(item.platform)}</th><td><span class="badge">${esc(item.state)}</span></td><td>${esc(item.next_action)}${recovery}</td><td>${link}</td></tr>`;
+        }).join('');
+        const localAction = status.local.next_action || '检查本地构建。';
+        const content = `<main class="shell"><div class="bar"><div><div class="eyebrow">WENCHANG LOCAL WORKBENCH</div><h1>本地分发工作台</h1><p class="sub">只读查看当前 bundle、平台草稿状态、预览入口和恢复动作。</p></div><span class="badge">${esc(status.local.state)}</span></div><section class="paper"><h2>当前版本</h2><p class="meta">bundle_version：${esc(status.bundle_version || 'UNKNOWN')}</p><p>${esc(localAction)}</p></section><section class="paper"><h2>平台状态</h2><table class="facts"><thead><tr><th>平台</th><th>状态</th><th>下一步</th><th>入口</th></tr></thead><tbody>${rows || '<tr><td colspan="4">没有选择平台。</td></tr>'}</tbody></table></section><footer>此页面只读，不登录、不上传、不保存、不发布。</footer></main>`;
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.end(page('文昌本地工作台', content));
+        return;
+      }
       if (requested === '' || requested === 'index.html' || requested === 'status' || requested.endsWith('.html')) {
         const state = check(dir);
         if (requested === 'status') { res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(state)); return; }

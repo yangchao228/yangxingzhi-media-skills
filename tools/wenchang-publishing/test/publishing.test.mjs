@@ -90,8 +90,11 @@ test('HTTP preview redirects home, serves assets, refuses writes and stale HTML'
  assert.equal((await fetch(base+'/project.json')).status,404);
  const status=await (await fetch(base+'/publishing-status')).json();
  assert.equal(status.local.state,'local_ready');assert.equal(status.platforms.length,3);
+ const workbench=await fetch(base+'/workbench');const workbenchHtml=await workbench.text();
+ assert.equal(workbench.status,200);assert.match(workbenchHtml,/本地分发工作台/);assert.match(workbenchHtml,/小红书|xiaohongshu/);assert.match(workbenchHtml,/只读/);assert.doesNotMatch(workbenchHtml,/<(?:button|form)\b|(?:upload|publish)\b/i);
  assert.equal((await fetch(base+'/publishing-status',{method:'HEAD'})).status,200);
  assert.equal((await fetch(base+'/publishing-status',{method:'POST'})).status,405);
+ assert.equal((await fetch(base+'/workbench',{method:'POST'})).status,405);
  assert.equal((await fetch(base+'/',{method:'POST'})).status,405);
  fs.appendFileSync(source,'\nChanged');
  assert.equal((await fetch(base+'/'+bundle.platforms.zhihu.preview)).status,409);

@@ -12,6 +12,8 @@
 | 公众号48001 / 凭证错误 | 核验AppID对应账号、接口权限及本地凭证；让用户本地填写AppSecret。读权限通过不等于写权限通过。 |
 | PREVIOUS_ADD_UNCERTAIN / NETWORK_UNCERTAIN | 写入可能已成功。保留journal，核对远端同名稿/media_id，再决定；禁止删journal后盲目add。 |
 | EXISTING_TITLE_REQUIRES_REVIEW / CONTENT_CHANGED | 核对既有稿及版本；不自动覆盖用户编辑或新增重复稿。当前公众号CLI没有通用更新现有稿命令。 |
+| WAIT_TIMEOUT / SAVE_PENDING_READBACK | 浏览器等待或保存结果不确定。保留当前草稿和旧回执，重新从草稿列表独立回读，提供新的 evidence 后再 verify；禁止重传、删稿或新建同名草稿。 |
+| FRESH_EVIDENCE_REQUIRED | 当前 evidence 早于上次失败尝试；重新回读并使用新 checked_at/plan_hash 的证据，旧 receipt 只保留为历史。 |
 | 知乎导入后缺图 | 先核验R2原图能打开、编辑器已初始化；等待转存和保存。回读仍失败时保留草稿，别反复粘贴正文。 |
 | IMAGE_NOT_LOADED | complete=true仍可能是破图。检查naturalWidth/Height与计划；等待平台处理，再重新观察。不可把0×0放行。 |
 | IMAGE_NOT_PERSISTED | 检查是否目标平台URL或小红书同源blob；外站blob、R2外链不冒充已转存平台图。 |

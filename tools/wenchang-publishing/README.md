@@ -79,7 +79,7 @@ npm --prefix tools/wenchang-publishing run build
 node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distribution
 ```
 
-`status` 不联网、不读账号凭证、不上传，也不修改构建、回执或 content_state。它按本次选定平台返回本地构建状态、回执版本关系、记录时点、存储范围、待审项及下一步。`serve` 另提供只读 `GET /publishing-status`；原 `GET /status` 继续只表示本地构建检查。
+`status` 不联网、不读账号凭证、不上传，也不修改构建、回执或 content_state。它按本次选定平台返回本地构建状态、回执版本关系、记录时点、存储范围、待审项及下一步。`serve` 提供只读 `GET /publishing-status` 和 `/workbench`；`/workbench` 展示 bundle、平台状态、预览入口与恢复动作，不提供上传、保存或发布按钮；原 `GET /status` 继续只表示本地构建检查。
 
 | 平台状态 | 含义 |
 | --- | --- |
@@ -88,10 +88,13 @@ node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distr
 | verified_current | 回执及关联证据对应当前构建；只代表记录时点的核验范围 |
 | historical_verified | 旧回执的平台输入、正文来源及实际产物与当前构建相同，明确沿用历史核验 |
 | stale_receipt | 本地产物已过期，或内容与回执不同；历史信息保留，不能据此上传旧版本 |
-| blocked | 最新尝试未核验通过，或本地条件未满足 |
+| blocked | 最新尝试未核验通过，或本地条件未满足；状态会保留错误码和恢复动作 |
+| saved_pending_readback | 保存结果不确定，必须从草稿列表重新回读；不能重传或新建 |
 | invalid_evidence | 回执、计划、证据或产物不完整，哈希、内容身份或受限路径校验失败 |
 
-旧回执不会重写成新成功；同版本的失败状态优先于残留成功回执。浏览器证据必须与回执中的 SHA-256 及计划原始字节匹配。公众号始终保留账号对应关系和视觉待审；小红书保留浏览器重启持久性待审。汇总不输出账号、签名图片地址或凭据，不能替代当次线上复查。
+旧回执不会重写成新成功；同版本的失败状态优先于残留成功回执。
+知乎和小红书的 prepare/verify 会在 transfer/status.json 记录 attempt_id、started_at、updated_at、plan_hash、last_error_code 和 recovery_action。`WAIT_TIMEOUT`、`SAVE_PENDING_READBACK` 或 `FRESH_EVIDENCE_REQUIRED` 出现时，保留现有草稿和旧回执，重新从草稿列表独立回读并提供新 evidence；verify 不会自动重传、创建新稿或发布。
+浏览器证据必须与回执中的 SHA-256 及计划原始字节匹配。公众号始终保留账号对应关系和视觉待审；小红书保留浏览器重启持久性待审。汇总不输出账号、签名图片地址或凭据，不能替代当次线上复查。
 
 CLI 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
 
