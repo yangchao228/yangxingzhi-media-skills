@@ -33,3 +33,9 @@
 - 只暂存离开，退出原编辑器并从新标签列表重开；逐图、顺序及文案核对后才能记录draft_verified。
 - 正常同源blob可验收；0×0破图、同页上传预览、只看到保存提示均不算通过。
 - 用户编辑冲突或同名多稿时先保留并核对；不自动新增、删除或覆盖，不宣称手机云端同步。
+
+描述与话题场景：
+
+- 从publish_assets.xiaohongshu接力body_description与hot_topic_tags；description保持段落，tags单独存储。
+- 用户要求排版与标签时，正文分成短段和编号要点，从平台搜索中选3–5个相关话题，不套无关热词。
+- 重开后若多段压成一段，返回DESCRIPTION_LAYOUT_MISMATCH；话题缺失或只有普通#文本，返回TOPICS_MISMATCH或TOPIC_NOT_SELECTED，不标记成功。

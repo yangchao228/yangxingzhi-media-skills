@@ -46,7 +46,7 @@ export function init(options: InitOptions) {
   const configs: Record<Platform, PlatformConfig> = {
     zhihu: { platform: 'zhihu', title },
     wechat: { platform: 'wechat', title, author: meta.wechat?.author || state.project?.account || '', digest: meta.wechat?.digest || state.publish_assets?.summary || '', cover: meta.wechat?.cover ? assetRef(meta.wechat.cover) : sourceImages[0] || '' },
-    xiaohongshu: { platform: 'xiaohongshu', cover_title: xhs.cover_title || state.publish_assets?.cover_text || '', post_title: xhs.post_title || title, description: xhs.description || xhs.body_description || '', tags: xhs.tags || [], cards_ref: 'derived/xiaohongshu-cards.json' }
+    xiaohongshu: { platform: 'xiaohongshu', cover_title: xhs.cover_title || state.publish_assets?.cover_text || '', post_title: xhs.post_title || title, description: xhs.description || xhs.body_description || '', tags: xhs.tags || xhs.hot_topic_tags || [], cards_ref: 'derived/xiaohongshu-cards.json' }
   };
   const cards = Array.isArray(xhs.images) ? xhs.images.map((v: string) => assetRef(v)) : sourceImages;
   const project: Project = { schema_version: 1, content_id: options.contentId || 'article-' + sha(ref(root, sourceFile)).slice(0, 12), workspace_ref: ref(dir, root), source_ref: ref(dir, sourceFile), theme: 'paper-v1', ...(options.platforms ? { target_platforms: options.platforms } : {}), ...(stateFile ? { content_state_ref: ref(dir, stateFile) } : {}) };

@@ -18,6 +18,8 @@
 | BLOB_REOPEN_NOT_INDEPENDENT | 是否真的关闭上传页、新标签从列表重开？同一页上传预览不是回读证据；不要仅重写布尔值。 |
 | DUPLICATE_IMAGE_SOURCE / IMAGE_COUNT_MISMATCH | 对照有序卡片清单、缩略图与实际图片；保留草稿，修复前先确认错误图片。 |
 | TITLE_OR_DESCRIPTION_MISMATCH / ACCOUNT_MISMATCH | 停止写入，核验账号、目标草稿和版本；不要自动切账号或改用户已有文案。 |
+| DESCRIPTION_LAYOUT_MISMATCH | 正文字相同但段落丢失或位置改变。检查fill是否压平换行，用支持段落的实际文本输入重填，保存前先看预览；不要将全部空白删除后判相同。 |
+| TOPICS_MISMATCH / TOPIC_NOT_SELECTED | 核对plan.tags与编辑器内已选话题名称/ID。用话题搜索结果补齐，排除重复/无关标签；普通#文字、页面推荐词或本地数组不能替代已选节点。 |
 | VISUAL_ORDER_REVIEW_REQUIRED | 逐张打开预览，与本地图片核对内容、顺序；保存实际截图后再确认。 |
 
 ## Chrome连接与本地草稿

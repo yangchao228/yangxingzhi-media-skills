@@ -193,10 +193,10 @@ R2 负责统一图片资产和映射。小红书网页当前使用文件上传�
 受控浏览器流程：
 
 1. 核验当前账号和新建入口。使用plan中的正式标题（首次接入可先用合成稿），标题不超过20字，保留其他草稿。重试前先检查列表有无同名草稿，禁止重复创建。
-2. 使用真实“上传图片”控件和文件选择器，按 plan.images 的 upload_file 顺序上传；等待全部图片解码完成，再填写 title 和 description。浏览器桥接 `browser/xhs-draft.mjs` 的 observe 仅从可见 DOM 读取、脱敏，不读内部状态或会话。
+2. 新图使用真实“上传图片”控件和文件选择器，按 plan.images 的 upload_file 顺序上传；只改文案时保留既有图片。填写 title 和分段description，再逐个从平台话题搜索结果添加plan.tags。普通#文字不等于已选话题；避免用会压平换行的fill。浏览器桥接 `browser/xhs-draft.mjs` 的 observe/readXhsDocument 仅从DOM读取正文段落及已选topics的名称/ID，排除隐藏话题标记，不读内部状态或会话。
 3. 保存前记录 uploaded 观察及截图。“暂存离开”有时位于封闭 shadow DOM：必须通过真实截图确认按钮和焦点，再执行保存；不能用通用“发布”选择器。若无法确认，交由用户手动暂存。
 4. 回到草稿列表，唯一匹配标题并截图。关闭本轮编辑页，在新标签进入草稿箱，再点击该标题重开。
-5. 记录 reopened 观察；正文、图片数、尺寸必须匹配，重开后允许加载成功的 HTTPS 小红书 CDN 图片，或 creator.xiaohongshu.com 同源 blob。blob 必须与上传时地址不同，重开图片地址不得重复；仍须从保存列表独立重开并确认实际尺寸。blob 地址本身不能单独证明持久化。按编号人工检查图片顺序并保存截图。
+5. 记录 reopened 观察；正文内容及段落边界、已选topics与plan.tags、图片数和尺寸必须匹配。段落允许CRLF/空行差异，不能压成一段；非空tags缺topics会失败。重开后允许加载成功的 HTTPS 小红书 CDN 图片，或 creator.xiaohongshu.com 同源 blob。blob 必须与上传时地址不同，重开图片地址不得重复；仍须从保存列表独立重开并确认实际尺寸。blob 地址本身不能单独证明持久化。按编号人工检查图片顺序并保存截图。
 
 证据 JSON 字段：plan_hash（plan.json 原始字节 SHA-256）、uploaded、reopened（observe 输出）、saved_in_list、reopened_from_list、independent_reopen、visual_order_verified、checked_at。布尔值必须来自当次实际观察；失败时保留 false。
 

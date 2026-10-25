@@ -72,10 +72,21 @@ export function prepareXhs(directory: string, options: { account: string; reuseM
 }
 export interface XhsObservation {
   account:string; title:string; description:string; images:{src:string;complete:boolean;width:number;height:number}[];
+  topics?: {name:string;id:string}[];
 }
+// DOM innerText may separate paragraphs with two newlines. Preserve boundaries,
+// while tolerating renderer spacing and empty paragraph separators.
+export const normalizeXhsDescription = (s:string) => s.normalize('NFC').replace(/\r\n?/g,'\n')
+  .split('\n').map(line=>line.replace(/[\t \u00a0\u200b]+/g,' ').trim()).filter(Boolean).join('\n');
 export function validateXhs(plan:XhsPlan,o:XhsObservation,reopened:boolean) {
   if(o.account!==plan.account)throw new Error('ACCOUNT_MISMATCH');
   if(o.title!==plan.title||normalizeText(o.description)!==normalizeText(plan.description))throw new Error('TITLE_OR_DESCRIPTION_MISMATCH');
+  if(normalizeXhsDescription(o.description)!==normalizeXhsDescription(plan.description))throw new Error('DESCRIPTION_LAYOUT_MISMATCH');
+  const tagName=(s:string)=>s.normalize('NFC').replace(/^#/,'').trim();
+  const expected=(plan.tags||[]).map(tagName),topics=o.topics||[];
+  if(topics.some(t=>typeof t.name!=='string'||typeof t.id!=='string'||!t.id.trim()))throw new Error('TOPIC_NOT_SELECTED');
+  const actual=topics.map(t=>tagName(t.name));
+  if(new Set(actual).size!==actual.length||actual.length!==expected.length||expected.some(t=>!actual.includes(t)))throw new Error('TOPICS_MISMATCH');
   if(o.images.length!==plan.images.length)throw new Error('IMAGE_COUNT_MISMATCH');
   o.images.forEach((im,i)=>{
     if(!im.complete||im.width!==plan.images[i].width||im.height!==plan.images[i].height)throw new Error('IMAGE_NOT_LOADED');
