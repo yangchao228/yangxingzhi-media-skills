@@ -31,7 +31,7 @@ node tools/wenchang-publishing/dist/cli.js export --dir content/my-article/distr
 - 文昌写作/整章阶段仍维护唯一正文；本工具读取原文件，不生成第二份可编辑正文。
 - `init --state ...` 读取 `content_state.draft.file`；存在歧义时显式给 `--source`。
 - `attach-state --dir ... --state ...` 只新增 `content_state.distribution.package_ref`，不推进审核或发布状态。已有不同引用会拒绝覆盖。新增引用后重新 build。
-- 现有 `redbook-cards`、`long-to-cards` 等工具生成卡片；P1 接收其已导出的 1080×1440 PNG/JPEG/WebP，校验尺寸、顺序、重复文件并按 01、02…导出。P1 不负责把 HTML 卡片截图或自动改写文章。
+- 小红书卡片默认使用 `baoyu-xhs-images` 的 `sketch-notes` + `macaron`，见[视觉与交接规范](../../content/wenchang-publish-check/references/xiaohongshu-visuals.md)。P1 接收已确认的 3:4 PNG/JPEG/WebP（不低于1080×1440），保留原图字节与实际尺寸，校验顺序、重复文件并按 01、02…导出；不负责截图或改写文章。
 - `wenchang-publish-check` 仍负责内容检查；`local_ready` 只表示本地工程检查通过。
 
 ## 配置及产物
@@ -101,7 +101,7 @@ node tools/wenchang-publishing/dist/wechat-cli.js preflight --config .local/wech
 ### 公众号 API：保存正式稿（2026-10-24 已实测）
 
 ```sh
-node tools/wenchang-publishing/dist/wechat-cli.js sync --config .local/wechat/credentials.json --dir content/outputs/2026-10-22-agent-review-burden/distribution
+node tools/wenchang-publishing/dist/wechat-cli.js sync --config .local/wechat/credentials.json --dir content/my-article/distribution
 ```
 
 仅在用户授权保存草稿且账号凭证对应正确公众号后执行。先 `build` / `check`，再同步。
@@ -184,7 +184,9 @@ node tools/wenchang-publishing/dist/xhs-cli.js prepare \
   --reuse-map 已有原稿.md.asset-map.json --env-file /本机私密配置/.env
 ```
 
-`--reuse-map` 读取 md-img-r2 upload-only 映射，按完整 SHA-256 和字节数复用资源；未覆盖的卡片才上传 R2。小红书卡片以 `derived/xiaohongshu-cards.json` 的顺序为准，不用长文正文图片替代。生成 `transfers/xiaohongshu/<version>/plan.json`、`r2-map.json` 和 `upload/01.png` 等。上传副本与原图逐字节一致，便于文件选择器按序上传。当前卡片规则为1080×1440；GIF 不支持。
+`--reuse-map` 读取 md-img-r2 upload-only 映射，按完整 SHA-256 和字节数复用资源；未覆盖的卡片才上传 R2。小红书卡片以 `derived/xiaohongshu-cards.json` 的顺序为准，不用长文正文图片替代。生成 `transfers/xiaohongshu/<version>/plan.json`、`r2-map.json` 和 `upload/01.png` 等。上传副本与原图逐字节一致，便于文件选择器按序上传。当前卡片规则为3:4且不低于1080×1440，保留原图尺寸；GIF 不支持。
+
+已确认新卡片更新现有草稿时，先改有序清单并重新 build/check/prepare，再按[Chrome更新与回读流程](../../content/wenchang-publish-check/references/chrome-drafts.md)替换原记录图片。只换图时保留标题和正文；保存后须在同一用户Chrome的新标签从列表重开，逐图核对实际尺寸、内容、顺序和文案。默认只暂存，不发布。
 
 R2 负责统一图片资产和映射。小红书网页当前使用文件上传，采用与映射哈希一致的本地副本；不尝试把 R2 URL 写入正文来替代图文图片，也不篡改平台保存的预览地址。
 

@@ -125,7 +125,7 @@ export function collect(directory: string) {
       cards = cardData.images.map(p => addAsset(input(root, dir, p)));
       for (const card of cards) {
         if (!['png', 'jpg', 'webp'].includes(card.type)) problem('XHS_IMAGE_FORMAT', '小红书图文导出不接受 GIF。', '显式准备 PNG/JPEG/WebP 卡片，不会自动抽帧。', platform);
-        if (card.width !== 1080 || card.height !== 1440) problem('XHS_CARD_SIZE', `卡片 ${card.source_ref} 为 ${card.width}×${card.height}，本项目约定 1080×1440。`, '在现有卡片工具中按 3:4 导出 1080×1440 成图。', platform);
+        if (card.width < 1080 || card.width * 4 !== card.height * 3) problem('XHS_CARD_SIZE', `卡片 ${card.source_ref} 为 ${card.width}×${card.height}，本项目要求3:4且不低于1080×1440。`, '准备3:4竖图，宽度至少1080像素；保留符合条件的原图。', platform);
         if (card.bytes > 32 * 1024 * 1024) problem('XHS_IMAGE_TOO_LARGE', '小红书单图超过 32 MiB。', '压缩该图片。', platform);
         own.push(inputs.get(card.source_ref)!);
       }

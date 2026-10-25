@@ -8,8 +8,8 @@
 
 - 正文唯一维护源：`article.md`；平台标题、摘要、卡片清单是衍生资产。
 - `distribution/project.json` 指定目标平台；平台配置在 `platforms/`。
-- 小红书 `derived/xiaohongshu-cards.json` 按顺序列图，引用路径相对 distribution；当前工具约定1080×1440静态PNG/JPEG/WebP。这是项目约定，不是小红书平台唯一允许尺寸。
-- 小红书封面标题与发布标题不同，发布标题≤20个Unicode字符；独立描述150–300字。没有竖版图时使用卡片Skill生成衍生资产，不偷偷裁切原图或上传测试图替代正式内容。
+- 小红书 `derived/xiaohongshu-cards.json` 按顺序列图，引用路径相对 distribution；当前工具约定3:4、至少1080×1440的静态PNG/JPEG/WebP；符合条件的原图保留实际尺寸（如1086×1448），不为固定模板尺寸重绘。这是项目约定，不是小红书平台唯一允许尺寸。
+- 小红书封面标题与发布标题不同，发布标题≤20个Unicode字符；独立描述150–300字。缺图时默认使用宝玉 `sketch-notes` + `macaron` 生成衍生资产，见 [视觉与交接](xiaohongshu-visuals.md)；不偷偷裁切原图或上传测试图替代正式内容。
 - 私密配置、token、签名URL、账号记录及在线截图不进入Skill示例或Git。R2公开上传需在用户授权范围内。
 
 ## 本地准备
@@ -65,7 +65,7 @@ node tools/wenchang-publishing/dist/zhihu-cli.js verify --dir content/my-article
 
 ## 小红书（含正常blob回读）
 
-连接细节及一次完整验收步骤见 [Chrome 操作流程](chrome-drafts.md)。
+连接、替换既有草稿图片及完整验收步骤见 [Chrome 操作流程](chrome-drafts.md)。已确认的新卡片先更新有序清单、build/check，再prepare新版本；旧构建和回读证据保留，不重新init，不改正式稿。
 
 默认目标是用户日常 Chrome（本次确认 profile：yangchao），保存、草稿列表和独立重开必须在同一 profile 内完成。先核验账号与同名稿；Chrome 未连接或无法可靠控制时提醒用户，不回退到内嵌浏览器保存。网页草稿为浏览器本地资产；不同浏览器/profile 不共享，代理直连只能解决图片网络加载，不能同步草稿列表。草稿入口为「发布笔记 → 上传图文 → 草稿箱 → 图文笔记」，默认视频分类为空不代表图文稿丢失。
 
@@ -79,7 +79,7 @@ node tools/wenchang-publishing/dist/xhs-cli.js prepare --dir content/my-article/
 
 没有已有映射时省略`--reuse-map`。按SHA-256与字节数复用资源，未覆盖的卡片上传R2。输出`transfers/xiaohongshu/<bundle_version>/plan.json`及有序`upload/`副本。
 
-1. 确认账号，检查同名草稿，避免重试时重复创建。上传plan中的文件，不上传示例文件。
+1. 确认账号，检查同名草稿，避免重试时重复创建。更新请求复用已核验的既有记录，先比较已有文字和图片；只换图时保留标题及正文。上传plan中的文件，不上传示例文件。
 2. 使用`browser/xhs-draft.mjs`的observe记录uploaded：账号、标题、独立描述、图片src和实际解码尺寸。等全部加载后再保存。
 3. 只点“暂存离开”。控件可能位于封闭shadow DOM；通过真实截图与键盘焦点确认按钮。无法确定焦点时交用户手动保存，不用“发布”选择器兜底。
 4. 看到保存成功后，在列表确认唯一匹配标题并记录截图。确认本轮编辑器已退出（暂存后返回上传页亦可），新标签进入草稿箱，从列表打开同一稿。保留其他草稿，不清浏览器数据。
