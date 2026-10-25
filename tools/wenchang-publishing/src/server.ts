@@ -6,6 +6,7 @@ import { input, readJson, url } from './io.js';
 import { loadProject } from './project.js';
 import { problem, PLATFORMS, type Bundle } from './model.js';
 import { esc, page } from './render.js';
+import { publishingStatus } from './status.js';
 
 export function previewServer(directory: string) {
   const { dir, root } = loadProject(directory);
@@ -17,6 +18,11 @@ export function previewServer(directory: string) {
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405); res.end(); return; }
     try {
       const requested = decodeURIComponent(new URL(req.url!, 'http://127.0.0.1').pathname).slice(1);
+      if (requested === 'publishing-status') {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        if (req.method === 'HEAD') res.end(); else res.end(JSON.stringify(publishingStatus(dir)));
+        return;
+      }
       if (requested === '' || requested === 'index.html' || requested === 'status' || requested.endsWith('.html')) {
         const state = check(dir);
         if (requested === 'status') { res.setHeader('Content-Type', 'application/json; charset=utf-8'); res.end(JSON.stringify(state)); return; }
@@ -48,6 +54,6 @@ export async function serve(directory: string, port = 8923) {
   await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', () => resolve()); });
   const bound = server.address();
   const actualPort = typeof bound === 'object' && bound ? bound.port : port;
-  console.log(JSON.stringify({ preview_url: `http://127.0.0.1:${actualPort}/`, mode: 'read_only_loopback', exit: 'Ctrl+C 关闭预览服务；HTML 可直接离线打开。' }));
+  console.log(JSON.stringify({ preview_url: `http://127.0.0.1:${actualPort}/`, publishing_status_url: `http://127.0.0.1:${actualPort}/publishing-status`, mode: 'read_only_loopback', exit: 'Ctrl+C 关闭预览服务；HTML 可直接离线打开。' }));
   return server;
 }

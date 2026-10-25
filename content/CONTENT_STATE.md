@@ -91,6 +91,7 @@ content_state:
     secondary_platforms: []
     card_skill:
     image_skill:
+    package_ref: # 可选，相对此状态文件的 distribution/bundle.json 路径
   archive:
     should_review_for_book:
     material_type:
@@ -123,6 +124,14 @@ content_state:
 6. 每次跨阶段都要输出 `handoff`，明确下一阶段应该读取什么、忽略什么、何时停止。
 7. 用户已经拍板的关键选择写入 `decisions`，不要只留在聊天历史里。
 8. 机器可读字段合同见 `content/content_state.schema.json`；脚本校验优先保证关键字段和停顿节点不丢。
+
+### 本地分发包引用
+
+`distribution.package_ref` 是可选字符串，指向 `bundle.json`，路径相对当前 content_state 文件所在目录。例如状态文件和 `distribution/` 同级时，值为 `distribution/bundle.json`。原有任务没有该字段仍然有效；尚无分发包时省略该字段，不填写猜测路径或空字符串。
+
+已有分发包时，出刊阶段先读取此引用，检查对应正文来源和版本，再复用平台配置、卡片及预览。引用本身不代表内容审核、草稿核验或正式发布通过。同步尝试与平台回执继续保存在分发目录，不把浏览器证据或传输日志复制进 content_state。
+
+使用 `tools/wenchang-publishing` 的 `attach-state --dir ... --state ...` 可新增引用；遇到不同的既有引用会停止，不覆盖用户选择。附加引用后重新 build，避免状态文件变化与旧预览混用。运行 `status --dir ...` 可只读汇总本地和三平台回执；它不会修改状态、上传或发布。
 
 ## 阶段负责字段
 

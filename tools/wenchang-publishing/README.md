@@ -72,6 +72,31 @@ npm --prefix tools/wenchang-publishing run typecheck
 
 ## P2 按平台接入
 
+### 只读汇总本地与平台状态
+
+```sh
+npm --prefix tools/wenchang-publishing run build
+node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distribution
+```
+
+`status` 不联网、不读账号凭证、不上传，也不修改构建、回执或 content_state。它按本次选定平台返回本地构建状态、回执版本关系、记录时点、存储范围、待审项及下一步。`serve` 另提供只读 `GET /publishing-status`；原 `GET /status` 继续只表示本地构建检查。
+
+| 平台状态 | 含义 |
+| --- | --- |
+| not_started | 没有找到同步记录 |
+| ready_for_browser | 当前版本的传输准备已完成，等待浏览器保存及回读 |
+| verified_current | 回执及关联证据对应当前构建；只代表记录时点的核验范围 |
+| historical_verified | 旧回执的平台输入、正文来源及实际产物与当前构建相同，明确沿用历史核验 |
+| stale_receipt | 本地产物已过期，或内容与回执不同；历史信息保留，不能据此上传旧版本 |
+| blocked | 最新尝试未核验通过，或本地条件未满足 |
+| invalid_evidence | 回执、计划、证据或产物不完整，哈希、内容身份或受限路径校验失败 |
+
+旧回执不会重写成新成功；同版本的失败状态优先于残留成功回执。浏览器证据必须与回执中的 SHA-256 及计划原始字节匹配。公众号始终保留账号对应关系和视觉待审；小红书保留浏览器重启持久性待审。汇总不输出账号、签名图片地址或凭据，不能替代当次线上复查。
+
+CLI 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
+
+需要在新目录安装运行时源码时，见 [安装与交付](../../docs/publishing-install.md)。单独安装出刊 Skill 仍不包含本工具。
+
 `init --platforms wechat,zhihu` 只创建并校验选定平台，未指定时保持原有三平台行为。已有项目可在 project.json 添加 `target_platforms` 数组。数组不能为空、不能重复、不能含未知平台；未选平台不需要配置或卡片，也不会进入导出。选择变化会使包过期。
 
 线上草稿回读证据与本地构建分开保存；bundle 中的 `transfer_status: not_started` 表示构建器自身未执行传输，不能作为线上草稿的实时状态。P2 当前由受控浏览器执行，尚未提供无人值守同步命令。

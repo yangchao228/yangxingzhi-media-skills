@@ -5,13 +5,15 @@ import { build, check, exportBundle } from './build.js';
 import { attachState, init } from './project.js';
 import { PublishingError, problem, type Platform } from './model.js';
 import { serve } from './server.js';
+import { publishingStatus } from './status.js';
 
-const HELP = `文昌本地分发包（P1，仅构建/预览，不连接账号）
+const HELP = `文昌本地分发包（构建、预览与只读状态；不连接账号）
 
 init --source article.md --workspace project --out project/distribution [--metadata file.json] [--state content-state.json] [--platforms wechat,zhihu]
 init --state content-state.json --workspace project --out project/distribution
 build --dir project/distribution
 check --dir project/distribution
+status --dir project/distribution
 export --dir project/distribution --out project/exports/review-01
 attach-state --dir project/distribution --state project/content-state.json
 serve --dir project/distribution [--port 8923]
@@ -37,6 +39,11 @@ try {
       if (command === 'build') {
         const r = build(dir); result = { status: r.bundle.status, bundle_version: r.bundle.bundle_version, preview: path.join(dir, r.bundle.preview), reused_platforms: r.reused, publication_performed: false };
       } else if (command === 'check') { const r = check(dir); result = r; if (r.status === 'stale') process.exitCode = 2; }
+      else if (command === 'status') {
+        const r = publishingStatus(dir); result = r;
+        if (r.local.state === 'blocked') process.exitCode = 1;
+        else if (r.local.state === 'stale') process.exitCode = 2;
+      }
       else if (command === 'export') { if (!v.out) problem('ARGUMENTS', 'export 需要 --out。', '选择项目内的新空目录。'); result = exportBundle(dir, v.out); }
       else if (command === 'attach-state') { if (!v.state) problem('ARGUMENTS', 'attach-state 需要 --state。', '指定已有 JSON/YAML 接力对象。'); result = attachState(dir, v.state); }
       else if (command === 'serve') await serve(dir, Number(v.port || '8923'));

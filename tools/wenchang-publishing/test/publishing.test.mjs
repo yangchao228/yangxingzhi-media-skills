@@ -3,18 +3,17 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { createRuntimeFixture } from './runtime-fixture.mjs';
 import { init, attachState } from '../dist/project.js';
 import { build, check, exportBundle } from '../dist/build.js';
 import { previewServer } from '../dist/server.js';
-const fixture = fileURLToPath(new URL('../../../content/publishing/p0/fixture/', import.meta.url));
 function setup(t) {
  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'wenchang-test-')));
  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
- fs.cpSync(fixture,path.join(root,'source'),{recursive:true});
+ const fixture=createRuntimeFixture(root);
  const dir=path.join(root,'distribution');
- init({workspace:root,out:dir,source:path.join(root,'source/body.md'),metadata:path.join(root,'source/metadata.json')});
- return {root,dir,source:path.join(root,'source/body.md')};
+ init({workspace:root,out:dir,source:fixture.source,metadata:fixture.metadata});
+ return {root,dir,source:fixture.source};
 }
 function edit(file, fn){const v=JSON.parse(fs.readFileSync(file));fn(v);fs.writeFileSync(file,JSON.stringify(v));}
 test('unchanged build reuses all platforms; XHS-only edit preserves article renders',t=>{
@@ -89,9 +88,14 @@ test('HTTP preview redirects home, serves assets, refuses writes and stale HTML'
  assert.equal((await fetch(base+'/index.html',{redirect:'manual'})).status,302);
  assert.equal((await fetch(base+'/'+bundle.platforms.xiaohongshu.images[0])).status,200);
  assert.equal((await fetch(base+'/project.json')).status,404);
+ const status=await (await fetch(base+'/publishing-status')).json();
+ assert.equal(status.local.state,'local_ready');assert.equal(status.platforms.length,3);
+ assert.equal((await fetch(base+'/publishing-status',{method:'HEAD'})).status,200);
+ assert.equal((await fetch(base+'/publishing-status',{method:'POST'})).status,405);
  assert.equal((await fetch(base+'/',{method:'POST'})).status,405);
  fs.appendFileSync(source,'\nChanged');
  assert.equal((await fetch(base+'/'+bundle.platforms.zhihu.preview)).status,409);
+ assert.equal((await (await fetch(base+'/publishing-status')).json()).local.state,'stale');
 });
 test('GIF remains a local article asset and cannot silently become an XHS still',t=>{
  const {dir,root,source}=setup(t);
