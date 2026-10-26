@@ -68,7 +68,9 @@ npm --prefix tools/wenchang-publishing run typecheck
 ./scripts/validate_skills.sh
 ```
 
-14 项回归覆盖缓存、失败保护、过期检测、迁移、路径、产物完整性、Unicode、HTML、状态接力、只读 HTTP、GIF 及相对资源。HTTP 测试需要允许临时监听回环端口。P1 不执行平台登录、上传、草稿同步或发布。
+2026-10-26 的 A/B 本地验收：完整工具回归 145/145，其中构建、预览及只读工作台测试 21/21；build、typecheck 和 `git diff --check` 通过。新增覆盖当前 plan 强绑定、Chrome evidence 路径、目录/文件缺失、五层符号链接拒绝、私有文件 GET/HEAD 拒绝、写请求拒绝及请求前后文件内容与修改时间不变。工作台夹具运行时在临时目录生成并清理，平台回归使用合成样例，不使用正式稿、截图或凭证。
+
+HTTP 测试需要允许临时监听回环端口。以上结果只证明本地代码行为；测试不执行平台登录、上传、草稿保存或发布，也不刷新已有线上回执。后续测试数量以实际输出为准。
 
 ## P2 按平台接入
 
@@ -79,7 +81,18 @@ npm --prefix tools/wenchang-publishing run build
 node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distribution
 ```
 
-`status` 不联网、不读账号凭证、不上传，也不修改构建、回执或 content_state。它按本次选定平台返回本地构建状态、回执版本关系、记录时点、存储范围、待审项及下一步。`serve` 提供只读 `GET /publishing-status` 和 `/workbench`；`/workbench` 展示 bundle、平台状态、预览入口与恢复动作，不提供上传、保存或发布按钮；原 `GET /status` 继续只表示本地构建检查。
+`status` 不联网、不读账号凭证、不上传，也不修改构建、回执或 content_state。它按本次选定平台返回本地构建状态、回执版本关系、记录时点、存储范围、待审项及下一步。`serve` 提供只读 `GET /publishing-status` 和 `/workbench`；原 `GET /status` 继续只表示本地构建检查。
+
+`/workbench` 的任务卡展示版本、平台状态、基线提示、预检命令、预览入口和恢复动作。知乎/小红书只在当前 transfer 目录实际存在且路径安全时列出 `plan.json`、`status.json`、`receipt.json`、`evidence.json` 与 `chrome/evidence.json` 的状态：
+
+| 本地条件 | 任务卡显示 |
+| --- | --- |
+| 当前 transfer 目录不存在 | 目录缺失提示，不显示推测路径 |
+| 文件存在 | 实际相对路径及“存在”；Chrome evidence 单独列出 |
+| 目录存在、文件缺失 | 文件名及“缺失” |
+| 任一父目录或末端文件是符号链接，或类型/访问异常 | “不可用”；不把链接目标当成 evidence |
+
+evidence 文件存在只表示“待预检”，不等于 `draft_verified`。公众号使用本地 API journal 和回执，不虚构 `transfers/wechat/` 路径。工作台不展示账号、签名图片地址或证据正文，不提供上传、保存、核验执行或发布按钮。私有 transfer 文件不能通过服务下载（GET/HEAD 返回 404）；POST/PUT/PATCH/DELETE 返回 405。prepare/verify 继续由独立 CLI 和受控浏览器流程执行。
 
 | 平台状态 | 含义 |
 | --- | --- |
@@ -89,30 +102,51 @@ node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distr
 | historical_verified | 旧回执的平台输入、正文来源及实际产物与当前构建相同，明确沿用历史核验 |
 | stale_receipt | 本地产物已过期，或内容与回执不同；历史信息保留，不能据此上传旧版本 |
 | blocked | 最新尝试未核验通过，或本地条件未满足；状态会保留错误码和恢复动作 |
-| saved_pending_readback | 保存结果不确定，必须从草稿列表重新回读；不能重传或新建 |
 | invalid_evidence | 回执、计划、证据或产物不完整，哈希、内容身份或受限路径校验失败 |
 
-旧回执不会重写成新成功；同版本的失败状态优先于残留成功回执。
+旧回执不会重写成新成功；同版本的失败状态优先于残留成功回执。`saved_pending_readback` 是传输记录中的阶段，汇总为 `blocked`，要求从草稿列表重新回读，不能直接重传或新建。
 知乎和小红书的 prepare/verify 会在 transfer/status.json 记录 attempt_id、started_at、updated_at、plan_hash、last_error_code 和 recovery_action。`WAIT_TIMEOUT`、`SAVE_PENDING_READBACK` 或 `FRESH_EVIDENCE_REQUIRED` 出现时，保留现有草稿和旧回执，重新从草稿列表独立回读并提供新 evidence；verify 不会自动重传、创建新稿或发布。
 浏览器证据必须与回执中的 SHA-256 及计划原始字节匹配。公众号始终保留账号对应关系和视觉待审；小红书保留浏览器重启持久性待审。汇总不输出账号、签名图片地址或凭据，不能替代当次线上复查。
 
-知乎和小红书在导入前还必须通过远端基线预检。把当前浏览器只读 `observe()` 结果保存为 JSON，再把上一份 `draft_verified` evidence 作为基线传入；预检只比较并输出结果，不清空编辑器、不上传、不保存、不新建草稿：
+供 status/工作台关联的最终 evidence 应放在对应 transfer 目录的 `evidence.json` 或 `chrome/evidence.json`，并保留 verify 回执。verify 可读取显式指定的外部文件，但不会自动搬到上述目录；状态汇总仅检查这两个固定位置，不搜索其他文件。独立导出的证据可以用于下述 CLI preflight，仍须满足当前 plan 的绑定。
+
+知乎和小红书在导入前还必须通过远端基线预检。把当前浏览器只读 `observe()` 结果保存为 JSON，再使用已通过 verify、且 hash 与当前计划一致的独立回读 evidence。预检只比较并输出结果，不清空编辑器、不上传、不保存、不新建草稿。先从本地 status 输出取得当前 `bundle_version`，替换下面的示例变量和观察文件路径：
 
 ```sh
-node tools/wenchang-publishing/dist/zhihu-cli.js preflight \
-  --dir content/my-article/distribution \
-  --observation /本机临时/zhihu-current.json \
-  --baseline-evidence /本机旧版本/transfers/zhihu/<version>/evidence.json
+distribution="content/my-article/distribution"
+bundle_version="替换为当前 bundle_version"
 
+node tools/wenchang-publishing/dist/zhihu-cli.js preflight \
+  --dir "$distribution" \
+  --observation "/本机临时/zhihu-current.json" \
+  --baseline-evidence "$distribution/transfers/zhihu/$bundle_version/evidence.json"
+
+# 小红书示例使用同一计划下已核验的 Chrome evidence；普通 evidence.json 也可用。
 node tools/wenchang-publishing/dist/xhs-cli.js preflight \
-  --dir content/my-article/distribution \
-  --observation /本机临时/xhs-current.json \
-  --baseline-evidence /本机旧版本/transfers/xiaohongshu/<version>/evidence.json
+  --dir "$distribution" \
+  --observation "/本机临时/xhs-current.json" \
+  --baseline-evidence "$distribution/transfers/xiaohongshu/$bundle_version/chrome/evidence.json"
 ```
 
-只有 `remote_unchanged` 才能进入导入步骤；没有显式独立回读基线返回 `BASELINE_REQUIRED`，账号/草稿目标变化返回身份错误，正文、描述、话题、图片数量/顺序/尺寸或稳定图片地址变化返回 `REMOTE_BASELINE_CHANGED`。知乎浏览器桥接的 `importDraft` 也要求传入同一份 `baseline`，在清空编辑器之前执行比较；小红书桥接提供 `preflightBeforeEdit`。小红书临时 `blob:` 地址不作为稳定图片身份，仍比较顺序和尺寸；不能据此证明图片字节未变。
+当前绑定规则：CLI 用当前分发包的 `plan.json` 计算预期 hash（`sha(json(plan))`），要求 `evidence.plan_hash` 完全一致；不会改用 evidence 相邻计划的 hash 来替代当前计划。证据还须有 `independent_reopen=true`、合法的 `checked_at` 和 64 位十六进制 `plan_hash`；若有 `status` 字段，必须为 `draft_verified`，且不能带失败 `code`。仅填写这些字段不代表通过独立核验，应保留实际 verify 回执。
 
-CLI 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
+相邻计划是额外约束：按顺序检查 evidence 同目录的 `plan.json`，不存在时再检查父目录（适配 `chrome/evidence.json`）；找到的计划按原始文件字节计算 hash，也须匹配当前预期值。独立导出的 evidence 即使没有相邻计划，也不能跳过当前 plan 的绑定。
+
+| 结果或错误 | 含义与下一步 |
+| --- | --- |
+| `remote_unchanged` | 本次观察与基线一致，可以继续已授权的导入；浏览器修改前仍再次比较 |
+| `BASELINE_REQUIRED` | 浏览器桥接/同步层没有显式基线；保留草稿，先取得已审独立回读证据 |
+| `BASELINE_EVIDENCE_PLAN_MISMATCH` | evidence 或相邻计划与当前 plan 不匹配；保留旧证据，核对所选分发包和对应记录，不手改 hash |
+| `BASELINE_EVIDENCE_NOT_VERIFIED` | 独立重开、时间或状态字段不合格；重新检查真实核验记录 |
+| `DRAFT_OR_ACCOUNT_MISMATCH` / `ACCOUNT_MISMATCH` | 账号或知乎草稿目标不符；停止并核对账号和编辑页 |
+| `REMOTE_BASELINE_CHANGED` | 标题、正文/描述、话题、图片数量/顺序/尺寸或稳定地址变化；保留远端修改，由用户审阅差异 |
+| `REMOTE_DRAFT_NOT_READY` | 当前观察仍在加载、保存或存在失败；等待稳定后重新只读观察 |
+
+CLI 必须同时提供 `--observation` 和 `--baseline-evidence`；缺少参数时返回 `USE_PREPARE_OR_VERIFY_OR_PREFLIGHT`，不会绕过守门。当前 CLI 不支持不同 plan 之间的基线迁移：改稿或工具升级产生不同计划时，旧 evidence 不能直接用于当前预检，须单独审阅后续迁移方案，不能复制旧证据并改 hash 冒充新验收。
+
+知乎 `importDraft` 必须传入同一份已校验的 `baseline`，在清空编辑器前再次比较；小红书 `preflightBeforeEdit` 在改图或改文案前执行同样的只读比较。小红书临时 `blob:` 地址不作为稳定图片身份，仍比较顺序和尺寸；不能据此证明图片字节未变。
+
+主 CLI 的 check/status 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期；知乎/小红书 preflight 返回 0 表示本次比较通过，1 表示阻塞。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
 
 需要在新目录安装运行时源码时，见 [安装与交付](../../docs/publishing-install.md)。单独安装出刊 Skill 仍不包含本工具。
 
@@ -182,7 +216,7 @@ GIF 尚未接入，不静默转换；上传回执按原图哈希复用。只允�
 
 更新前的最后一次读取只能缩短并发窗口；客户端没有已核验的原子条件写入能力，不能保证消除读取与写入之间的其他编辑。建议验收期间关闭该草稿的其他编辑窗口。
 
-当前已通过56项公众号更新离线回归及130项完整工具回归，包含快照采纳、平台样式处理后阻塞、显式批准对账及只读重跑。真实稿的同ID测试摘要修改与原摘要恢复已回读，样式变化曾触发冲突；用户确认当前版式可接受后，reconcile-baseline重读匹配新快照并归档旧基线/确认/pending，原本地目标保留。连续两次普通sync均verify、同ID、快照不变，当前无pending且status为verified_current。本轮只读对账及重跑共三组token/get，未追加更新或发布。详见 [最新真实验收](../../content/publishing/p2/agent-review-burden/wechat-reconciliation-acceptance-20261025.md)；[前轮阻塞](../../content/publishing/p2/agent-review-burden/wechat-update-acceptance-20261025.md) 保留历史。
+公众号更新的离线回归覆盖快照采纳、平台样式处理后阻塞、显式批准对账及只读重跑；当前工具测试结果统一见“验证”节。历史真实验收中，同ID测试摘要修改与原摘要恢复已回读，样式变化曾触发冲突；用户确认当时呈现后，只读对账归档旧基线和 pending，连续两次 sync 仅回读同ID，记录时点无 pending。该结果不证明当前在线状态，也不代表原 CSS 完整恢复。真实稿回执、截图和前轮阻塞证据留在本地，不随公开操作说明提交。
 
 `adopt-baseline`不是强制覆盖：它不能处理已有pending，也不能替换既有基线；仅允许初次采纳用户已审的精确快照，或幂等重核同一采纳记录。实际命令及失败处理见下方操作手册。
 
@@ -206,6 +240,8 @@ node tools/wenchang-publishing/dist/zhihu-cli.js prepare \
 
 首次使用先在受控浏览器新建草稿，等它获得固定 ID 并完成初始化，再将真实编辑 URL 交给 prepare。既有正式稿复用原 ID。此入口上传正文引用的图片，不上传独立封面或小红书卡片；上传会使资源可通过已配置的 R2 公开域名读取，调用前须有相应授权。
 
+固定 ID 不等于已审基线。当前浏览器守门没有无基线初始化通道；无法提供与当前 plan 匹配的已核验 evidence 时，先保留草稿并单独审阅初始化方案，不把空编辑器标记成已验收。
+
 `prepare` 调用受版本管理的 `md-img-r2/scripts/md_img_r2.py --upload-only`，输入为自动生成的资源列表。生成 `distribution/transfers/zhihu/<bundle_version>/`：
 
 - `r2-map.json`：原稿哈希、每张图片哈希、本地引用、尺寸和 R2 URL。
@@ -225,10 +261,14 @@ node tools/wenchang-publishing/dist/zhihu-cli.js prepare \
 var bridge = await import('/绝对仓库路径/tools/wenchang-publishing/browser/zhihu-draft.mjs');
 var fs = await import('node:fs/promises');
 var crypto = await import('node:crypto');
+var preflight = await import('/绝对仓库路径/tools/wenchang-publishing/dist/remote-preflight.js');
 var planBytes = await fs.readFile('/绝对路径/plan.json', 'utf8');
 var plan = JSON.parse(planBytes);
+var planHash = crypto.createHash('sha256').update(JSON.stringify(plan, null, 2) + '\n').digest('hex');
+// 使用已通过 verify 且与当前 plan 一致的证据；保留基线原件，不覆盖该文件。
+var baseline = preflight.readEvidenceObservation('/绝对路径/已保留基线/evidence.json', planHash);
 // tab 为已经绑定并检查的目标草稿标签。
-var start = await bridge.importDraft(tab, plan);
+var start = await bridge.importDraft(tab, plan, { baseline });
 // 每次最多等待45秒，超时保留当前草稿并排查；不能当作成功，也不自动重传。
 var imported = await bridge.waitForDraft(tab, plan);
 var readback = await bridge.reopenAndRead(cua, tab, plan);
@@ -266,7 +306,7 @@ R2 负责统一图片资产和映射。小红书网页当前使用文件上传�
 
 受控浏览器流程：
 
-1. 核验当前账号和新建入口。使用plan中的正式标题（首次接入可先用合成稿），标题不超过20字，保留其他草稿。重试前先检查列表有无同名草稿，禁止重复创建。
+1. 核验当前账号与目标草稿。使用plan中的正式标题，标题不超过20字，保留其他草稿。重试前先检查列表有无同名草稿，禁止重复创建；改图或改文案前，用与当前 plan 绑定的已审基线执行 CLI preflight，并调用 `preflightBeforeEdit(tab, plan, baseline)` 再次比较。首次接入没有基线时保留阻塞，单独审阅初始化方案，不以空基线进入编辑。
 2. 新图使用真实“上传图片”控件和文件选择器，按 plan.images 的 upload_file 顺序上传；只改文案时保留既有图片。填写 title 和分段description，再逐个从平台话题搜索结果添加plan.tags。普通#文字不等于已选话题；避免用会压平换行的fill。浏览器桥接 `browser/xhs-draft.mjs` 的 observe/readXhsDocument 仅从DOM读取正文段落及已选topics的名称/ID，排除隐藏话题标记，不读内部状态或会话。
 3. 保存前记录 uploaded 观察及截图。“暂存离开”有时位于封闭 shadow DOM：必须通过真实截图确认按钮和焦点，再执行保存；不能用通用“发布”选择器。若无法确认，交由用户手动暂存。
 4. 回到草稿列表，唯一匹配标题并截图。关闭本轮编辑页，在新标签进入草稿箱，再点击该标题重开。
