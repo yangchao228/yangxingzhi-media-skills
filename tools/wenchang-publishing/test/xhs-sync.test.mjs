@@ -7,8 +7,8 @@ import {fileURLToPath} from 'node:url';
 import {init,collect} from '../dist/project.js';
 import {build} from '../dist/build.js';
 import {compareXhsBaseline,prepareXhs,preflightXhsBaseline,validateXhs,verifyXhs} from '../dist/xhs-sync.js';
-import {json} from '../dist/io.js';
-import {readEvidenceObservation} from '../dist/remote-preflight.js';
+import {json,sha} from '../dist/io.js';
+import {adjacentPlanHash,readEvidenceObservation} from '../dist/remote-preflight.js';
 const fixture=fileURLToPath(new URL('../../../content/publishing/p0/fixture/',import.meta.url));
 function setup(t){
  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'xhs-flow-')));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
@@ -57,6 +57,19 @@ test('remote preflight protects the existing XHS draft before editing',t=>{
  assert.throws(()=>preflightXhsBaseline(plan,undefined,baseline),/BASELINE_REQUIRED/);
  const evidence=path.join(root,'baseline-evidence.json');fs.writeFileSync(evidence,json({plan_hash:'0'.repeat(64),independent_reopen:true,checked_at:new Date().toISOString(),reopened:baseline}));
  assert.throws(()=>readEvidenceObservation(evidence,r.plan_hash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+});
+
+test('baseline evidence stays bound to the current XHS plan in local and Chrome layouts',t=>{
+ const {root,r,plan}=setup(t),transfer=path.dirname(r.plan),e={plan_hash:r.plan_hash,independent_reopen:true,checked_at:new Date().toISOString(),reopened:obs(plan)};
+ const local=path.join(transfer,'evidence.json');fs.writeFileSync(local,json(e));
+ assert.equal(adjacentPlanHash(local),r.plan_hash);assert.equal(readEvidenceObservation(local,r.plan_hash).title,plan.title);
+ const chromeDir=path.join(transfer,'chrome');fs.mkdirSync(chromeDir);const chrome=path.join(chromeDir,'evidence.json');fs.writeFileSync(chrome,json(e));
+ assert.equal(adjacentPlanHash(chrome),r.plan_hash);assert.equal(readEvidenceObservation(chrome,r.plan_hash).title,plan.title);
+ const detached=path.join(root,'detached-evidence.json');fs.writeFileSync(detached,json(e));
+ fs.appendFileSync(r.plan,'\n');const currentPlanHash=sha(fs.readFileSync(r.plan));
+ assert.throws(()=>readEvidenceObservation(local,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+ assert.throws(()=>readEvidenceObservation(chrome,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+ assert.throws(()=>readEvidenceObservation(detached,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
 });
 
 test('reopened blobs must be fresh, distinct and independently reopened',t=>{

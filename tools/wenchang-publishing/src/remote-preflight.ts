@@ -1,5 +1,6 @@
 import fs from 'node:fs';
-import { readJson } from './io.js';
+import path from 'node:path';
+import { readJson, sha } from './io.js';
 
 export class RemotePreflightError extends Error {
   readonly code: string;
@@ -26,20 +27,38 @@ export function requireObservation(value: any, fields: string[]): void {
   }
 }
 
-export function requireEvidenceEnvelope(value: any, expectedPlanHash?: string): void {
+export function requireEvidenceEnvelope(value: any, expectedPlanHash: string): void {
   if (!value || typeof value !== 'object' || Array.isArray(value) || value.independent_reopen !== true
     || value.status && value.status !== 'draft_verified' || value.code
+    || typeof value.plan_hash !== 'string' || !/^[a-f0-9]{64}$/.test(value.plan_hash)
     || typeof value.checked_at !== 'string' || !Number.isFinite(Date.parse(value.checked_at))
-    || expectedPlanHash && value.plan_hash !== expectedPlanHash) {
-    if (expectedPlanHash && value?.plan_hash !== expectedPlanHash) throw new RemotePreflightError('BASELINE_EVIDENCE_PLAN_MISMATCH');
+    || value.plan_hash !== expectedPlanHash) {
+    if (value?.plan_hash !== expectedPlanHash) throw new RemotePreflightError('BASELINE_EVIDENCE_PLAN_MISMATCH');
     throw new RemotePreflightError('BASELINE_EVIDENCE_NOT_VERIFIED');
   }
 }
 
-export function readEvidenceObservation(file: string, expectedPlanHash?: string): any {
+export function readEvidenceObservation(file: string, expectedPlanHash: string): any {
+  const adjacent = adjacentPlanHash(file);
+  if (adjacent && adjacent !== expectedPlanHash) throw new RemotePreflightError('BASELINE_EVIDENCE_PLAN_MISMATCH');
   const value = readJson<any>(file);
   requireEvidenceEnvelope(value, expectedPlanHash);
   return readObservation(file);
+}
+
+/** Check an evidence file against adjacent immutable plan bytes when available. */
+export function adjacentPlanHash(file: string): string | undefined {
+  const candidates = [
+    path.join(path.dirname(file), 'plan.json'),
+    path.join(path.dirname(file), '..', 'plan.json'),
+  ];
+  for (const candidate of candidates) {
+    try {
+      const stat = fs.statSync(candidate);
+      if (stat.isFile()) return sha(fs.readFileSync(candidate));
+    } catch { /* a caller may keep evidence in a separately exported directory */ }
+  }
+  return undefined;
 }
 
 export function isBlobUrl(value: string): boolean {

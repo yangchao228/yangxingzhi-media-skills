@@ -16,7 +16,8 @@ try {
   else if (p[0] === 'preflight' && v.observation && v['baseline-evidence']) {
     const data = collect(v.dir);
     const plan = readJson(path.join(data.dir, 'transfers', 'zhihu', data.bundleVersion, 'plan.json'));
-    result = preflightZhihuBaseline(plan, readEvidenceObservation(v['baseline-evidence'], sha(json(plan))), readObservation(v.observation));
+    const baselineFile = v['baseline-evidence'];
+    result = preflightZhihuBaseline(plan, readEvidenceObservation(baselineFile, sha(json(plan))), readObservation(v.observation));
   }
   else throw new Error('USE_PREPARE_OR_VERIFY_OR_PREFLIGHT');
   console.log(JSON.stringify(result, null, 2));

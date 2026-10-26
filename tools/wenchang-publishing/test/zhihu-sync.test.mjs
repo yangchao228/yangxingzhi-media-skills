@@ -9,8 +9,8 @@ import { build } from '../dist/build.js';
 import { prepareZhihu, preflightZhihuBaseline, resolveMap, sourceText, validateObservation, verifyZhihu } from '../dist/zhihu-sync.js';
 import { sha, json } from '../dist/io.js';
 import { publishingStatus } from '../dist/status.js';
-import { readEvidenceObservation } from '../dist/remote-preflight.js';
 import { waitForDraft, importDraft } from '../browser/zhihu-draft.mjs';
+import { adjacentPlanHash, readEvidenceObservation } from '../dist/remote-preflight.js';
 const fixture = fileURLToPath(new URL('../../../content/publishing/p0/fixture/', import.meta.url));
 const draft = 'https://zhuanlan.zhihu.com/p/123/edit';
 function setup(t) {
@@ -92,4 +92,15 @@ test('import guard compares the remote baseline before clearing the editor',asyn
  const tab={playwright:{evaluate:async()=>current,locator:()=>({fill:async()=>{cleared=true},press:async()=>{cleared=true}})},getAXState:async()=>{}};
  await assert.rejects(importDraft(tab,plan,{baseline}),/REMOTE_BASELINE_CHANGED/);
  assert.equal(cleared,false);
+});
+test('baseline evidence is bound to the immutable plan bytes',t=>{
+ const {root,plan,result}=setup(t),dir=path.dirname(result.plan),e={plan_hash:result.plan_hash,independent_reopen:true,checked_at:new Date().toISOString(),reopened:observation(plan)};
+ const file=path.join(dir,'evidence.json');fs.writeFileSync(file,json(e));assert.equal(adjacentPlanHash(file),result.plan_hash);assert.equal(readEvidenceObservation(file,adjacentPlanHash(file)).title,plan.title);
+ const chromeDir=path.join(dir,'chrome');fs.mkdirSync(chromeDir);const chrome=path.join(chromeDir,'evidence.json');fs.writeFileSync(chrome,json(e));
+ assert.equal(adjacentPlanHash(chrome),result.plan_hash);assert.equal(readEvidenceObservation(chrome,result.plan_hash).title,plan.title);
+ const detached=path.join(root,'detached-evidence.json');fs.writeFileSync(detached,json(e));
+ fs.appendFileSync(result.plan,'\n');const currentPlanHash=sha(fs.readFileSync(result.plan));
+ assert.throws(()=>readEvidenceObservation(file,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+ assert.throws(()=>readEvidenceObservation(chrome,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+ assert.throws(()=>readEvidenceObservation(detached,currentPlanHash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
 });

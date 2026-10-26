@@ -15,7 +15,8 @@ try {
  else if(p[0]==='verify'&&v.evidence)r=verifyXhs(v.dir,v.evidence);
  else if(p[0]==='preflight'&&v.observation&&v['baseline-evidence']) {
   const data=collect(v.dir),plan=readJson(path.join(data.dir,'transfers','xiaohongshu',data.bundleVersion,'plan.json'));
-  r=preflightXhsBaseline(plan,readEvidenceObservation(v['baseline-evidence'],sha(json(plan))),readObservation(v.observation));
+  const baselineFile=v['baseline-evidence'];
+  r=preflightXhsBaseline(plan,readEvidenceObservation(baselineFile,sha(json(plan))),readObservation(v.observation));
  }
  else throw new Error('USE_PREPARE_OR_VERIFY_OR_PREFLIGHT');
  console.log(JSON.stringify(r,null,2));
