@@ -16,6 +16,28 @@ function setup(t) {
  return {root,dir,source:fixture.source};
 }
 function edit(file, fn){const v=JSON.parse(fs.readFileSync(file));fn(v);fs.writeFileSync(file,JSON.stringify(v));}
+async function listen(t,dir){
+ const server=previewServer(dir);
+ await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve)});
+ t.after(()=>new Promise(resolve=>server.close(resolve)));
+ return `http://127.0.0.1:${server.address().port}`;
+}
+function snapshotTree(root){
+ const entries={};
+ function visit(file){
+  const stat=fs.lstatSync(file),relative=path.relative(root,file);
+  if(stat.isSymbolicLink())entries[relative]=['link',stat.mtimeMs,fs.readlinkSync(file)];
+  else if(stat.isDirectory()){
+   entries[relative]=['directory',stat.mtimeMs];
+   for(const name of fs.readdirSync(file).sort())visit(path.join(file,name));
+  }else entries[relative]=['file',stat.mtimeMs,fs.readFileSync(file).toString('base64')];
+ }
+ visit(root);return entries;
+}
+function workbenchRow(html,platform){
+ const match=html.match(new RegExp(`<tr><th>${platform}</th>([\\s\\S]*?)</tr>`));
+ assert.ok(match,`missing task card: ${platform}`);return match[1];
+}
 test('unchanged build reuses all platforms; XHS-only edit preserves article renders',t=>{
  const {dir}=setup(t);const a=build(dir);
  assert.equal(check(dir).status,'local_ready');assert.equal(build(dir).reused.length,3);
@@ -91,7 +113,7 @@ test('HTTP preview redirects home, serves assets, refuses writes and stale HTML'
  const status=await (await fetch(base+'/publishing-status')).json();
  assert.equal(status.local.state,'local_ready');assert.equal(status.platforms.length,3);
  const workbench=await fetch(base+'/workbench');const workbenchHtml=await workbench.text();
- assert.equal(workbench.status,200);assert.match(workbenchHtml,/本地分发工作台/);assert.match(workbenchHtml,/小红书|xiaohongshu/);assert.match(workbenchHtml,/只读/);assert.doesNotMatch(workbenchHtml,/<(?:button|form)\b|(?:upload|publish)\b/i);
+ assert.equal(workbench.status,200);assert.match(workbenchHtml,/本地分发工作台/);assert.match(workbenchHtml,/平台任务卡/);assert.match(workbenchHtml,/基线/);assert.match(workbenchHtml,/preflight/);assert.match(workbenchHtml,/小红书|xiaohongshu/);assert.match(workbenchHtml,/只读/);assert.doesNotMatch(workbenchHtml,/<(?:button|form)\b|(?:upload|publish)\b/i);
  assert.equal((await fetch(base+'/publishing-status',{method:'HEAD'})).status,200);
  assert.equal((await fetch(base+'/publishing-status',{method:'POST'})).status,405);
  assert.equal((await fetch(base+'/workbench',{method:'POST'})).status,405);
@@ -99,6 +121,68 @@ test('HTTP preview redirects home, serves assets, refuses writes and stale HTML'
  fs.appendFileSync(source,'\nChanged');
  assert.equal((await fetch(base+'/'+bundle.platforms.zhihu.preview)).status,409);
  assert.equal((await (await fetch(base+'/publishing-status')).json()).local.state,'stale');
+});
+test('workbench distinguishes absent transfer directories from missing files',async t=>{
+ const {root,dir}=setup(t),{bundle}=build(dir),base=await listen(t,dir);
+ const before=snapshotTree(root),empty=await (await fetch(base+'/workbench')).text();
+ for(const platform of ['zhihu','xiaohongshu']){
+  const row=workbenchRow(empty,platform);assert.match(row,/当前版本还没有 transfer 目录/);assert.ok(!row.includes(`transfers/${platform}/`));
+ }
+ assert.doesNotMatch(workbenchRow(empty,'wechat'),/transfers\/wechat/);
+ assert.deepEqual(snapshotTree(root),before);
+ fs.mkdirSync(path.join(dir,'transfers/zhihu',bundle.bundle_version),{recursive:true});
+ const created=snapshotTree(root),row=workbenchRow(await (await fetch(base+'/workbench')).text(),'zhihu');
+ assert.ok(row.includes(`目录：transfers/zhihu/${bundle.bundle_version}/`));
+ for(const name of ['plan.json','status.json','receipt.json','evidence.json','chrome/evidence.json'])assert.ok(row.includes(`${name}（缺失）`));
+ assert.doesNotMatch(row,/（存在）/);assert.deepEqual(snapshotTree(root),created);
+});
+test('workbench lists default and Chrome evidence paths without serving private files or writing',async t=>{
+ const {root,dir}=setup(t),{bundle}=build(dir);
+ const sentinel='synthetic-private-token',plan={account:'synthetic-workbench',private_url:`https://example.com/image?token=${sentinel}`};
+ const refs=[];
+ for(const [platform,evidence] of [['zhihu','evidence.json'],['xiaohongshu','chrome/evidence.json']]){
+  const relative=`transfers/${platform}/${bundle.bundle_version}`,transfer=path.join(dir,relative);
+  fs.mkdirSync(path.dirname(path.join(transfer,evidence)),{recursive:true});
+  for(const [name,value] of Object.entries({'plan.json':plan,'status.json':{status:'blocked',last_error_code:'BASELINE_REQUIRED',recovery_action:'先提供独立回读 evidence。'},[evidence]:{private_value:sentinel}})){
+   fs.writeFileSync(path.join(transfer,name),JSON.stringify(value));refs.push(`${relative}/${name}`);
+  }
+  if(platform==='zhihu'){
+   fs.writeFileSync(path.join(transfer,'receipt.json'),JSON.stringify({status:'blocked',private_value:sentinel}));refs.push(`${relative}/receipt.json`);
+  }
+ }
+ const base=await listen(t,dir),before=snapshotTree(root),response=await fetch(base+'/workbench'),html=await response.text();
+ assert.equal(response.status,200);
+ for(const [platform,evidence,command] of [['zhihu','evidence.json','zhihu-cli'],['xiaohongshu','chrome/evidence.json','xhs-cli']]){
+  const row=workbenchRow(html,platform),relative=`transfers/${platform}/${bundle.bundle_version}`;
+  assert.match(row,/基线：本地 evidence 文件待预检/);
+  for(const name of ['plan.json','status.json',evidence])assert.ok(row.includes(`${relative}/${name}（存在）`));
+  assert.ok(row.includes(`${command} preflight --dir &lt;distribution&gt; --observation &lt;current.json&gt; --baseline-evidence &lt;旧transfer&gt;/evidence.json`));
+  assert.match(row,/恢复：先提供独立回读 evidence。/);
+ }
+ assert.match(workbenchRow(html,'xiaohongshu'),/receipt\.json（缺失）/);
+ assert.doesNotMatch(html,/<(?:button|form|script)\b|synthetic-private-token|synthetic-workbench|https:\/\/example\.com/);
+ assert.equal((await (await fetch(base+'/workbench',{method:'HEAD'})).text()),'');
+ for(const ref of refs)for(const method of ['GET','HEAD']){
+  const denied=await fetch(`${base}/${ref}`,{method});assert.equal(denied.status,404);assert.ok(!(await denied.text()).includes(sentinel));
+ }
+ for(const method of ['POST','PUT','PATCH','DELETE']){
+  assert.equal((await fetch(base+'/workbench',{method,body:JSON.stringify({publication_performed:true})})).status,405);
+ }
+ assert.deepEqual(snapshotTree(root),before);
+});
+for(const level of ['transfers','platform','version','chrome','evidence'])test(`workbench rejects symlinks at ${level} without changing local files`,async t=>{
+ const {root,dir}=setup(t),{bundle}=build(dir),relative=`transfers/xiaohongshu/${bundle.bundle_version}`;
+ const linkRef={transfers:'transfers',platform:'transfers/xiaohongshu',version:relative,chrome:`${relative}/chrome`,evidence:`${relative}/chrome/evidence.json`}[level];
+ const suffix=path.relative(linkRef,`${relative}/chrome/evidence.json`),target=path.join(root,'synthetic-link-target');
+ const evidenceTarget=path.join(target,suffix);fs.mkdirSync(path.dirname(evidenceTarget),{recursive:true});fs.writeFileSync(evidenceTarget,'{"private_value":"symlink-sentinel"}');
+ const link=path.join(dir,linkRef);fs.mkdirSync(path.dirname(link),{recursive:true});fs.symlinkSync(target,link);
+ const transfer=path.join(dir,relative);
+ fs.writeFileSync(path.join(transfer,'status.json'),JSON.stringify({status:'blocked',last_error_code:'BASELINE_REQUIRED'}));
+ const base=await listen(t,dir),before=snapshotTree(root),response=await fetch(base+'/workbench'),html=await response.text(),row=workbenchRow(html,'xiaohongshu');
+ assert.equal(response.status,200);assert.match(row,/不可用[（：]符号链接或路径异常/);
+ assert.doesNotMatch(row,/evidence 文件待预检|evidence\.json（存在）|symlink-sentinel|synthetic-link-target/);
+ assert.equal((await fetch(`${base}/${relative}/chrome/evidence.json`)).status,404);
+ assert.deepEqual(snapshotTree(root),before);
 });
 test('GIF remains a local article asset and cannot silently become an XHS still',t=>{
  const {dir,root,source}=setup(t);
