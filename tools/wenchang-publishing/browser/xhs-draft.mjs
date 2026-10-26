@@ -4,6 +4,15 @@ export async function observe(tab) {
  return tab.playwright.evaluate(readXhsDocument);
 }
 
+// Read-only guard for the caller that is about to mutate the editor. The guard
+// must run before any card selection, deletion, upload, or text replacement.
+export async function preflightBeforeEdit(tab, plan, baseline) {
+ const { preflightXhsBaseline } = await import('../dist/xhs-sync.js');
+ const current = await observe(tab);
+ preflightXhsBaseline(plan, baseline, current);
+ return current;
+}
+
 // Serializable DOM-only reader, also usable with Chrome DevTools evaluate_script.
 export function readXhsDocument() {
  const editor=document.querySelector('[contenteditable="true"]');

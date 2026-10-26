@@ -14,6 +14,9 @@
 | EXISTING_TITLE_REQUIRES_REVIEW / CONTENT_CHANGED | 核对既有稿及版本；不自动覆盖用户编辑或新增重复稿。当前公众号CLI没有通用更新现有稿命令。 |
 | WAIT_TIMEOUT / SAVE_PENDING_READBACK | 浏览器等待或保存结果不确定。保留当前草稿和旧回执，重新从草稿列表独立回读，提供新的 evidence 后再 verify；禁止重传、删稿或新建同名草稿。 |
 | FRESH_EVIDENCE_REQUIRED | 当前 evidence 早于上次失败尝试；重新回读并使用新 checked_at/plan_hash 的证据，旧 receipt 只保留为历史。 |
+| BASELINE_REQUIRED / BASELINE_EVIDENCE_NOT_VERIFIED / BASELINE_EVIDENCE_PLAN_MISMATCH | 编辑器修改前缺少当前版本的独立回读基线。先从草稿列表读取并确认 `draft_verified`、`independent_reopen=true`、当前 `plan_hash` 和 `checked_at`，再执行 preflight；不要先清空正文。 |
+| REMOTE_BASELINE_CHANGED | 草稿标题、正文/描述、话题或图片顺序/尺寸已被平台或人工修改。保留当前草稿和旧回执，查看 `changed_fields` 后由用户决定合并；不自动覆盖、不新建同名稿。 |
+| REMOTE_DRAFT_NOT_READY / REMOTE_OBSERVATION_INVALID | 当前页面仍在加载、保存或回读字段不完整。等待状态稳定后重新独立回读，不用旧页面快照继续编辑。 |
 | 知乎导入后缺图 | 先核验R2原图能打开、编辑器已初始化；等待转存和保存。回读仍失败时保留草稿，别反复粘贴正文。 |
 | IMAGE_NOT_LOADED | complete=true仍可能是破图。检查naturalWidth/Height与计划；等待平台处理，再重新观察。不可把0×0放行。 |
 | IMAGE_NOT_PERSISTED | 检查是否目标平台URL或小红书同源blob；外站blob、R2外链不冒充已转存平台图。 |

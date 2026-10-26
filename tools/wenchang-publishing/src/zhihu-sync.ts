@@ -6,6 +6,7 @@ import { collect } from './project.js';
 import { atomic, input, json, output, readJson, ref, sha, TOOL_ROOT } from './io.js';
 import { article, markdown, scan } from './render.js';
 import { archiveReceipt, newAttempt, readTransferState, recoveryAction, writeTransferState, type TransferState } from './transfer-state.js';
+import { assertFreshObservation, RemotePreflightError, stableRemoteImageSource } from './remote-preflight.js';
 import type { ArticleConfig } from './model.js';
 
 export const normalizeText = (s: string) => s.normalize('NFC').replace(/\s+/gu, '');
@@ -123,6 +124,34 @@ export function validateObservation(plan: ZhihuPlan, o: Observation) {
     if (u.protocol !== 'https:' || !(u.hostname === 'pic-private.zhihu.com' || u.hostname.endsWith('.zhimg.com')) || u.search || u.hash) throw new Error('IMAGE_NOT_TRANSFERRED');
     if (!image.complete || image.width <= 0 || image.height <= 0 || Math.abs(image.width / image.height - a.width / a.height) > 0.015) throw new Error('IMAGE_LOAD_OR_DIMENSIONS_FAILED');
   });
+}
+
+/** Compare the last accepted remote draft with the fresh read taken immediately before editing. */
+export function compareZhihuBaseline(baseline: Observation, current: Observation): string[] {
+  const changed: string[] = [];
+  if (baseline.url !== current.url) changed.push('url');
+  if (baseline.account !== current.account) changed.push('account');
+  if (baseline.title !== current.title) changed.push('title');
+  if (normalizeText(baseline.text) !== normalizeText(current.text)) changed.push('body');
+  if (baseline.images.length !== current.images.length) changed.push('images.count');
+  const count = Math.min(baseline.images.length, current.images.length);
+  for (let i = 0; i < count; i++) {
+    const a = baseline.images[i], b = current.images[i];
+    if (stableRemoteImageSource(a.src) !== stableRemoteImageSource(b.src)) changed.push(`images[${i}].src`);
+    if (a.width !== b.width || a.height !== b.height) changed.push(`images[${i}].dimensions`);
+  }
+  return changed;
+}
+
+export function preflightZhihuBaseline(plan: ZhihuPlan, baseline: Observation | undefined, current: Observation): { status: 'remote_unchanged'; changed_fields: [] } {
+  if (!baseline) throw new RemotePreflightError('BASELINE_REQUIRED');
+  if (current.url !== plan.draft_url || current.account !== plan.account || baseline.url !== plan.draft_url || baseline.account !== plan.account) {
+    throw new RemotePreflightError('DRAFT_OR_ACCOUNT_MISMATCH');
+  }
+  assertFreshObservation(current);
+  const changed = compareZhihuBaseline(baseline, current);
+  if (changed.length) throw new RemotePreflightError('REMOTE_BASELINE_CHANGED', changed);
+  return { status: 'remote_unchanged', changed_fields: [] };
 }
 export function verifyZhihu(directory: string, evidenceFile: string) {
   const data = current(directory);

@@ -6,6 +6,7 @@ import { collect } from './project.js';
 import { atomic, input, json, output, readJson, ref, sha, TOOL_ROOT } from './io.js';
 import { resolveMap, normalizeText } from './zhihu-sync.js';
 import { archiveReceipt, newAttempt, readTransferState, recoveryAction, writeTransferState, type TransferState } from './transfer-state.js';
+import { assertFreshObservation, RemotePreflightError, stableRemoteImageSource } from './remote-preflight.js';
 import type { XhsConfig } from './model.js';
 
 export interface XhsPlan {
@@ -101,6 +102,36 @@ export function validateXhs(plan:XhsPlan,o:XhsObservation,reopened:boolean) {
       if((!cdn&&!blob)||u.search||u.hash)throw new Error('IMAGE_NOT_PERSISTED');
     }
   });
+}
+
+/** Compare the last accepted XHS draft with a fresh read before any editor mutation. */
+export function compareXhsBaseline(baseline: XhsObservation, current: XhsObservation): string[] {
+  const changed: string[] = [];
+  if (baseline.account !== current.account) changed.push('account');
+  if (baseline.title !== current.title) changed.push('title');
+  if (normalizeXhsDescription(baseline.description) !== normalizeXhsDescription(current.description)) changed.push('description');
+  const baseTopics = (baseline.topics || []).map(topic => `${topic.name}\u0000${topic.id}`);
+  const currentTopics = (current.topics || []).map(topic => `${topic.name}\u0000${topic.id}`);
+  if (JSON.stringify(baseTopics) !== JSON.stringify(currentTopics)) changed.push('topics');
+  if (baseline.images.length !== current.images.length) changed.push('images.count');
+  const count = Math.min(baseline.images.length, current.images.length);
+  for (let i = 0; i < count; i++) {
+    const a = baseline.images[i], b = current.images[i];
+    // XHS blob URLs are editor-session identifiers. They are intentionally ignored;
+    // order and dimensions remain protected, and stable CDN URLs are compared.
+    if (stableRemoteImageSource(a.src) !== stableRemoteImageSource(b.src)) changed.push(`images[${i}].src`);
+    if (a.width !== b.width || a.height !== b.height) changed.push(`images[${i}].dimensions`);
+  }
+  return changed;
+}
+
+export function preflightXhsBaseline(plan: XhsPlan, baseline: XhsObservation | undefined, current: XhsObservation): { status: 'remote_unchanged'; changed_fields: [] } {
+  if (!baseline) throw new RemotePreflightError('BASELINE_REQUIRED');
+  if (current.account !== plan.account || baseline.account !== plan.account) throw new RemotePreflightError('ACCOUNT_MISMATCH');
+  assertFreshObservation(current);
+  const changed = compareXhsBaseline(baseline, current);
+  if (changed.length) throw new RemotePreflightError('REMOTE_BASELINE_CHANGED', changed);
+  return { status: 'remote_unchanged', changed_fields: [] };
 }
 export function verifyXhs(directory:string,evidenceFile:string) {
   const d=current(directory),dir=path.join(d.dir,'transfers','xiaohongshu',d.bundleVersion);

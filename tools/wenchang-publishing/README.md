@@ -96,6 +96,22 @@ node tools/wenchang-publishing/dist/cli.js status --dir content/my-article/distr
 知乎和小红书的 prepare/verify 会在 transfer/status.json 记录 attempt_id、started_at、updated_at、plan_hash、last_error_code 和 recovery_action。`WAIT_TIMEOUT`、`SAVE_PENDING_READBACK` 或 `FRESH_EVIDENCE_REQUIRED` 出现时，保留现有草稿和旧回执，重新从草稿列表独立回读并提供新 evidence；verify 不会自动重传、创建新稿或发布。
 浏览器证据必须与回执中的 SHA-256 及计划原始字节匹配。公众号始终保留账号对应关系和视觉待审；小红书保留浏览器重启持久性待审。汇总不输出账号、签名图片地址或凭据，不能替代当次线上复查。
 
+知乎和小红书在导入前还必须通过远端基线预检。把当前浏览器只读 `observe()` 结果保存为 JSON，再把上一份 `draft_verified` evidence 作为基线传入；预检只比较并输出结果，不清空编辑器、不上传、不保存、不新建草稿：
+
+```sh
+node tools/wenchang-publishing/dist/zhihu-cli.js preflight \
+  --dir content/my-article/distribution \
+  --observation /本机临时/zhihu-current.json \
+  --baseline-evidence /本机旧版本/transfers/zhihu/<version>/evidence.json
+
+node tools/wenchang-publishing/dist/xhs-cli.js preflight \
+  --dir content/my-article/distribution \
+  --observation /本机临时/xhs-current.json \
+  --baseline-evidence /本机旧版本/transfers/xiaohongshu/<version>/evidence.json
+```
+
+只有 `remote_unchanged` 才能进入导入步骤；没有显式独立回读基线返回 `BASELINE_REQUIRED`，账号/草稿目标变化返回身份错误，正文、描述、话题、图片数量/顺序/尺寸或稳定图片地址变化返回 `REMOTE_BASELINE_CHANGED`。知乎浏览器桥接的 `importDraft` 也要求传入同一份 `baseline`，在清空编辑器之前执行比较；小红书桥接提供 `preflightBeforeEdit`。小红书临时 `blob:` 地址不作为稳定图片身份，仍比较顺序和尺寸；不能据此证明图片字节未变。
+
 CLI 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
 
 需要在新目录安装运行时源码时，见 [安装与交付](../../docs/publishing-install.md)。单独安装出刊 Skill 仍不包含本工具。

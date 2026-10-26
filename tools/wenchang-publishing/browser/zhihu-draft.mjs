@@ -1,6 +1,6 @@
 // Run only inside cua_repl after inspecting the target editor and confirming account/draft.
 // Browser operations use the injected, documented cua Tab; no network or hidden app state.
-import { validateObservation } from '../dist/zhihu-sync.js';
+import { validateObservation, preflightZhihuBaseline } from '../dist/zhihu-sync.js';
 
 export async function observe(tab) {
   return tab.playwright.evaluate(() => {
@@ -19,10 +19,14 @@ export async function observe(tab) {
       images: Array.from(editor?.querySelectorAll('img') || []).map(i => ({ src: (i.getAttribute('src') || '').split(/[?#]/)[0], complete: i.complete, width: i.naturalWidth, height: i.naturalHeight })) };
   });
 }
-export async function importDraft(tab, plan) {
+export async function importDraft(tab, plan, { baseline } = {}) {
   const before = await observe(tab);
   if (!before.initialized || before.busy || !before.saved) throw new Error('EDITOR_NOT_READY');
   if (before.url !== plan.draft_url || before.account !== plan.account) throw new Error('DRAFT_OR_ACCOUNT_MISMATCH');
+  // The baseline is the last independently accepted remote observation. Do this
+  // before clearing the editor so a remote edit cannot be destroyed by import.
+  if (!baseline) throw new Error('BASELINE_REQUIRED');
+  preflightZhihuBaseline(plan, baseline, before);
   await tab.playwright.locator('textarea').fill(plan.title);
   const editor = tab.playwright.locator('[contenteditable="true"]');
   await editor.press('ControlOrMeta+A'); await editor.press('Backspace');

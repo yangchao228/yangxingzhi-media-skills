@@ -17,6 +17,11 @@ export interface TransferState {
 }
 
 export const RECOVERY_ACTIONS: Record<string, string> = {
+  BASELINE_REQUIRED: '当前草稿没有已审远端基线；先从列表独立回读并由用户确认，再提供 baseline 后重试。不要清空、重传或新建草稿。',
+  BASELINE_EVIDENCE_NOT_VERIFIED: '提供上一次独立回读且 draft_verified 的 evidence；旧或失败证据不能作为远端基线。',
+  REMOTE_BASELINE_CHANGED: '远端草稿在编辑前已变化；保留当前草稿和旧基线，先查看差异并由用户决定合并方式。',
+  REMOTE_DRAFT_NOT_READY: '远端草稿仍在加载、保存或上传；等待状态稳定后重新独立回读，不要清空或重传。',
+  REMOTE_OBSERVATION_INVALID: '当前远端回读证据不完整；保留现有草稿，重新采集账号、正文/描述、话题和图片状态。',
   WAIT_TIMEOUT: '浏览器等待超时；不要重传或新建草稿，重新打开现有草稿并提供新的回读证据后再核验。',
   SAVE_PENDING_READBACK: '保存结果不确定；保留现有草稿，重新从草稿列表打开并提供新的回读证据后再核验。',
   FRESH_EVIDENCE_REQUIRED: '当前证据早于上次失败状态；重新执行独立回读并提供更新后的 evidence，再核验。',

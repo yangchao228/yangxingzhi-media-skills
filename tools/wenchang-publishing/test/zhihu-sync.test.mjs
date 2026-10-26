@@ -6,9 +6,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { init, collect } from '../dist/project.js';
 import { build } from '../dist/build.js';
-import { prepareZhihu, resolveMap, sourceText, validateObservation, verifyZhihu } from '../dist/zhihu-sync.js';
+import { prepareZhihu, preflightZhihuBaseline, resolveMap, sourceText, validateObservation, verifyZhihu } from '../dist/zhihu-sync.js';
 import { sha, json } from '../dist/io.js';
 import { publishingStatus } from '../dist/status.js';
+import { readEvidenceObservation } from '../dist/remote-preflight.js';
 import { waitForDraft, importDraft } from '../browser/zhihu-draft.mjs';
 const fixture = fileURLToPath(new URL('../../../content/publishing/p0/fixture/', import.meta.url));
 const draft = 'https://zhuanlan.zhihu.com/p/123/edit';
@@ -65,10 +66,30 @@ test('new prepare archives a prior successful receipt; blocked retry exposes it 
 test('text expectation preserves code punctuation and excludes image alt',()=>{
  assert.equal(sourceText('# title\n\nHello **world**\n\n![ALT](a.png)\n\n`x*y`'),'Helloworldx*y');
 });
+test('remote preflight blocks a changed draft before editor mutation',t=>{
+ const {root,plan,result}=setup(t);
+ const baseline=observation(plan), same=structuredClone(baseline);
+ assert.deepEqual(preflightZhihuBaseline(plan,baseline,same),{status:'remote_unchanged',changed_fields:[]});
+ for(const [field,change] of [['title',o=>o.title='changed'],['body',o=>o.text='changed'],['image',o=>o.images[0].width=0]]) {
+  const current=structuredClone(baseline); change(current);
+  assert.throws(()=>preflightZhihuBaseline(plan,baseline,current),field==='image'?/REMOTE_BASELINE_CHANGED/:/REMOTE_BASELINE_CHANGED/);
+ }
+ assert.throws(()=>preflightZhihuBaseline(plan,undefined,baseline),/BASELINE_REQUIRED/);
+ const evidence=path.join(root,'baseline-evidence.json');fs.writeFileSync(evidence,json({plan_hash:'0'.repeat(64),independent_reopen:true,checked_at:new Date().toISOString(),reopened:baseline}));
+ assert.throws(()=>readEvidenceObservation(evidence,result.plan_hash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
+});
 test('bounded browser wait requires loaded platform image and saved state',async()=>{
  const plan={draft_url:draft,account:'test',title:'title',expected_text:'body',images:[{width:10,height:10}]},good={...observation(plan),initialized:true};
  let count=0;const tab={playwright:{evaluate:async()=>++count===1?{...good,busy:true,saved:false}:good},getAXState:async()=>{}};
  assert.equal((await waitForDraft(tab,plan)).saved,true);assert.equal(count,2);
  tab.playwright.evaluate=async()=>({...good,images:[]});await assert.rejects(waitForDraft(tab,plan,{timeoutMs:0}),/WAIT_TIMEOUT/);
  tab.playwright.evaluate=async()=>({...good,account:'wrong'});await assert.rejects(importDraft(tab,plan),/ACCOUNT/);
+});
+test('import guard compares the remote baseline before clearing the editor',async()=>{
+ const plan={draft_url:draft,account:'test',title:'title',expected_text:'body',images:[{width:10,height:10}]};
+ const baseline={...observation(plan),initialized:true,saved:true,busy:false,failed:false}, current={...baseline,title:'manual edit'};
+ let cleared=false;
+ const tab={playwright:{evaluate:async()=>current,locator:()=>({fill:async()=>{cleared=true},press:async()=>{cleared=true}})},getAXState:async()=>{}};
+ await assert.rejects(importDraft(tab,plan,{baseline}),/REMOTE_BASELINE_CHANGED/);
+ assert.equal(cleared,false);
 });

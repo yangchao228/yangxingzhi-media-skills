@@ -6,8 +6,9 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {init,collect} from '../dist/project.js';
 import {build} from '../dist/build.js';
-import {prepareXhs,validateXhs,verifyXhs} from '../dist/xhs-sync.js';
+import {compareXhsBaseline,prepareXhs,preflightXhsBaseline,validateXhs,verifyXhs} from '../dist/xhs-sync.js';
 import {json} from '../dist/io.js';
+import {readEvidenceObservation} from '../dist/remote-preflight.js';
 const fixture=fileURLToPath(new URL('../../../content/publishing/p0/fixture/',import.meta.url));
 function setup(t){
  const root=fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(),'xhs-flow-')));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
@@ -44,6 +45,18 @@ test('verify failure is blocked with recovery metadata and does not replace plan
 test('wrong account/text, missing image and off-platform URL fail',()=>{
  const p={account:'a',title:'t',description:'d',images:[{width:1080,height:1440}]};
  for(const change of [{account:'other'},{description:'truncated'},{images:[]},{images:[{...obs(p).images[0],src:'https://example.com/image.png'}]}])assert.throws(()=>validateXhs(p,{...obs(p),...change},true));
+});
+
+test('remote preflight protects the existing XHS draft before editing',t=>{
+ const {root,plan,r}=setup(t),baseline=obs(plan),same=structuredClone(baseline); baseline.topics=[{name:'工作流',id:'topic-1'}]; same.topics=structuredClone(baseline.topics);
+ assert.deepEqual(compareXhsBaseline(baseline,same),[]);
+ assert.deepEqual(preflightXhsBaseline(plan,baseline,same),{status:'remote_unchanged',changed_fields:[]});
+ for(const change of [o=>o.title='changed',o=>o.description='changed',o=>o.topics[0].id='other',o=>o.images[0].height=1]) {
+  const current=structuredClone(baseline);change(current);assert.throws(()=>preflightXhsBaseline(plan,baseline,current),/REMOTE_BASELINE_CHANGED/);
+ }
+ assert.throws(()=>preflightXhsBaseline(plan,undefined,baseline),/BASELINE_REQUIRED/);
+ const evidence=path.join(root,'baseline-evidence.json');fs.writeFileSync(evidence,json({plan_hash:'0'.repeat(64),independent_reopen:true,checked_at:new Date().toISOString(),reopened:baseline}));
+ assert.throws(()=>readEvidenceObservation(evidence,r.plan_hash),/BASELINE_EVIDENCE_PLAN_MISMATCH/);
 });
 
 test('reopened blobs must be fresh, distinct and independently reopened',t=>{
