@@ -67,6 +67,14 @@ prepare调用`md-img-r2 --upload-only`，原稿不改，输出版本绑定的pla
 node tools/wenchang-publishing/dist/zhihu-cli.js verify --dir content/my-article/distribution --evidence /实际路径/evidence.json
 ```
 
+### 导入前远端基线预检（知乎与小红书）
+
+既有草稿准备改写前，先在当前浏览器页面只读采集 `observe()`，并与上一份独立重开且 `draft_verified` 的 `evidence.reopened` 比较。账号、知乎草稿 URL、标题、正文/描述、话题、图片数量/顺序/尺寸或稳定图片地址变化时，返回 `REMOTE_BASELINE_CHANGED` 并保留草稿；没有显式基线返回 `BASELINE_REQUIRED`。预检发生在清空编辑器、删除卡片、选择文件和上传之前，禁止用当前未审页面静默建立覆盖基线。
+
+小红书的临时 `blob:` 地址是浏览器会话标识，预检不把它当稳定图片身份；仍比较图片顺序和实际尺寸，稳定 CDN 地址才参与地址比较。这层保护远端文案和结构，不能证明同尺寸图片的字节没有变化；后续仍须完成保存、独立重开和逐图核验。
+
+对应入口为 `zhihu-cli preflight`、`xhs-cli preflight`；浏览器编排使用知乎 `importDraft(tab, plan, { baseline })` 和小红书 `preflightBeforeEdit(tab, plan, baseline)`。预检只读，不上传、不保存、不新建草稿、不发布。
+
 ## 小红书（含正常blob回读）
 
 连接、替换既有草稿图片及完整验收步骤见 [Chrome 操作流程](chrome-drafts.md)。已确认的新卡片先更新有序清单、build/check，再prepare新版本；旧构建和回读证据保留，不重新init，不改正式稿。
