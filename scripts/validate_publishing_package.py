@@ -13,6 +13,7 @@ import sys
 
 
 MANIFEST = "publishing-manifest.json"
+FILE_MANIFEST = "package-manifest.txt"
 TOOL = "tools/wenchang-publishing"
 FIXTURE = "content/publishing/p0/fixture"
 STATIC_FILES = (
@@ -36,9 +37,9 @@ class PackageError(Exception):
 
 def blocked(ref: str) -> bool:
     parts = PurePosixPath(ref).parts
-    return any(part in BLOCKED_PARTS or part.lower().startswith(".env")
+    return "\n" in ref or "\r" in ref or any(part.lower() in BLOCKED_PARTS or part.lower().startswith(".env")
                or part.lower().endswith(".env") or "credentials" in part.lower()
-               or part == ".DS_Store" or part.endswith((".pyc", ".pyo")) for part in parts)
+               or part.lower() == ".ds_store" or part.lower().endswith((".pyc", ".pyo")) for part in parts)
 
 
 def source_files(root: Path) -> list[str]:
@@ -68,7 +69,7 @@ def scan_package(root: Path) -> None:
         ref = path.relative_to(root).as_posix()
         if blocked(ref) or path.is_symlink():
             raise PackageError(f"blocked package entry: {ref}")
-        if path.is_file() and path.stat().st_mode & 0o170000 != 0o100000:
+        if not path.is_file() and not path.is_dir():
             raise PackageError(f"package entry is not a regular file: {ref}")
     # Delivery can include content-production skills; runtime and fixture trees
     # must match the bounded allowlist exactly, including after unzip.
@@ -77,6 +78,24 @@ def scan_package(root: Path) -> None:
         for path in (root / prefix).rglob("*"):
             if path.is_file() and path.relative_to(root).as_posix() not in allowed:
                 raise PackageError(f"unexpected runtime or evidence file: {path.relative_to(root)}")
+
+
+def validate_file_manifest(root: Path) -> None:
+    manifest = root / FILE_MANIFEST
+    if not manifest.is_file() or manifest.is_symlink():
+        raise PackageError("missing package file manifest")
+    try:
+        listed = manifest.read_text(encoding="utf-8").split("## files\n\n", 1)[1].splitlines()
+    except (OSError, UnicodeError, IndexError) as error:
+        raise PackageError("invalid package file manifest") from error
+    if listed != sorted(set(listed)):
+        raise PackageError("invalid package file manifest")
+    actual = sorted(path.relative_to(root).as_posix() for path in root.rglob("*")
+                    if path.is_file() and path != manifest)
+    # Older packages listed the root manifest itself. Both forms protect the
+    # same file set; nested files sharing its basename must still be listed.
+    if listed not in (actual, sorted(actual + [FILE_MANIFEST])):
+        raise PackageError("package file manifest mismatch")
 
 
 def validate(root: Path, source: Path | None = None, write: bool = False) -> int:
@@ -108,6 +127,7 @@ def validate(root: Path, source: Path | None = None, write: bool = False) -> int
             raise PackageError("invalid publishing source manifest") from error
         if actual != manifest:
             raise PackageError("publishing manifest mismatch: file is missing, changed or unlisted")
+        validate_file_manifest(root)
     return len(entries)
 
 

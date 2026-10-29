@@ -101,6 +101,7 @@ copy_dir() {
   mkdir -p "$dst"
   rsync -a \
     --exclude '.DS_Store' \
+    --exclude '.git/' \
     --exclude '.env' \
     --exclude '.env.*' \
     --exclude '*.env' \
@@ -123,7 +124,7 @@ copy_dir() {
 
 scan_blocked_files() {
   local found
-  found="$(find "$WORK_DIR" \( -type l -o -name '.env' -o -name '.env.*' -o -name '*.env' -o -name '*credentials*' -o -name '.local' -o -name 'local' -o -name 'private' -o -name 'node_modules' -o -name '.DS_Store' \) -print)"
+  found="$(find "$WORK_DIR" \( \( ! -type d -a ! -type f \) -o -name $'*\n*' -o -name $'*\r*' -o -iname '.git' -o -iname '.env*' -o -iname '*.env' -o -iname '*credentials*' -o -iname '.local' -o -iname 'local' -o -iname 'private' -o -iname 'node_modules' -o -iname 'dist' -o -iname 'outputs' -o -iname '__pycache__' -o -iname '*.pyc' -o -iname '*.pyo' -o -iname '.ds_store' \) -print)"
   if [[ -n "$found" ]]; then
     printf 'blocked files found in package:\n%s\n' "$found" >&2
     exit 1
@@ -194,8 +195,15 @@ scan_blocked_files
   printf 'package: %s\n' "$PACKAGE_NAME"
   printf 'generated_at: %s\n\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   printf '## files\n\n'
-  find "$WORK_DIR" -type f | sed "s#^$WORK_DIR/##" | sort
+  (
+    cd "$WORK_DIR"
+    find . -type f ! -path './package-manifest.txt' | sed 's#^\./##' | LC_ALL=C sort
+  )
 } > "$WORK_DIR/package-manifest.txt"
+
+if [[ "$WITH_PUBLISHING" -eq 1 ]]; then
+  python3 "$ROOT/scripts/validate_publishing_package.py" --package "$WORK_DIR" --source-root "$ROOT"
+fi
 
 (
   cd "$OUT_DIR"

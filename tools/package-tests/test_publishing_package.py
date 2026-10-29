@@ -64,6 +64,139 @@ class PublishingDeliveryTest(unittest.TestCase):
         self.assertIn(ref, validator.source_files(self.publishing))
         self.assertTrue((self.publishing / ref).is_file())
 
+    def test_package_manifest_matches_extracted_file_set(self):
+        manifest = (self.publishing / "package-manifest.txt").read_text(encoding="utf-8")
+        listed = manifest.split("## files\n\n", 1)[1].splitlines()
+        actual = sorted(path.relative_to(self.publishing).as_posix()
+                        for path in self.publishing.rglob("*")
+                        if path.is_file() and path != self.publishing / "package-manifest.txt")
+        self.assertEqual(listed, actual)
+
+    def test_unlisted_root_file_is_rejected(self):
+        directory = self.copy_package()
+        (directory / "EXTRA-UNLISTED.txt").write_text("synthetic-only", encoding="utf-8")
+        with self.assertRaisesRegex(validator.PackageError, "package file manifest mismatch"):
+            validator.validate(directory)
+
+    def test_nested_manifest_named_file_is_not_exempt(self):
+        directory = self.copy_package()
+        file = directory / "sale/package-manifest.txt"
+        file.write_text("synthetic-only", encoding="utf-8")
+        with self.assertRaisesRegex(validator.PackageError, "package file manifest mismatch"):
+            validator.validate(directory)
+
+    def test_invalid_file_manifest_is_rejected(self):
+        for mode in ("missing", "malformed", "duplicate", "omitted", "extra"):
+            with self.subTest(mode=mode):
+                directory = self.out / ("manifest-" + mode)
+                shutil.copytree(self.publishing, directory)
+                file = directory / "package-manifest.txt"
+                header, listing = file.read_text(encoding="utf-8").split("## files\n\n", 1)
+                entries = listing.splitlines()
+                if mode == "missing":
+                    file.unlink()
+                elif mode == "malformed":
+                    file.write_text("synthetic-only", encoding="utf-8")
+                else:
+                    if mode == "duplicate":
+                        entries.append(entries[-1])
+                    elif mode == "omitted":
+                        entries.pop()
+                    else:
+                        entries.append("z-extra.txt")
+                    file.write_text(header + "## files\n\n" + "\n".join(entries) + "\n", encoding="utf-8")
+                with self.assertRaisesRegex(validator.PackageError, "package file manifest"):
+                    validator.validate(directory)
+
+    def test_legacy_self_listed_manifest_remains_compatible(self):
+        directory = self.copy_package()
+        file = directory / "package-manifest.txt"
+        header, listing = file.read_text(encoding="utf-8").split("## files\n\n", 1)
+        entries = sorted(listing.splitlines() + ["package-manifest.txt"])
+        file.write_text(header + "## files\n\n" + "\n".join(entries) + "\n", encoding="utf-8")
+        self.assertGreater(validator.validate(directory), 20)
+
+    def test_listed_nested_manifest_is_compatible_with_both_root_formats(self):
+        directory = self.copy_package()
+        nested = directory / "sale/example/package-manifest.txt"
+        nested.parent.mkdir()
+        nested.write_text("synthetic-only", encoding="utf-8")
+        file = directory / "package-manifest.txt"
+        header, listing = file.read_text(encoding="utf-8").split("## files\n\n", 1)
+        entries = listing.splitlines() + [nested.relative_to(directory).as_posix()]
+        for legacy in (False, True):
+            with self.subTest(legacy=legacy):
+                listed = sorted(entries + (["package-manifest.txt"] if legacy else []))
+                file.write_text(header + "## files\n\n" + "\n".join(listed) + "\n", encoding="utf-8")
+                self.assertGreater(validator.validate(directory), 20)
+
+    def test_both_packagers_support_metacharacter_output_paths(self):
+        for optional in (False, True):
+            with self.subTest(publishing=optional):
+                out = self.out / "delivery space[1]#" / str(optional)
+                command = ["bash", str(ROOT / "scripts/package_for_sale.sh"), "--out-dir", str(out)]
+                if optional:
+                    command.append("--with-publishing")
+                result = subprocess.run(command, env=dict(os.environ, VERSION="path-test"),
+                                        capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                package = out / ("wenchang-publishing-pack-vpath-test" if optional else "wenchang-skill-pack-vpath-test")
+                listed = (package / "package-manifest.txt").read_text(encoding="utf-8").split("## files\n\n", 1)[1].splitlines()
+                actual = sorted(path.relative_to(package).as_posix() for path in package.rglob("*")
+                                if path.is_file() and path != package / "package-manifest.txt")
+                self.assertEqual(listed, actual)
+                if optional:
+                    self.assertGreater(validator.validate(package, ROOT), 20)
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "FIFO requires POSIX")
+    def test_special_entry_is_rejected_before_file_reads(self):
+        directory = self.copy_package()
+        os.mkfifo(directory / "synthetic-pipe")
+        with patch.object(Path, "read_bytes", side_effect=AssertionError("must not read package payload")):
+            with self.assertRaisesRegex(validator.PackageError, "not a regular file"):
+                validator.validate(directory)
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "FIFO requires POSIX")
+    def test_both_packagers_reject_special_entries_before_zip(self):
+        for optional in (False, True):
+            with self.subTest(publishing=optional):
+                source = self.out / ("special-source-" + str(optional))
+                shutil.copytree(self.publishing if optional else self.content, source)
+                script = source / "scripts/package_for_sale.sh"
+                script.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / "scripts/package_for_sale.sh", script)
+                os.mkfifo(source / "sale/synthetic-pipe")
+                out = self.out / ("special-output-" + str(optional))
+                command = ["bash", str(script), "--out-dir", str(out)]
+                if optional:
+                    command.append("--with-publishing")
+                result = subprocess.run(command, env=dict(os.environ, VERSION="special-test"),
+                                        capture_output=True, text=True, timeout=30)
+                self.assertNotEqual(result.returncode, 0, result.stdout)
+                self.assertRegex(result.stderr, "blocked|not a regular file")
+                self.assertFalse(list(out.glob("*.zip")))
+
+    def test_both_packagers_reject_line_break_names_before_zip(self):
+        for optional in (False, True):
+            source = self.out / ("line-break-source-" + str(optional))
+            shutil.copytree(self.publishing if optional else self.content, source)
+            script = source / "scripts/package_for_sale.sh"
+            script.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / "scripts/package_for_sale.sh", script)
+            out = self.out / ("line-break-output-" + str(optional))
+            for index, name in enumerate(("synthetic\nnote.txt", "synthetic\rnote.txt")):
+                with self.subTest(publishing=optional, name=repr(name)):
+                    file = source / "sale" / name
+                    file.write_text("synthetic-only", encoding="utf-8")
+                    command = ["bash", str(script), "--out-dir", str(out)]
+                    if optional:
+                        command.append("--with-publishing")
+                    result = subprocess.run(command, env=dict(os.environ, VERSION=f"line-break-{index}"),
+                                            capture_output=True, text=True, timeout=30)
+                    file.unlink()
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertFalse(list(out.glob("*.zip")))
+
     def test_changed_source_is_rejected(self):
         directory = self.copy_package()
         with (directory / "tools/wenchang-publishing/src/cli.ts").open("a") as stream:
@@ -106,6 +239,60 @@ class PublishingDeliveryTest(unittest.TestCase):
                 (directory / name).mkdir()
                 with self.assertRaisesRegex(validator.PackageError, "blocked package entry"):
                     validator.validate(directory)
+
+    def test_case_variant_blocked_entries_are_rejected(self):
+        for name in (".Git", ".ENV", ".DS_STORE"):
+            with self.subTest(name=name):
+                directory = self.out / (self.id().split(".")[-1] + "-" + name.replace(".", "-"))
+                shutil.copytree(self.publishing, directory)
+                if name == ".Git":
+                    (directory / name).mkdir()
+                else:
+                    (directory / name).write_text("synthetic-only", encoding="utf-8")
+                with self.assertRaisesRegex(validator.PackageError, "blocked package entry"):
+                    validator.validate(directory)
+
+    def test_nested_sensitive_path_variants_fail_before_file_reads(self):
+        for index, ref in enumerate(("sale/CrEdEnTiAlS.json", "sale/.EnVrc", "sale/PRIVATE/evidence.json",
+                                     "sale/.Git/config", "sale/Outputs/note.txt", "sale/cache.PYO")):
+            with self.subTest(path=ref):
+                directory = self.out / ("sensitive-variant-" + str(index))
+                shutil.copytree(self.publishing, directory)
+                file = directory / ref
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text("synthetic-only", encoding="utf-8")
+                with patch.object(Path, "read_bytes", side_effect=AssertionError("must not read package payload")):
+                    with self.assertRaisesRegex(validator.PackageError, "blocked package entry"):
+                        validator.validate(directory)
+
+    def test_both_packagers_block_environment_and_generated_path_variants(self):
+        variants = (".envrc", ".ENV-secret", "Dist/generated.js",
+                    "Outputs/user-note.txt", "__PYCACHE__/cached.PYC", "cached.PYO", ".Git/config")
+        for optional in (False, True):
+            source = self.out / ("boundary-source-publishing" if optional else "boundary-source-content")
+            shutil.copytree(self.publishing if optional else self.content, source)
+            script = source / "scripts/package_for_sale.sh"
+            script.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / "scripts/package_for_sale.sh", script)
+            out = self.out / (source.name + "-output")
+            for index, ref in enumerate(variants):
+                with self.subTest(publishing=optional, path=ref):
+                    injected = source / "sale" / ref
+                    injected.parent.mkdir(parents=True, exist_ok=True)
+                    injected.write_text("synthetic-only", encoding="utf-8")
+                    command = ["bash", str(script), "--out-dir", str(out)]
+                    if optional:
+                        command.append("--with-publishing")
+                    result = subprocess.run(command, env=dict(os.environ, VERSION=f"blocked-{index}"),
+                                            capture_output=True, text=True)
+                    injected.unlink()
+                    parent = injected.parent
+                    while parent != source / "sale":
+                        parent.rmdir()
+                        parent = parent.parent
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn("blocked", result.stderr)
+                    self.assertFalse(list(out.glob("*.zip")))
 
     def test_symlink_entries_are_rejected(self):
         directory = self.copy_package()
