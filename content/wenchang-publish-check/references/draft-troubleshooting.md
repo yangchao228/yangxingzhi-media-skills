@@ -10,8 +10,14 @@
 | listen/connect EPERM | 先区分执行环境权限与平台失败。仅为必要本地监听或网络申请执行权限；不要据此改代理或宣称平台故障。 |
 | 公众号40164 | 让用户把实际出口IP加入该AppID白名单；不要猜本机内网IP，也不要修改敏感配置绕过。 |
 | 公众号48001 / 凭证错误 | 核验AppID对应账号、接口权限及本地凭证；让用户本地填写AppSecret。读权限通过不等于写权限通过。 |
-| PREVIOUS_ADD_UNCERTAIN / NETWORK_UNCERTAIN | 写入可能已成功。保留journal，核对远端同名稿/media_id，再决定；禁止删journal后盲目add。 |
-| EXISTING_TITLE_REQUIRES_REVIEW / CONTENT_CHANGED | 核对既有稿及版本；不自动覆盖用户编辑或新增重复稿。当前公众号CLI没有通用更新现有稿命令。 |
+| PREVIOUS_ADD_UNCERTAIN_MANUAL_RECONCILIATION_REQUIRED | 上次新增结果不确定且journal未取得media_id。保留记录，先人工核对远端同名稿及ID；未确认前不再次新增，不删除journal重试。 |
+| NETWORK_UNCERTAIN（可带接口后缀） | 先核对失败接口、journal和本次回执，读取失败不能推定已写入。新增结果不确定走人工对账；已有pending_update按下述更新恢复，不把网络错误统一当作可以重发。 |
+| EXISTING_TITLE_REQUIRES_REVIEW | 本工具尚未绑定media_id时发现远端同名稿。先人工核对归属并查找原journal；缺少可信关联则保持阻塞，不按标题接管，不新建重复稿。`sync`不接受任意草稿ID。 |
+| 公众号改稿（旧版CONTENT_CHANGED提示） | 当前已有本工具journal、media_id和完整远端基线时，先build/check，再用`sync`。远端未变时更新同一ID；本地与远端均未变时只回读。操作步骤见[正常更新](wechat-update.md#正常更新)，无强制覆盖入口。 |
+| LEGACY_BASELINE_REQUIRED / LEGACY_REMOTE_REVIEW_REQUIRED | 前者先恢复上次成功本地输入，再用`sync`只读迁移基线；后者先审阅HTML等差异。仅在用户明确接受已审呈现、原输入不变且无pending时，按[旧记录迁移](wechat-update.md#旧记录迁移)使用`adopt-baseline`及已审快照hash；不替换已有基线。 |
+| REMOTE_CONFLICT_DRAFT_PRESERVED / READBACK_MISMATCH_DRAFT_PRESERVED | 保留原草稿、journal和pending，核对本次回执及conflict_fields。差异可能来自人工编辑或平台处理，不自动覆盖或吸收；已有pending且用户接受更新后的HTML差异时，按[显式对账](wechat-update.md#用户确认更新后的html差异)核对`reconcile-baseline`的适用条件。 |
+| UPDATE_PENDING_RECONCILIATION_REQUIRED / PENDING_UPDATE_INPUT_CHANGED | 保持待确认输入不变；已改稿时先恢复pending目标版本。下一次`sync`先读原ID：等于目标则完成且不重发，仍等于原基线时本次最多重发一次，第三种状态停止为冲突。详见[超时与失败](wechat-update.md#超时与失败)；不删pending，不以旧成功回执代替本次结果。 |
+| REMOTE_SNAPSHOT_CHANGED_REVIEW_REQUIRED / RECONCILIATION_*（错误码族） | 快照再次变化或对账条件不符时继续阻塞，保留旧基线、pending及差异，按本次错误重新核对本地目标、用户确认的hash及允许字段。`adopt-baseline`和`reconcile-baseline`只读重核并记录本地基线，不新增、上传或更新；不能把当前任意hash当作用户确认。 |
 | WAIT_TIMEOUT / SAVE_PENDING_READBACK | 保留本批次plan/status、旧回执及有效imported/uploaded观察；新独立reopened须与阶段观察组成完整新证据再verify，不能只有reopened或复制字段。详见[证据恢复](baseline-migration.md#保存不确定后的证据恢复)；禁止重传、重prepare、删稿或新建同名草稿。 |
 | FRESH_EVIDENCE_REQUIRED | verify时检查是否早于上次失败；迁移时检查观察是否在五分钟内、不早于旧回读且不超过当前时间五秒。重新只读采集，不回填时间或改旧证据hash；见[迁移恢复](baseline-migration.md#失败恢复)。 |
 | BASELINE_REQUIRED / BASELINE_EVIDENCE_NOT_VERIFIED / BASELINE_EVIDENCE_PLAN_MISMATCH | 保留原草稿和旧证据，先区分同plan与跨plan。同plan核对当前plan绑定；跨plan须读取旧已核验status/receipt/evidence，经[显式迁移](baseline-migration.md)关联新批次，不能把新回读标为旧验收或手改hash；首次无基线仍阻塞。 |
