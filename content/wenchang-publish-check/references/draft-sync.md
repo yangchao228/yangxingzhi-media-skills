@@ -57,6 +57,8 @@ preflight读取草稿数量、素材数量，成功只证明读取权限；写�
 
 确认登录账号和真实草稿编辑URL。新稿先完成编辑器初始化并取得稳定ID；既有稿复用ID。不要因为等待超时重复新建。
 
+下面的prepare仅用于确需生成计划且尚无本轮有效批次的情况；已有`ready_for_browser`且匹配当前plan的批次则复用。执行前按[批次分流](baseline-migration.md#选择入口与准备批次)检查目标目录：已有回执/history或保存结果不明时先只读核对，不直接复制命令重跑。
+
 ```sh
 node tools/wenchang-publishing/dist/zhihu-cli.js prepare --dir content/my-article/distribution --draft https://zhuanlan.zhihu.com/p/实际ID/edit --account 目标账号 --env-file /本机私密目录/.env
 ```
@@ -69,21 +71,27 @@ node tools/wenchang-publishing/dist/zhihu-cli.js verify --dir content/my-article
 
 ### 导入前远端基线预检（知乎与小红书）
 
-既有草稿准备改写前，先在当前浏览器页面只读采集 `observe()`，并与上一份独立重开且 `draft_verified` 的 `evidence.reopened` 比较。账号、知乎草稿 URL、标题、正文/描述、话题、图片数量/顺序/尺寸或稳定图片地址变化时，返回 `REMOTE_BASELINE_CHANGED` 并保留草稿；没有显式基线返回 `BASELINE_REQUIRED`。预检发生在清空编辑器、删除卡片、选择文件和上传之前，禁止用当前未审页面静默建立覆盖基线。
+既有草稿准备改写前，先只读采集 `observe()`，与旧status/receipt已核验且由回执hash绑定的 `evidence.reopened` 比较。账号或知乎草稿目标不符时返回 `ACCOUNT_MISMATCH` / `DRAFT_OR_ACCOUNT_MISMATCH`；目标一致后，标题、正文/描述、话题、图片数量/尺寸或稳定图片地址变化才返回 `REMOTE_BASELINE_CHANGED`。没有显式基线返回 `BASELINE_REQUIRED`。预检发生在清空编辑器、删除卡片、选择文件和上传之前，禁止用当前未审页面静默建立覆盖基线。
 
-小红书的临时 `blob:` 地址是浏览器会话标识，预检不把它当稳定图片身份；仍比较图片顺序和实际尺寸，稳定 CDN 地址才参与地址比较。这层保护远端文案和结构，不能证明同尺寸图片的字节没有变化；后续仍须完成保存、独立重开和逐图核验。
+小红书临时 `blob:` 地址是浏览器会话标识，预检不把它当稳定图片身份。CLI按索引比较数量/尺寸和稳定CDN地址；等尺寸blob互换时可能仍通过，不能据此证明顺序或字节相同。跨plan观察的`visual_order_verified`须来自实际逐图对照；后续仍须保存、独立重开和逐图核验。
 
-对应入口为 `zhihu-cli preflight`、`xhs-cli preflight`；浏览器编排使用知乎 `importDraft(tab, plan, { baseline })` 和小红书 `preflightBeforeEdit(tab, plan, baseline)`。预检只读，不上传、不保存、不新建草稿、不发布。
+同 plan 使用 `preflight --baseline-evidence`，证据 hash 必须匹配当前 plan。改文案、换图或工具升级形成不同 plan 时，改走 [跨 plan 基线迁移](baseline-migration.md)：显式选择原已核验 bundle，运行 `migrate-baseline --from-version`，再用 `preflight --migrated-baseline`；不能给旧 evidence 改 hash。
+
+浏览器编排使用知乎 `importDraft(tab, plan, { baseline })` 和小红书 `preflightBeforeEdit(tab, plan, baseline)`。跨 plan 的 baseline 须由 `readMigratedBaseline` 重核取得，编辑前还须再次比较。迁移与 preflight 只读比较远端观察，前者仅新增本地关联记录；两者都不上传、不保存、不新建草稿、不发布。再次 prepare 会改变批次并使旧迁移关联失效，不能作为迁移后的自动重试。
+
+迁移与preflight失败时以本次退出码1和stderr中的`status=blocked`、`code`、`changed_fields`为准；它们不把transfer/status.json写成blocked，该文件可能仍为ready_for_browser。不能据此跳过失败继续编辑。verify对就绪分发包记录本次核验status，仅通过后写成功receipt；失败时旧receipt不代表本轮成功。
 
 ## 小红书（含正常blob回读）
 
-连接、替换既有草稿图片及完整验收步骤见 [Chrome 操作流程](chrome-drafts.md)。已确认的新卡片先更新有序清单、build/check，再prepare新版本；旧构建和回读证据保留，不重新init，不改正式稿。
+连接、替换既有草稿图片及完整验收步骤见 [Chrome 操作流程](chrome-drafts.md)。已确认的新卡片先更新有序清单、build/check；确需新计划时prepare一次，再按[迁移手册](baseline-migration.md)关联旧基线。已有当前批次plan时复用，旧构建和回读证据保留，不重新init，不改正式稿。
 
 默认目标是用户日常 Chrome（本次确认 profile：yangchao），保存、草稿列表和独立重开必须在同一 profile 内完成。先核验账号与同名稿；Chrome 未连接或无法可靠控制时提醒用户，不回退到内嵌浏览器保存。网页草稿为浏览器本地资产；不同浏览器/profile 不共享，代理直连只能解决图片网络加载，不能同步草稿列表。草稿入口为「发布笔记 → 上传图文 → 草稿箱 → 图文笔记」，默认视频分类为空不代表图文稿丢失。
 
 连接现用 Chrome 可采用 Chrome DevTools 官方 `--autoConnect`（Chrome 144+）；用户在 `chrome://inspect/#remote-debugging` 开启并允许连接。先用list_pages确认用户原有标签页和目标账号。默认插件启动的独立profile、仅about:blank页不算接入成功。若Codex尚未热加载新增MCP，可在用户明确授权Chrome DevTools后使用同一官方包的CLI；不复制用户profile，不重启用户浏览器，不开启无确认的调试端口。
 
 evidence记录浏览器及 profile，回执通过evidence_sha256绑定该证据；迁移到 Chrome 必须单独回读，不能沿用内嵌浏览器的 draft_verified。原草稿保留，不跨浏览器删除或覆盖。
+
+以下prepare同样须先检查[批次分流](baseline-migration.md#选择入口与准备批次)：已准备批次直接复用，已有成功/历史或不确定保存先回读；不要因换图重试或预检失败再次prepare。
 
 ```sh
 node tools/wenchang-publishing/dist/xhs-cli.js prepare --dir content/my-article/distribution --account 目标账号 --reuse-map /已有路径/article.md.asset-map.json --env-file /本机私密目录/.env
@@ -107,5 +115,7 @@ node tools/wenchang-publishing/dist/xhs-cli.js verify --dir content/my-article/d
 ## 结果与交接
 
 `ready_for_browser`=准备完成；`blocked`=失败未验收；`draft_verified`=当前版本回读通过。同时检查status、bundle_version与时间，不能只读旧receipt宣称本轮通过。浏览器DOM校验不能代替像素和文案审阅。
+
+`baseline_linked` 仅表示旧基线已关联当前 plan/prepare 批次；`remote_unchanged` 仅表示本次观察未发现冲突。两者都不能推进为 `draft_verified`，仍须保存后独立重开并用新 plan 的证据 verify。
 
 交付：目标账号、标题/草稿标识、保存与重开结果、图片数与尺寸、视觉结论、回执路径、剩余限制、publication_performed=false。失败先看[排障手册](draft-troubleshooting.md)，保留已有草稿和证据。

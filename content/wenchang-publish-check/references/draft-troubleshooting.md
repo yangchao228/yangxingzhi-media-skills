@@ -4,7 +4,7 @@
 
 | 现象/错误 | 检查与下一步 |
 | --- | --- |
-| BUNDLE_STALE / PLAN_MISMATCH | 对照源稿、卡片、配置与版本。重新build/prepare，不拿旧证据验证新包。 |
+| BUNDLE_STALE / PLAN_MISMATCH | 对照源稿、卡片、配置与版本。输入确已变化时build/check，确需新plan再prepare一次；已有迁移或保存尝试时先按[迁移恢复](baseline-migration.md#失败恢复)核对批次和回执，不循环prepare，不拿旧证据验证新包。 |
 | XHS_CARD_SIZE | 本项目要求精确3:4且宽度≥1080像素。1086×1448原图有效；不要为凑1080×1440缩放或重绘。非3:4或分辨率不足时重新准备合规素材，不放宽校验。 |
 | R2_MAP_NOT_UPLOADED / R2_UPLOAD_FAILED | 检查映射是否dry-run、缺文件或部分失败，核对哈希。修复网络/凭证后只重跑该上传清单的upload-only，再prepare；保留失败记录，不改原稿。 |
 | listen/connect EPERM | 先区分执行环境权限与平台失败。仅为必要本地监听或网络申请执行权限；不要据此改代理或宣称平台故障。 |
@@ -12,9 +12,11 @@
 | 公众号48001 / 凭证错误 | 核验AppID对应账号、接口权限及本地凭证；让用户本地填写AppSecret。读权限通过不等于写权限通过。 |
 | PREVIOUS_ADD_UNCERTAIN / NETWORK_UNCERTAIN | 写入可能已成功。保留journal，核对远端同名稿/media_id，再决定；禁止删journal后盲目add。 |
 | EXISTING_TITLE_REQUIRES_REVIEW / CONTENT_CHANGED | 核对既有稿及版本；不自动覆盖用户编辑或新增重复稿。当前公众号CLI没有通用更新现有稿命令。 |
-| WAIT_TIMEOUT / SAVE_PENDING_READBACK | 浏览器等待或保存结果不确定。保留当前草稿和旧回执，重新从草稿列表独立回读，提供新的 evidence 后再 verify；禁止重传、删稿或新建同名草稿。 |
-| FRESH_EVIDENCE_REQUIRED | 当前 evidence 早于上次失败尝试；重新回读并使用新 checked_at/plan_hash 的证据，旧 receipt 只保留为历史。 |
-| BASELINE_REQUIRED / BASELINE_EVIDENCE_NOT_VERIFIED / BASELINE_EVIDENCE_PLAN_MISMATCH | 编辑器修改前缺少当前版本的独立回读基线。先从草稿列表读取并确认 `draft_verified`、`independent_reopen=true`、当前 `plan_hash` 和 `checked_at`，再执行 preflight；不要先清空正文。 |
+| WAIT_TIMEOUT / SAVE_PENDING_READBACK | 保留本批次plan/status、旧回执及有效imported/uploaded观察；新独立reopened须与阶段观察组成完整新证据再verify，不能只有reopened或复制字段。详见[证据恢复](baseline-migration.md#保存不确定后的证据恢复)；禁止重传、重prepare、删稿或新建同名草稿。 |
+| FRESH_EVIDENCE_REQUIRED | verify时检查是否早于上次失败；迁移时检查观察是否在五分钟内、不早于旧回读且不超过当前时间五秒。重新只读采集，不回填时间或改旧证据hash；见[迁移恢复](baseline-migration.md#失败恢复)。 |
+| BASELINE_REQUIRED / BASELINE_EVIDENCE_NOT_VERIFIED / BASELINE_EVIDENCE_PLAN_MISMATCH | 保留原草稿和旧证据，先区分同plan与跨plan。同plan核对当前plan绑定；跨plan须读取旧已核验status/receipt/evidence，经[显式迁移](baseline-migration.md)关联新批次，不能把新回读标为旧验收或手改hash；首次无基线仍阻塞。 |
+| BASELINE_MIGRATION_MISMATCH / MIGRATION_TARGET_PLAN_MISMATCH / MIGRATION_TARGET_NOT_READY | 迁移绑定、prepare批次或target回执/历史不符。保留plan、迁移记录与原草稿，按[迁移恢复](baseline-migration.md#失败恢复)核对；禁止删除history、改attempt_id或重新prepare制造可编辑状态。 |
+| BASELINE_CONTENT_MISMATCH / CHROME_BASELINE_REQUIRED / ORIGINAL_CHROME_DRAFT_REQUIRED | 旧内容身份、Chrome证据范围或原稿唯一匹配不符。核对分发目录和原Chrome列表，不借用其他文章或内嵌浏览器证据，不新建稿替代；详见[迁移恢复](baseline-migration.md#失败恢复)。 |
 | REMOTE_BASELINE_CHANGED | 草稿标题、正文/描述、话题或图片顺序/尺寸已被平台或人工修改。保留当前草稿和旧回执，查看 `changed_fields` 后由用户决定合并；不自动覆盖、不新建同名稿。 |
 | REMOTE_DRAFT_NOT_READY / REMOTE_OBSERVATION_INVALID | 当前页面仍在加载、保存或回读字段不完整。等待状态稳定后重新独立回读，不用旧页面快照继续编辑。 |
 | 知乎导入后缺图 | 先核验R2原图能打开、编辑器已初始化；等待转存和保存。回读仍失败时保留草稿，别反复粘贴正文。 |
@@ -26,6 +28,8 @@
 | DESCRIPTION_LAYOUT_MISMATCH | 正文字相同但段落丢失或位置改变。检查fill是否压平换行，用支持段落的实际文本输入重填，保存前先看预览；不要将全部空白删除后判相同。 |
 | TOPICS_MISMATCH / TOPIC_NOT_SELECTED | 核对plan.tags与编辑器内已选话题名称/ID。用话题搜索结果补齐，排除重复/无关标签；普通#文字、页面推荐词或本地数组不能替代已选节点。 |
 | VISUAL_ORDER_REVIEW_REQUIRED | 逐张打开预览，与本地图片核对内容、顺序；保存实际截图后再确认。 |
+
+迁移/preflight的blocked来自本次退出码和stderr，不会自动持久化为transfer/status.json的blocked；即使本地状态仍ready_for_browser也必须停止编辑。verify对就绪分发包另记核验状态，仅通过才写成功回执；失败时旧回执只作历史，不能把两种入口混为同一种恢复动作。
 
 ## Chrome连接与本地草稿
 
