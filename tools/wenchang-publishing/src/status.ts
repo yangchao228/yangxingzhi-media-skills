@@ -6,6 +6,7 @@ import { loadProject } from './project.js';
 import { PLATFORMS, PublishingError, type Bundle, type Platform } from './model.js';
 import { validateObservation } from './zhihu-sync.js';
 import { validateXhs } from './xhs-sync.js';
+import { requireEvidenceEnvelope } from './remote-preflight.js';
 
 export type PublishingState = 'not_started' | 'ready_for_browser' | 'blocked' | 'historical_verified' | 'verified_current' | 'stale_receipt' | 'invalid_evidence';
 type Relation = 'none' | 'current' | 'historical_equivalent' | 'stale' | 'invalid';
@@ -53,14 +54,20 @@ function safePath(dir: string, relative: string, optional = false): string | und
   }
   return target;
 }
-function read(dir: string, relative: string, optional = false): any {
+function readHashed(dir: string, relative: string, optional = false, expectedHash?: string): { value: any; sha256: string } | undefined {
   const file = safePath(dir, relative, optional);
   if (!file) return undefined;
   const stat = fs.statSync(file);
   if (!stat.isFile() || stat.size > 20 * 1024 * 1024) fail('INVALID_STATUS_FILE');
-  try { const value = JSON.parse(fs.readFileSync(file, 'utf8')); if (!value || typeof value !== 'object' || Array.isArray(value)) fail('INVALID_STATUS_JSON'); return value; }
+  // Hash and parse the same bytes. Another writer may replace an evidence file
+  // between separate reads; an unchecked reread must never become the baseline.
+  const bytes = fs.readFileSync(file);
+  const digest = sha(bytes);
+  if (expectedHash !== undefined && digest !== expectedHash) return undefined;
+  try { const value = JSON.parse(bytes.toString('utf8')); if (!value || typeof value !== 'object' || Array.isArray(value)) fail('INVALID_STATUS_JSON'); return { value, sha256: digest }; }
   catch { return fail('INVALID_STATUS_JSON'); }
 }
+function read(dir: string, relative: string, optional = false): any { return readHashed(dir, relative, optional)?.value; }
 function hashFile(dir: string, relative: string): string {
   const file = safePath(dir, relative)!;
   if (!fs.statSync(file).isFile() || fs.statSync(file).size > 64 * 1024 * 1024) fail('INVALID_OUTPUT_FILE');
@@ -149,8 +156,8 @@ function boundEvidence(dir: string, candidate: Candidate, expectedHash: unknown)
   // scopes by immutable bytes; never infer trust from a filename or search broadly.
   for (const [relative, scope] of [['evidence.json', 'default'], ['chrome/evidence.json', 'chrome']] as const) {
     const reference = `${candidate.base}/${relative}`;
-    if (!safePath(dir, reference, true)) continue;
-    if (hashFile(dir, reference) === expectedHash) return { evidence: read(dir, reference), scope };
+    const document = readHashed(dir, reference, true, expectedHash as string);
+    if (document && document.sha256 === expectedHash) return { evidence: document.value, scope };
   }
   return fail('EVIDENCE_HASH_MISMATCH');
 }
@@ -165,10 +172,11 @@ function archivedReceipts(dir: string, candidate: Candidate): { state: Publishin
     } catch { return []; }
   });
 }
-function browserEvidence(dir: string, candidate: Candidate, platform: 'zhihu' | 'xiaohongshu', receipt: any, bundle: Bundle): 'default' | 'chrome' {
-  const plan = read(dir, `${candidate.base}/plan.json`), { evidence, scope } = boundEvidence(dir, candidate, receipt.evidence_sha256);
+function browserEvidence(dir: string, candidate: Candidate, platform: 'zhihu' | 'xiaohongshu', receipt: any, bundle: Bundle) {
+  const document = readHashed(dir, `${candidate.base}/plan.json`)!, plan = document.value;
+  const { evidence, scope } = boundEvidence(dir, candidate, receipt.evidence_sha256);
   validatePlan(plan, candidate.version, bundle.source_hash);
-  if (evidence.plan_hash !== hashFile(dir, `${candidate.base}/plan.json`) || plan.bundle_version !== candidate.version || plan.source_hash !== bundle.source_hash
+  if (evidence.plan_hash !== document.sha256 || plan.bundle_version !== candidate.version || plan.source_hash !== bundle.source_hash
     || plan.publication_performed !== false || evidence.independent_reopen !== true) fail('EVIDENCE_PLAN_MISMATCH');
   if (!iso(evidence.checked_at) || iso(evidence.checked_at) !== iso(receipt.checked_at) || receipt.account !== plan.account || typeof plan.account !== 'string' || !plan.account.trim()) fail('EVIDENCE_RECEIPT_MISMATCH');
   if (stable(receipt.images) !== stable(evidence.reopened?.images)) fail('RECEIPT_IMAGES_MISMATCH');
@@ -187,8 +195,24 @@ function browserEvidence(dir: string, candidate: Candidate, platform: 'zhihu' | 
     if (evidence.reopened.images.some((im: any) => im.src.startsWith('blob:') && uploaded.has(im.src))) fail('BLOB_REOPEN_NOT_INDEPENDENT');
     if (new Set(evidence.reopened.images.map((im: any) => im.src)).size !== plan.images.length) fail('DUPLICATE_IMAGE_SOURCE');
   }
-  return scope;
+  return { scope, plan, evidence, plan_hash: document.sha256 };
 }
+
+/** Validate a historical browser baseline without invoking verify or changing files. */
+export function readVerifiedBrowserBaseline(dir: string, platform: 'zhihu' | 'xiaohongshu', version: string) {
+  if (!HASH.test(version)) fail('INVALID_BUNDLE_VERSION');
+  const candidate = { base: `transfers/${platform}/${version}`, version, activity: 0 };
+  const bundle = bundleAt(dir, version), receiptDocument = readHashed(dir, `${candidate.base}/receipt.json`)!;
+  const receipt = receiptDocument.value, state = read(dir, `${candidate.base}/status.json`);
+  if (receipt.status !== 'draft_verified' || receipt.publication_performed !== false || receipt.bundle_version !== version
+    || state.status !== 'draft_verified' || state.publication_performed !== false) fail('BASELINE_EVIDENCE_NOT_VERIFIED');
+  const checked = browserEvidence(dir, candidate, platform, receipt, bundle);
+  if (state.plan_hash !== checked.plan_hash || receipt.plan_hash !== checked.plan_hash) fail('BASELINE_EVIDENCE_NOT_VERIFIED');
+  requireEvidenceEnvelope(checked.evidence, checked.plan_hash);
+  return { bundle, ...checked, receipt,
+    evidence_sha256: receipt.evidence_sha256 as string, receipt_sha256: receiptDocument.sha256 };
+}
+
 function browserStatus(dir: string, bundle: Bundle, platform: 'zhihu' | 'xiaohongshu', candidate: Candidate): PlatformStatus {
   let result = initial(platform);
   try {
@@ -223,7 +247,7 @@ function browserStatus(dir: string, bundle: Bundle, platform: 'zhihu' | 'xiaohon
     if (!receipt) { if (status?.status === 'draft_verified') fail('VERIFIED_RECEIPT_MISSING'); return result; }
     if (receipt.status !== 'draft_verified' || receipt.publication_performed !== false || receipt.bundle_version !== candidate.version || !iso(receipt.checked_at)) fail('INVALID_VERIFIED_RECEIPT');
     const saved = bundleAt(dir, candidate.version);
-    result.evidence_scope = browserEvidence(dir, candidate, platform, receipt, saved);
+    result.evidence_scope = browserEvidence(dir, candidate, platform, receipt, saved).scope;
     if (result.evidence_scope === 'chrome') result.issue_codes.push('EVIDENCE_SCOPED_CHROME');
     const rel = relation(dir, bundle, platform, candidate.version, receipt.source_hash);
     result.receipt = { relation: rel, status: 'draft_verified', bundle_version: candidate.version };

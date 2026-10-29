@@ -70,6 +70,12 @@ npm --prefix tools/wenchang-publishing run typecheck
 
 2026-10-26 的 A/B 本地验收：完整工具回归 145/145，其中构建、预览及只读工作台测试 21/21；build、typecheck 和 `git diff --check` 通过。新增覆盖当前 plan 强绑定、Chrome evidence 路径、目录/文件缺失、五层符号链接拒绝、私有文件 GET/HEAD 拒绝、写请求拒绝及请求前后文件内容与修改时间不变。工作台夹具运行时在临时目录生成并清理，平台回归使用合成样例，不使用正式稿、截图或凭证。
 
+2026-10-27 跨 plan 迁移本地验收：迁移专项 22/22，完整工具回归 167/167，build、typecheck 通过。新增夹具及两张 PNG 全部运行时在临时目录生成并清理；覆盖改文案、换图、远端冲突、账号不符、重复执行、旧证据/回执/新 plan 变动、符号链接、Chrome 范围和 blob 重开。测试核对旧 transfer 内容与 mtime 不变、迁移不推进 status/receipt，以及新计划仍须独立 verify。完整回归中的预览用例只监听本机临时端口，未操作真实平台。
+
+同日边界复审后：迁移专项 30/30，与只读状态联合回归 50/50，完整工具回归 175/175；build、typecheck、差异检查通过。先用 7 项失败回归复现证据读取竞态、prepare 换批次后复用、成功回执归档后重入及知乎保存标记类型不符，再修复；另补默认证据不匹配时仍选择回执绑定的 Chrome 证据。旧证据不改写，迁移仍不产生新成功回执。
+
+最终恢复提示文字对齐后，非端口回归 167/167 通过；剩余 8 项本机端口用例已补跑 8/8 通过。补跑前逐文件核对前轮 8 个受审文件 SHA-256 全部一致，源码无漂移；175 项采用同版分组验收（167 + 8），不称为最后版本的一次全量运行。端口测试仅使用临时合成夹具和本机回环地址，确认预览、工作台只读、私有文件与写请求拒绝，以及五层符号链接拒绝；未操作真实平台。
+
 HTTP 测试需要允许临时监听回环端口。以上结果只证明本地代码行为；测试不执行平台登录、上传、草稿保存或发布，也不刷新已有线上回执。后续测试数量以实际输出为准。
 
 ## P2 按平台接入
@@ -142,9 +148,69 @@ node tools/wenchang-publishing/dist/xhs-cli.js preflight \
 | `REMOTE_BASELINE_CHANGED` | 标题、正文/描述、话题、图片数量/顺序/尺寸或稳定地址变化；保留远端修改，由用户审阅差异 |
 | `REMOTE_DRAFT_NOT_READY` | 当前观察仍在加载、保存或存在失败；等待稳定后重新只读观察 |
 
-CLI 必须同时提供 `--observation` 和 `--baseline-evidence`；缺少参数时返回 `USE_PREPARE_OR_VERIFY_OR_PREFLIGHT`，不会绕过守门。当前 CLI 不支持不同 plan 之间的基线迁移：改稿或工具升级产生不同计划时，旧 evidence 不能直接用于当前预检，须单独审阅后续迁移方案，不能复制旧证据并改 hash 冒充新验收。
+同 plan 预检必须同时提供 `--observation` 和 `--baseline-evidence`。跨 plan 必须显式使用下述迁移入口；旧 evidence 仍不能直接用于新 plan，禁止复制旧证据并改 hash 冒充新验收。`--baseline-evidence` 与 `--migrated-baseline` 互斥；缺少命令所需参数时返回 `USE_PREPARE_OR_VERIFY_OR_PREFLIGHT_OR_MIGRATE_BASELINE`。
 
 知乎 `importDraft` 必须传入同一份已校验的 `baseline`，在清空编辑器前再次比较；小红书 `preflightBeforeEdit` 在改图或改文案前执行同样的只读比较。小红书临时 `blob:` 地址不作为稳定图片身份，仍比较顺序和尺寸；不能据此证明图片字节未变。
+
+### 跨 plan 基线迁移（本地入口）
+
+改文案、换图或工具升级后，先完成本地 build / prepare，保留旧 transfer 全目录。新旧 plan 必须属于同一 `content_id` 和账号；知乎必须保持原 `draft_url`。旧记录须有 `draft_verified` 的最新 status、receipt，以及回执哈希匹配的 `evidence.json` 或 `chrome/evidence.json`；会按旧 plan 再验原始证据、图片和保存重开字段。失败或未核验的旧记录不能迁移。
+
+另存一份当次只读回读为 `current-observation.json`。它不能直接复用旧 evidence，结构如下（字段必须来自实际观察，不预填成功）：
+
+```json
+{
+  "checked_at": "当次 ISO 时间",
+  "independent_reopen": true,
+  "observation": { "...": "observe() 完整结果" },
+  "browser": "chrome",
+  "saved_in_list": true,
+  "reopened_from_list": true,
+  "visual_order_verified": true,
+  "draft_match_count": 1
+}
+```
+
+末五个字段仅小红书必需：使用用户日常 Chrome 的原配置，在列表按**旧标题**唯一匹配并重开原草稿；同名候选多于一份时停止，先由用户辨认。旧证据也必须位于 `chrome/evidence.json`。目前 DOM 观察没有稳定草稿 ID，也不验证 Chrome 配置名称；这些字段是采集者的操作确认，不能证明跨浏览器同步或云端草稿身份。blob 地址仅证明本次加载，须另确认图片顺序；不能证明图片字节完全相同。
+
+观察须在五分钟内、时间不早于旧独立回读，不允许超过当前时间五秒。超时重新只读采集。远端仍须等于旧基线，不能把已改动的远端直接吸收为新基线。
+
+```sh
+# distribution / bundle_version 取前面的当前包；old_version 取原已核验包版本。
+old_version="替换为原 bundle_version"
+node tools/wenchang-publishing/dist/zhihu-cli.js migrate-baseline \
+  --dir "$distribution" --from-version "$old_version" \
+  --observation "/本机临时/zhihu-current-observation.json"
+node tools/wenchang-publishing/dist/zhihu-cli.js preflight \
+  --dir "$distribution" --migrated-baseline \
+  --observation "/本机临时/zhihu-fresh-observation.json"
+
+# 小红书使用 xhs-cli.js，参数相同；观察必须来自原 Chrome 列表重开。
+node tools/wenchang-publishing/dist/xhs-cli.js migrate-baseline \
+  --dir "$distribution" --from-version "$old_version" \
+  --observation "/本机临时/xhs-current-observation.json"
+node tools/wenchang-publishing/dist/xhs-cli.js preflight \
+  --dir "$distribution" --migrated-baseline \
+  --observation "/本机临时/xhs-fresh-observation.json"
+```
+
+成功只在**新 transfer** 独占创建 `baseline-migration.json`，状态为 `baseline_linked`，绑定旧 plan / evidence / receipt 的原始字节哈希、新 plan 哈希及当前 `target_attempt_id`，记录首次观察摘要；不改旧文件、不写成功回执、不操作平台。旧 plan、evidence、receipt 的解析和哈希各使用同一份读取字节，最终返回已校验的观察，不重新读取未校验内容。重复执行先重新检查远端，再复用同一记录；不会刷新记录时间、重复创建或覆盖迁移记录。两个命令都不采集浏览器，以上观察文件须由独立的只读采集步骤提供。
+
+迁移后继续使用当次 prepare 的计划和状态。再次 prepare 会更换 attempt，即使 plan 字节相同，也不能复用旧迁移记录；出现 `BASELINE_MIGRATION_MISMATCH` 时保留记录、证据和草稿，先审阅前次保存及回读，不删除记录重新导入。当前 target 存在 `receipt.json` 或 `history`（含中断留下的空目录）时，迁移一律阻塞，避免成功回执被 prepare 归档后重复编辑。知乎观察中的 `saved`、`busy`、`failed` 必须是 JSON 布尔值，字符串或缺失字段不能证明已保存。
+
+在已授权的浏览器编辑步骤中，用 `readMigratedBaseline(dir, platform, freshObservationFile)` 取得 `baseline`，再传给知乎 `importDraft(tab, plan, {baseline})` 或小红书 `preflightBeforeEdit(tab, plan, baseline)`。不要直接从迁移文件拼出基线；该函数每次重核旧回执、证据、新 plan 和当次观察，浏览器桥接还会在编辑前再比较。迁移只允许更新原草稿，不提供新建或发布入口。
+
+| 结果或错误 | 含义与恢复 |
+| --- | --- |
+| `baseline_linked` | 旧基线已关联当前计划；本轮仍待保存和独立重开，status 保持 `ready_for_browser` |
+| `BASELINE_MIGRATION_MISMATCH` | 记录绑定已变化；保留记录及原草稿，检查旧证据或当前计划，不手改哈希 |
+| `MIGRATION_TARGET_NOT_READY` | 当前计划已核验、含回执/历史目录或保存结果待处理；检查根目录及历史记录，禁止重复导入 |
+| `BASELINE_CONTENT_MISMATCH` | 旧记录属于其他内容身份；核对分发目录及历史版本 |
+| `CHROME_BASELINE_REQUIRED` / `ORIGINAL_CHROME_DRAFT_REQUIRED` | 缺少原 Chrome 已验基线、列表唯一匹配或图片顺序确认；重新采集，不能借用内嵌浏览器草稿 |
+| `FRESH_EVIDENCE_REQUIRED` | 观察过期、未来时间或缺少独立重开确认；只读重开原草稿后重采 |
+| `REMOTE_BASELINE_CHANGED` | 远端与旧基线冲突，返回 `changed_fields`；保留两边内容，由用户决定合并 |
+
+完成实际更新后，仍以**新 plan_hash** 生成新的保存 / 独立重开 evidence，再运行原 `verify`。旧 evidence 和迁移记录都不能替代新验收。新版本已有成功回执后，迁移入口阻塞重复编辑。本节实现仅做本地与合成测试验收，真实平台迁移尚未验收；默认只保存草稿、不发布。
 
 主 CLI 的 check/status 退出码只反映本地条件：0=本地就绪，1=本地阻塞，2=本地过期；知乎/小红书 preflight 返回 0 表示本次比较通过，1 表示阻塞。平台是否仍需处理，读取各平台 `state`、`review_pending` 和 `next_action`。工具升级也可能使旧包过期；重新 build 仅更新本地产物，不产生新的平台回执。
 
