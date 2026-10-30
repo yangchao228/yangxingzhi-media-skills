@@ -4,7 +4,7 @@
 
 > 从热点到发布，把自媒体写作全流程收拢成一套可复用的内容生产系统。
 
-## 本地分发能力（2026-10-26）
+## 本地分发能力（2026-10-29）
 
 以本地 Markdown 和图片为资产底座，复用文昌 Skills 生成三平台内容，不依赖 Obsidian。默认只保存草稿，正式发布由用户决定。
 
@@ -16,11 +16,13 @@
 | 小红书 | 默认宝玉风格卡片，保留合规 3:4 原图；使用用户日常 Chrome 保存和重开，核对图片、分段正文及已选话题；不保证跨浏览器或手机端同步 |
 | 只读工作台 | `/workbench` 汇总版本、平台状态、基线提示、实际文件路径、缺失项、预检命令和预览；不提供保存或发布按钮 |
 
-知乎和小红书的 CLI 预检要求 evidence 与当前 plan 的 hash 一致。文件存在不代表核验通过；不同 plan 的历史证据不能直接用于当前预检。详细条件、错误码与恢复方法见[分发工具说明](tools/wenchang-publishing/README.md)。
+知乎和小红书同 plan 预检要求 evidence 与当前 plan 的 hash 一致；跨 plan 须先显式关联旧已核验基线与当前 prepare 批次，再预检，不能改旧 evidence 的 hash。迁移不会保存新版本，仍须保存后独立重开并用新证据 verify；真实平台迁移尚未验收。入口见[跨 plan 基线迁移](content/wenchang-publish-check/references/baseline-migration.md)，CLI 条件与恢复方法见[分发工具说明](tools/wenchang-publishing/README.md)。
 
 平台回执只证明记录时点的结果，本地重建和离线测试不会刷新线上验收。正式稿、图片、截图、凭证和运行证据留在本地，公开文档只保留可复用流程。
 
-使用入口见[分发工具说明](tools/wenchang-publishing/README.md)、[安装与交付](docs/publishing-install.md)及[实施方案](docs/product/wenchang-local-publishing-mvp.md)。工作台继续保持只读；模板管理、卡片自动导出及更多平台后续再评估，打包相关改动单独审查。
+使用入口见[分发工具说明](tools/wenchang-publishing/README.md)、[安装与交付](docs/publishing-install.md)及[实施方案](docs/product/wenchang-local-publishing-mvp.md)。可选分发源码包支持清单校验与源码对账；工作台继续保持只读，模板管理、卡片自动导出及更多平台后续再评估。
+
+Skills 主源位于 `content/<skill>/`，本仓安装副本位于 `.codex/skills/<skill>/`。主源变更后须单独对账，历史一致性记录不代表当前副本已更新；操作方法见[安装说明](docs/publishing-install.md#本仓技能安装副本对账)。
 
 `文昌.skill` 是一套面向自媒体创作者的写作技能体系。它覆盖热点探测、选题、提纲、初稿、插图、诊断、排版、封面、发布等主要环节，但不要求用户自己判断“下一步该调用哪个技能”。
 
@@ -78,6 +80,14 @@
 - Git 跟踪中的 `.env`、`.DS_Store`、`__pycache__`、报告/备份文件检查
 - `md-img-r2` 临时 Markdown dry-run 样例
 - 文昌总控、路由和卡片类 skill 的成本敏感执行规则
+
+该脚本排除 `.codex/`，不会检查本仓安装副本是否与主源一致。需要时另运行只读对比：
+
+```bash
+diff -qr content/wenchang-publish-check .codex/skills/wenchang-publish-check
+```
+
+`diff` 无输出且退出码为0表示一致，1表示有差异，大于1表示检查出错。差异需先审阅再按文件同步；通用校验通过不代表安装副本一致，也不证明当前会话已热加载。
 
 ## 成本敏感工作方式
 
