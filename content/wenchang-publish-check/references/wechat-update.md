@@ -57,4 +57,17 @@ pending期间保持输入不变；已经改稿时先恢复待确认版本完成�
 
 远端快照与原始差异只存本机私密目录，权限600；报告只写字段名、版本、时间和结果，不输出token、密钥或签名URL。浏览器视觉验收与API数据验收分别记录。客户端没有已核验的条件写入能力，读取与写入之间仍可能发生并发编辑。
 
-2026-10-25正式稿先因旧HTML差异停止，用户确认后建立基线；同ID摘要更新及恢复已完成，但回读缺少原外层字体和颜色样式，曾保留content冲突及pending。用户再次在后台核对并接受当前版式后，reconcile-baseline重读新快照完成对账、归档旧记录，连续两次普通sync均verify，同ID、快照稳定、无pending。本轮只有三组token/get，无更新、新建或发布；见 [最新验收记录](../../publishing/p2/agent-review-burden/wechat-reconciliation-acceptance-20261025.md)；[前轮阻塞](../../publishing/p2/agent-review-burden/wechat-update-acceptance-20261025.md) 保留为历史。
+## 历史验收提炼与完成判定
+
+2026-10-25的历史验收记录显示：同ID摘要修改及恢复后，正文文字和图片仍一致，原外层字体与颜色样式却未恢复，因而保留HTML冲突。用户随后在后台接受当时的新呈现，才按新快照完成只读对账及两次普通sync回读。这说明“按用户接受的新呈现完成对账”可以成立，不能据此宣称原CSS已恢复，也不能将该次结果视为当前线上状态。
+
+| 观察结果 | 可复用判断 |
+| --- | --- |
+| 摘要恢复、正文文字与图片一致，但按现有归一化规则比较后HTML仍有差异 | 字段恢复不等于版式恢复。保留冲突与pending，按[超时与失败](#超时与失败)核对差异；不能凭核心内容一致报告完整恢复，也不将已支持的图片URL别名判为新冲突。 |
+| 用户接受更新后的新呈现 | 确认只绑定本次已审新快照。按[用户确认更新后的HTML差异](#用户确认更新后的html差异)核对reconcile-baseline条件；旧版式的确认不能代替新确认。 |
+| reconcile-baseline返回draft_verified、operation=reconciled、baseline_reconciled=true | 首次解决pending时，核对旧基线、原确认及已解决pending已归档到baseline_reconciliations，本地目标未被远端HTML替换；相同批准的幂等重核返回idempotent=true，不新增归档或重写journal。历史归档仍须独立核对，不能仅凭成功字段推定留存完整。两种路径均不发送更新、新建、上传或发布。 |
+| 对账后本地输入与远端均未变，两次普通sync均返回draft_verified、operation=verify | 执行前确认原media_id、当前本地fingerprint与已对账目标一致且无pending；执行后核对完整规范化快照稳定、无pending/conflict，两次均仅stable_token与draft/get。普通sync没有通用只读开关，本地改稿或待确认写入可能触发更新，不能把这些情况当作不变重跑。 |
+
+用户接受版式的反馈与API数据回读分别记录；API回执中的account_identity_verified=false、visual_review=pending不会因该反馈自动变成工具身份或视觉验收通过。草稿回读通过也不代表公开发布。
+
+本历史案例的原始文档与证据保留在本机，不作为其他任务的安装或执行依赖；更新其他既有草稿仍须保留其自身的当前journal。实际重跑前，将当前wechat-sync-receipt.json、journal及对应回读/截图复制到本机私密历史目录；CLI会更新当前回执，baseline_reconciliations仅归档旧基线、原确认和已解决pending，不会自动保存每轮回执及截图。新结果另行留存，不覆盖历史副本或将旧blocked记录改写为成功；不照搬历史快照哈希、测试数量或后续待办执行新任务。
