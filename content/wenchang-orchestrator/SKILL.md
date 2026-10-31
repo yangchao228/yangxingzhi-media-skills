@@ -7,6 +7,8 @@ description: 文昌.skill 总控入口。根据用户输入选择完整内容流
 
 ## 已有正式稿的草稿分发
 
+先核对用户最新决定及 `distribution.status`。用户已确认本篇分发完成或状态为 `completed_user_reported` 时，按[出刊收尾](../wenchang-publish-check/SKILL.md#已分发稿件收尾)结束本篇；“继续/下一步”不自动重启同步。用户另有具体的只读排障、改稿或新增平台请求时，仅执行该次范围；新稿独立建状态。
+
 “同步到公众号/知乎/小红书草稿箱”“图片看不到”“保存后重开核验”直接进入 `wenchang-publish-check` 的草稿同步入口，读取其 `references/draft-sync.md`；不要重新启动选题或写作。默认只存草稿，不发布。失败按 `references/draft-troubleshooting.md` 保留证据并定位阶段。缺登录、凭证、账号对应关系或真实覆盖冲突时才提醒用户；已授权的上传和保存不逐步重复确认。
 
 ## 目标
